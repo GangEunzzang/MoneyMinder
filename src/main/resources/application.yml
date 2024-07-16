@@ -1,0 +1,27 @@
+server:
+  port: 8080
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/moneyminder?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&connectionCollation=utf8mb4_general_ci
+#    username: root
+#    password:
+
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:szs
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+        show_sql: false
+
+  profiles:
+    include: oauth2

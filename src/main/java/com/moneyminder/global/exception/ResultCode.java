@@ -24,7 +24,7 @@ public enum ResultCode {
     // jwt
     JWT_NOT_FOUND(404, HttpStatus.NOT_FOUND, "토큰을 찾을 수 없습니다."),
     JWT_INVALID_SIGN(401, HttpStatus.UNAUTHORIZED, "잘못된 서명"),
-    JWT_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰"),
+    JWT_EXPIRED(403, HttpStatus.UNAUTHORIZED, "만료된 토큰"),
     JWT_UNSUPPORTED(400, HttpStatus.BAD_REQUEST, "지원되지 않는 토큰"),
     JWT_INVALID(400, HttpStatus.BAD_REQUEST,  "올바르지 않은 토큰"),
     JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 에러");

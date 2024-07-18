@@ -1,6 +1,7 @@
 package com.moneyminder.domain.auth.filter;
 
 import com.moneyminder.domain.auth.jwt.JwtProvider;
+import com.moneyminder.domain.auth.jwt.dto.TokenDto;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import jakarta.servlet.FilterChain;
@@ -24,17 +25,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String accessToken = jwtProvider.extractBearerToken(request)
+            String accessToken = jwtProvider.extractAccessToken(request)
                     .orElseThrow(() -> new BaseException(ResultCode.JWT_NOT_FOUND));
 
             jwtProvider.validateToken(accessToken);
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (BaseException e) {
+            handleJwtException(e, request, response);
         } catch (Exception e) {
             logger.error("Could not set user authentication in security context", e);
         }
 
         filterChain.doFilter(request, response);
+    }
 
+    private void handleJwtException(BaseException e, HttpServletRequest request, HttpServletResponse response) {
+        if (e.getResultCode().equals(ResultCode.JWT_EXPIRED)) {
+            String refreshToken = jwtProvider.extractRefreshToken(request)
+                    .orElseThrow(() -> new BaseException(ResultCode.JWT_NOT_FOUND, "Refresh Token Not Found"));
+
+            TokenDto newTokenDto = jwtProvider.reissueToken(refreshToken);
+
+            response.setHeader(JwtProvider.AUTHORIZATION_HEADER, JwtProvider.BEARER_PREFIX + newTokenDto.accessToken());
+            response.setHeader(JwtProvider.REFRESH_TOKEN_HEADER, JwtProvider.BEARER_PREFIX + newTokenDto.refreshToken());
+        }
     }
 }

@@ -38,6 +38,7 @@ public class JwtProvider {
     private final TokenProperties tokenProperties;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String AUTHORITIES_KEY = "authority";
 
@@ -63,20 +64,20 @@ public class JwtProvider {
     }
 
 
-    public TokenDto reissueToken(TokenDto tokenDto) {
-        validateToken(tokenDto.refreshToken());
+    public TokenDto reissueToken(String refreshToken) {
+        validateToken(refreshToken);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByTokenValue(tokenDto.refreshToken())
+        RefreshToken currentRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_INVALID));
 
-        User user = userRepository.findByEmail(refreshToken.getEmail())
+        User user = userRepository.findByEmail(currentRefreshToken.getEmail())
                 .orElseThrow(() -> new BaseException(ResultCode.USER_NOT_FOUND));
 
         String newAccessToken = generateAccessToken(user.getEmail(), user.getUserRole());
         String newRefreshToken = generateRefreshToken();
 
-        refreshToken.changeTokenValue(newRefreshToken);
-        refreshTokenRepository.save(refreshToken);
+        currentRefreshToken.changeTokenValue(newRefreshToken);
+        refreshTokenRepository.save(currentRefreshToken);
 
         return TokenDto.of(newAccessToken, newRefreshToken);
     }
@@ -114,16 +115,22 @@ public class JwtProvider {
         }
     }
 
-    public Optional<String> extractBearerToken(HttpServletRequest request) {
+    public Optional<String> extractAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        return StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX) ?
+                Optional.of(bearerToken.substring(BEARER_PREFIX.length())) :
+                Optional.empty();
+    }
 
+    public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(REFRESH_TOKEN_HEADER);
         return StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX) ?
                 Optional.of(bearerToken.substring(BEARER_PREFIX.length())) :
                 Optional.empty();
     }
 
     public User getUserByRequest(HttpServletRequest request) {
-        String bearerToken = extractBearerToken(request)
+        String bearerToken = extractAccessToken(request)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_NOT_FOUND));
 
         validateToken(bearerToken);
@@ -135,7 +142,7 @@ public class JwtProvider {
     }
 
     public String getEmailByRequest(HttpServletRequest request) {
-        String bearerToken = extractBearerToken(request)
+        String bearerToken = extractAccessToken(request)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_NOT_FOUND));
 
         validateToken(bearerToken);

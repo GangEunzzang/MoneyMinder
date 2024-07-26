@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, Long> {
+
     boolean existsByCategoryName(String categoryName);
 
     Optional<CategoryEntity> findByCategoryCode(String categoryCode);

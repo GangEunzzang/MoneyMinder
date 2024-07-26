@@ -13,5 +13,6 @@ import java.util.List;
 @Component
 @ConfigurationProperties("auth.oauth2")
 public class OAuth2Properites {
+
     List<String> authorizedRedirectUris = new ArrayList<>();
 }

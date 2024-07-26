@@ -99,7 +99,7 @@ class CategoryControllerTest extends ControllerTest {
         categoryTestHelper.카테고리_등록_요청(categoryTestHelper.카테고리_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> response = categoryTestHelper.카테고리_조회_요청_이메일(;
+        ExtractableResponse<Response> response = categoryTestHelper.카테고리_조회_요청_이메일();
 
         // then
         assertAll(

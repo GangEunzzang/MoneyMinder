@@ -13,6 +13,7 @@ import java.util.List;
 @Component
 @ConfigurationProperties("auth.cors")
 public class CorsProperties {
+
     private List<String> allowedOrigins = new ArrayList<>();
     private List<String> allowedMethods = new ArrayList<>();
     private List<String> allowedHeaders = new ArrayList<>();

@@ -42,7 +42,8 @@ public class CategoryEntity {
     private String description;
 
     @Builder
-    private CategoryEntity(Long id, String categoryName, String categoryCode, CategoryType categoryType, boolean isCustom, String userEmail, String description) {
+    private CategoryEntity(Long id, String categoryName, String categoryCode, CategoryType categoryType,
+            boolean isCustom, String userEmail, String description) {
         this.id = id;
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;

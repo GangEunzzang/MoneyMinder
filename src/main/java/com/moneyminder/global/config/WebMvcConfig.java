@@ -1,6 +1,6 @@
 package com.moneyminder.global.config;
 
-import com.moneyminder.domain.auth.jwt.JwtProvider;
+import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.global.resolver.CurrentUserEmailResolver;
 import com.moneyminder.global.resolver.CurrentUserResolver;
 import java.util.List;

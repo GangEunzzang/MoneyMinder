@@ -1,8 +1,8 @@
 package com.moneyminder.global.resolver;
 
-import com.moneyminder.domain.user.entity.User;
+import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
 import com.moneyminder.global.annotaion.CurrentUser;
-import com.moneyminder.domain.auth.jwt.JwtProvider;
+import com.moneyminder.domain.auth.application.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -20,7 +20,7 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterAnnotation(CurrentUser.class) != null &&
-                User.class.isAssignableFrom(parameter.getParameterType());
+                UserEntity.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override

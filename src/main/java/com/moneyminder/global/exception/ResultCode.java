@@ -27,7 +27,11 @@ public enum ResultCode {
     JWT_EXPIRED(403, HttpStatus.UNAUTHORIZED, "만료된 토큰"),
     JWT_UNSUPPORTED(400, HttpStatus.BAD_REQUEST, "지원되지 않는 토큰"),
     JWT_INVALID(400, HttpStatus.BAD_REQUEST,  "올바르지 않은 토큰"),
-    JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 에러");
+    JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 에러"),
+
+    // accountBook
+    ACCOUNT_BOOK_NOT_FOUND(404, HttpStatus.NOT_FOUND, "가계부 데이터를 찾을 수 없습니다."),
+    ACCOUNT_BOOK_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
 
     // category
     CATEGORY_NOT_FOUND(404, HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),

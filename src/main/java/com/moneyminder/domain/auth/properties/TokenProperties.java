@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("auth.token")
 public class TokenProperties {
+
     private String secretKey;
     private long accessTokenExpiry;
     private long refreshTokenExpiry;

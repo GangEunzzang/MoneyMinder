@@ -16,7 +16,7 @@ public enum CategoryType {
     private final String dbCode;
 
     public static CategoryType fromDbCode(String dbCode) {
-       return Arrays.stream(CategoryType.values())
+        return Arrays.stream(CategoryType.values())
                 .filter(categoryType -> categoryType.getDbCode().equals(dbCode))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown dbCode: " + dbCode));

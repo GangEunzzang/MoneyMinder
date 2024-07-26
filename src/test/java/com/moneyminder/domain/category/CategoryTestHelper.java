@@ -1,9 +1,9 @@
 package com.moneyminder.domain.category;
 
-import com.moneyminder.domain.auth.jwt.JwtProvider;
+import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
 import com.moneyminder.domain.category.presentation.dto.request.CategoryUpdateRequest;
-import com.moneyminder.domain.user.type.UserRole;
+import com.moneyminder.domain.user.domain.type.UserRole;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

@@ -15,4 +15,5 @@ public record CategoryServiceCreateReq(
         String description
 
 ) {
+
 }

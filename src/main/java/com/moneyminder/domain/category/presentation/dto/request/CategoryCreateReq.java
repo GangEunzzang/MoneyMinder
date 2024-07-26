@@ -20,6 +20,7 @@ public record CategoryCreateReq(
         @Size(max = 255)
         String description
 ) {
+
     public CategoryServiceCreateReq toService(String email) {
         return CategoryServiceCreateReq.builder()
                 .categoryName(categoryName)

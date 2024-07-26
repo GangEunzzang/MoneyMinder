@@ -26,6 +26,7 @@ public record CategoryUpdateRequest(
         Long categoryId
 
 ) {
+
     public CategoryServiceUpdateReq toService(String email) {
         return CategoryServiceUpdateReq.builder()
                 .categoryName(categoryName)

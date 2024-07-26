@@ -12,20 +12,19 @@ import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/api/categories")
-@Controller
+@RestController
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     @PostMapping("/create")
-    public DataResponse<CategoryResponse> createCategory(@CurrentUserEmail String email, @Valid @RequestBody CategoryCreateReq request) {
+    public DataResponse<CategoryResponse> createCategory(@CurrentUserEmail String email, @RequestBody @Valid CategoryCreateReq request) {
         CategoryServiceCreateReq serviceRequest = request.toService(email);
         Category category = categoryService.create(serviceRequest);
         CategoryResponse response = CategoryResponse.fromDomain(category);
@@ -34,7 +33,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update")
-    public DataResponse<CategoryResponse> updateCategory(@CurrentUserEmail String email, @Valid @RequestBody CategoryUpdateRequest request) {
+    public DataResponse<CategoryResponse> updateCategory(@CurrentUserEmail String email, @RequestBody @Valid CategoryUpdateRequest request) {
         CategoryServiceUpdateReq serviceRequest = request.toService(email);
         Category category = categoryService.update(serviceRequest);
         CategoryResponse response = CategoryResponse.fromDomain(category);

@@ -1,5 +1,6 @@
-package com.moneyminder.domain.category.application;
+package com.moneyminder.domain.category;
 
+import com.moneyminder.domain.category.application.CategoryService;
 import com.moneyminder.domain.category.application.dto.CategoryServiceCreateReq;
 import com.moneyminder.domain.category.application.dto.CategoryServiceUpdateReq;
 import com.moneyminder.domain.category.domain.Category;
@@ -36,7 +37,7 @@ class CategoryServiceTest {
     @BeforeEach
     void setUp() {
         categoryRepository.deleteAllInBatch();
-        jdbcTemplate.update("ALTER TABLE category ALTER COLUMN category_id RESTART WITH 1");
+        jdbcTemplate.update("ALTER TABLE category ALTER COLUMN id RESTART WITH 1");
         categoryRepository.save(Category.builder()
                 .categoryName("테스트이름")
                 .categoryType(CategoryType.EXPENSE)
@@ -45,8 +46,6 @@ class CategoryServiceTest {
                 .categoryCode("테스트코드")
                 .isCustom(true)
                 .build());
-
-
     }
 
     @Nested

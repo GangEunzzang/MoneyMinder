@@ -26,7 +26,7 @@ public enum DefaultCategory {
     MEDICAL_HEALTH(CategoryType.EXPENSE, "의료/건강", "DC014"),
     LEISURE_ENTERTAINMENT(CategoryType.EXPENSE, "여가/유흥", "DC015"),
     TAX_INTEREST(CategoryType.EXPENSE, "세금/이자", "DC016"),
-    OTHER_EXPENSE(CategoryType.EXPENSE, "기타비용", "DC17");
+    OTHER_EXPENSE(CategoryType.EXPENSE, "기타비용", "DC017");
 
     private final CategoryType categoryType;
     private final String categoryName;

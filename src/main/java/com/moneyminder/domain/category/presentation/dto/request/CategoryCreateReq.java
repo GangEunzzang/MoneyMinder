@@ -4,7 +4,9 @@ import com.moneyminder.domain.category.application.dto.CategoryServiceCreateReq;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record CategoryCreateReq(
 
         @NotEmpty

@@ -18,7 +18,6 @@ public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
     @Comment("카테고리 고유 식별자")
     private Long id;
 

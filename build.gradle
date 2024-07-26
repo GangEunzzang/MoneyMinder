@@ -53,11 +53,15 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    // guava
+    implementation 'com.google.guava:guava:32.1.2-jre'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.rest-assured:rest-assured:5.3.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -65,36 +69,5 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// QueryDSL 설정
-def querydslDir = "target/generated-sources/java"
 
-sourceSets {
-    main {
-        java {
-            srcDirs += querydslDir
-        }
-    }
-}
-
-tasks.withType(JavaCompile) {
-    options.annotationProcessorPath = configurations.annotationProcessor
-    options.compilerArgs += [
-            "-Aquerydsl.embeddedProjects=true",
-            "-Aquerydsl.sqlTemplates=org.springframework.data.jpa.domain.Specification"
-    ]
-}
-
-tasks.register('compileQuerydsl', JavaCompile) {
-    source = sourceSets.main.java
-    classpath = sourceSets.main.compileClasspath
-    destinationDir = file(querydslDir)
-    options.annotationProcessorPath = configurations.annotationProcessor
-    options.compilerArgs = [
-            "-proc:only",
-            "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
-    ]
-}
-
-compileJava {
-    dependsOn compileQuerydsl
-}
+compileJava {	options.compilerArgs << '-parameters'}

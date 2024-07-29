@@ -70,4 +70,16 @@ tasks.named('test') {
 }
 
 
-compileJava {	options.compilerArgs << '-parameters'}
+// -- QueryDsl 설정 -------------------------------------------------------
+def querydslSrcDir = 'src/main/generated'
+clean {
+    delete file(querydslSrcDir)
+}
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
+
+// 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+    delete file('src/main/generated')
+}

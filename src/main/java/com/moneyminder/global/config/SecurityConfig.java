@@ -2,9 +2,10 @@ package com.moneyminder.global.config;
 
 import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
 import com.moneyminder.domain.auth.infrastructure.filter.JwtAuthenticationFilter;
-import com.moneyminder.domain.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
 import com.moneyminder.domain.auth.infrastructure.oauth2.handler.OAuth2FailureHandler;
 import com.moneyminder.domain.auth.infrastructure.oauth2.handler.Oauth2SuccessHandler;
+import com.moneyminder.domain.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
+import com.moneyminder.global.filter.GlobalExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oauth2FailureHandler;
     private final CustomOAuth2RedirectFilter customOAuth2RedirectFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final GlobalExceptionFilter globalExceptionFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,8 +56,8 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(customOAuth2RedirectFilter, OAuth2AuthorizationRequestRedirectFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(globalExceptionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 

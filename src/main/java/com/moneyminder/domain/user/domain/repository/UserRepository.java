@@ -1,7 +1,6 @@
 package com.moneyminder.domain.user.domain.repository;
 
 import com.moneyminder.domain.user.domain.User;
-import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -15,4 +14,6 @@ public interface UserRepository {
     Optional<User> findByEmail(String email);
 
     void delete(User user);
+
+    void deleteAllInBatch();
 }

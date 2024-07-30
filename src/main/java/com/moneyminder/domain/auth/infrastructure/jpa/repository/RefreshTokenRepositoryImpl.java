@@ -34,4 +34,9 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     public void delete(RefreshToken refreshToken) {
         jpaRepository.delete(refreshToken.toEntity());
     }
+
+    @Override
+    public void deleteAllInBatch() {
+        jpaRepository.deleteAllInBatch();
+    }
 }

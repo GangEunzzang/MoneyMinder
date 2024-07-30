@@ -41,4 +41,9 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
         jpaRepository.delete(user.toEntity());
     }
+
+    @Override
+    public void deleteAllInBatch() {
+        jpaRepository.deleteAllInBatch();
+    }
 }

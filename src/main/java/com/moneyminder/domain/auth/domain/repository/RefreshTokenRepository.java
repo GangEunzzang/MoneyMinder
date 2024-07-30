@@ -12,4 +12,6 @@ public interface RefreshTokenRepository {
     RefreshToken save(RefreshToken refreshToken);
 
     void delete(RefreshToken refreshToken);
+
+    void deleteAllInBatch();
 }

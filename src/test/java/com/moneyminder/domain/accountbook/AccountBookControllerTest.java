@@ -3,35 +3,44 @@ package com.moneyminder.domain.accountbook;
 import com.moneyminder.ControllerTest;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
+import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
 
 class AccountBookControllerTest extends ControllerTest {
 
     @Autowired
     private AccountBookRepository accountBookRepository;
 
-    @Autowired
-    private AccountTestHelper accountTestHelper;
+    @SpyBean
+    private CategoryRepository categoryRepository;
+
+    @BeforeEach
+    void setupMocks() {
+        when(categoryRepository.existsByCategoryCode(org.mockito.ArgumentMatchers.anyString())).thenReturn(true);
+    }
 
 
     @DisplayName("가계부 등록")
     @Test
     void givenAccountBookCreateRequest_whenCreateAccountBook_thenSuccess() {
         // given
-        AccountBookCreateReq request = accountTestHelper.가계부_등록_요청_생성();
+        AccountBookCreateReq request = AccountTestHelper.가계부_등록_요청_생성();
 
         // when
-        ExtractableResponse<Response> response = accountTestHelper.가계부_등록_요청(request);
+        ExtractableResponse<Response> response = AccountTestHelper.가계부_등록_요청(request);
 
         // then
         assertAll(
@@ -45,10 +54,11 @@ class AccountBookControllerTest extends ControllerTest {
     @Test
     void givenAccountBookUpdateRequest_whenUpdateAccountBook_thenSuccess() {
         // given
-        accountTestHelper.가계부_등록_요청(accountTestHelper.가계부_등록_요청_생성());
+        AccountBookCreateReq request = AccountTestHelper.가계부_등록_요청_생성();
+        AccountTestHelper.가계부_등록_요청(request);
 
         // when
-        ExtractableResponse<Response> updateResponse = accountTestHelper.가계부_수정_요청(accountTestHelper.가계부_수정_요청_생성());
+        ExtractableResponse<Response> updateResponse = AccountTestHelper.가계부_수정_요청(AccountTestHelper.가계부_수정_요청_생성());
 
         // then
         assertAll(
@@ -62,10 +72,10 @@ class AccountBookControllerTest extends ControllerTest {
     @Test
     void givenAccountBookDeleteRequest_whenDeleteAccountBook_thenSuccess() {
         // given
-        accountTestHelper.가계부_등록_요청(accountTestHelper.가계부_등록_요청_생성());
+        AccountTestHelper.가계부_등록_요청(AccountTestHelper.가계부_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> deleteResponse = accountTestHelper.가계부_삭제_요청(1L);
+        ExtractableResponse<Response> deleteResponse = AccountTestHelper.가계부_삭제_요청(1L);
 
         // then
         assertAll(
@@ -78,10 +88,10 @@ class AccountBookControllerTest extends ControllerTest {
     @Test
     void givenAccountId_whenGetAccountBook_thenSuccess() {
         // given
-        accountTestHelper.가계부_등록_요청(accountTestHelper.가계부_등록_요청_생성());
+        AccountTestHelper.가계부_등록_요청(AccountTestHelper.가계부_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> response = accountTestHelper.가계부_조회_요청(1L);
+        ExtractableResponse<Response> response = AccountTestHelper.가계부_조회_요청(1L);
 
         // then
         assertAll(
@@ -94,11 +104,11 @@ class AccountBookControllerTest extends ControllerTest {
     @Test
     void givenEmail_whenGetAccountBook_thenSuccess() {
         // given
-        accountTestHelper.가계부_등록_요청(accountTestHelper.가계부_등록_요청_생성());
-        accountTestHelper.가계부_등록_요청(accountTestHelper.가계부_등록_요청_생성());
+        AccountTestHelper.가계부_등록_요청(AccountTestHelper.가계부_등록_요청_생성());
+        AccountTestHelper.가계부_등록_요청(AccountTestHelper.가계부_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> response = accountTestHelper.가계부_조회_요청_이메일();
+        ExtractableResponse<Response> response = AccountTestHelper.가계부_조회_요청_이메일();
 
         // then
         assertAll(

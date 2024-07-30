@@ -8,11 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthHelper {
 
-    @Autowired
-    private JwtProvider jwtProvider;
+    private static JwtProvider jwtProvider;
 
-    public String getAccessToken() {
-        return jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    @Autowired
+    public AuthHelper(JwtProvider jwtProvider) {
+        AuthHelper.jwtProvider = jwtProvider;
     }
 
+    public static String getAccessToken() {
+        return jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    }
 }

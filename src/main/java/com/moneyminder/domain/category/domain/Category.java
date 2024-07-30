@@ -1,8 +1,8 @@
 package com.moneyminder.domain.category.domain;
 
 import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
-import com.moneyminder.domain.category.application.dto.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import com.moneyminder.global.util.SnowflakeIdUtil;
 import lombok.Builder;
@@ -19,6 +19,9 @@ public record Category(
 ) {
 
     public static final String CUSTOM_CATEGORY_CODE_PREFIX = "CC";
+    public static final String DEFAULT_CATEGORY_CODE = "DEFAULT_CODE";
+    public static final String DEFAULT_USER_EMAIL = "DEFAULT_CATEGORY";
+    public static final String DEFAULT_CATEGORY_NAME = "기본 카테고리";
     public static final SnowflakeIdUtil SNOWFLAKE_ID_UTIL = new SnowflakeIdUtil(1, 1);
 
     @Builder
@@ -33,6 +36,17 @@ public record Category(
 
     public static String generateCategoryCode() {
         return CUSTOM_CATEGORY_CODE_PREFIX + SNOWFLAKE_ID_UTIL.nextId();
+    }
+
+    public static Category defaultCategory() {
+        return Category.builder()
+                .categoryName(DEFAULT_CATEGORY_NAME)
+                .categoryType(CategoryType.ETC)
+                .description("기본 카테고리입니다.")
+                .categoryCode(DEFAULT_CATEGORY_CODE)
+                .isCustom(false)
+                .userEmail(DEFAULT_USER_EMAIL)
+                .build();
     }
 
     public static Category create(CategoryServiceCreateReq createReq) {

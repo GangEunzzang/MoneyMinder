@@ -1,8 +1,9 @@
 package com.moneyminder.domain.category;
 
 import com.moneyminder.domain.category.application.CategoryService;
-import com.moneyminder.domain.category.application.dto.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.response.CategoryServiceRes;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.domain.category.domain.type.CategoryType;
@@ -16,12 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
 @SpringBootTest
 class CategoryServiceTest {
 
@@ -34,11 +33,13 @@ class CategoryServiceTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private Category setupCategory;
+
     @BeforeEach
     void setUp() {
         categoryRepository.deleteAllInBatch();
         jdbcTemplate.update("ALTER TABLE category ALTER COLUMN id RESTART WITH 1");
-        categoryRepository.save(Category.builder()
+        setupCategory = categoryRepository.save(Category.builder()
                 .categoryName("테스트이름")
                 .categoryType(CategoryType.EXPENSE)
                 .description("테스트설명")
@@ -63,7 +64,7 @@ class CategoryServiceTest {
                     .build();
 
             // when
-            Category createdCategory = categoryService.create(request);
+            CategoryServiceRes createdCategory = categoryService.create(request);
             Category fetchedCategory = categoryRepository.findById(createdCategory.id()).get();
 
             // then
@@ -82,15 +83,14 @@ class CategoryServiceTest {
                     .categoryType(CategoryType.INCOME)
                     .description("수정된 카테고리 설명")
                     .userEmail("테스트이메일")
-                    .categoryId(1L)
+                    .categoryId(setupCategory.id())
                     .build();
 
             // when
-            Category updatedCategory = categoryService.update(request);
+            CategoryServiceRes updatedCategory = categoryService.update(request);
 
             // then
             assertThat(updatedCategory.categoryName()).isEqualTo("수정된 카테고리");
-            assertThat(updatedCategory.categoryType()).isEqualTo(CategoryType.INCOME);
             assertThat(updatedCategory.description()).isEqualTo("수정된 카테고리 설명");
         }
 
@@ -98,44 +98,42 @@ class CategoryServiceTest {
         @Test
         void whenDeleteCategory_thenCategoryIsDeleted() {
             // given
-            Long categoryId = categoryRepository.findByCategoryCode("테스트코드").get().id();
+            Long categoryId = setupCategory.id();
             String userEmail = "테스트이메일";
 
             // when
             categoryService.delete(categoryId, userEmail);
 
             // then
-            assertThat(categoryRepository.findByCategoryCode("테스트코드")).isEmpty();
+            assertThat(categoryRepository.findById(categoryId)).isEmpty();
         }
 
         @DisplayName("조회 - ID로 카테고리를 성공적으로 조회한다")
         @Test
         void whenGetCategoryById_thenCategoryIsFound() {
             // given
-            Long categoryId = categoryRepository.findByCategoryCode("테스트코드").get().id();
+            Long categoryId = setupCategory.id();
 
             // when
-            Category category = categoryService.getCategoryById(categoryId);
+            CategoryServiceRes category = categoryService.getById(categoryId);
 
             // then
-            assertThat(category.categoryName()).isEqualTo("테스트이름");
-            assertThat(category.categoryType()).isEqualTo(CategoryType.EXPENSE);
-            assertThat(category.description()).isEqualTo("테스트설명");
+            assertThat(category.categoryName()).isEqualTo(setupCategory.categoryName());
+            assertThat(category.description()).isEqualTo(setupCategory.description());
         }
 
         @DisplayName("조회 - 코드로 카테고리를 성공적으로 조회한다")
         @Test
         void whenGetCategoryByCode_thenCategoryIsFound() {
             // given
-            String categoryCode = "테스트코드";
+            String categoryCode = setupCategory.categoryCode();
 
             // when
-            Category category = categoryService.getCategoryByCode(categoryCode);
+            CategoryServiceRes category = categoryService.getCategoryByCode(categoryCode);
 
             // then
-            assertThat(category.categoryName()).isEqualTo("테스트이름");
-            assertThat(category.categoryType()).isEqualTo(CategoryType.EXPENSE);
-            assertThat(category.description()).isEqualTo("테스트설명");
+            assertThat(category.categoryName()).isEqualTo(setupCategory.categoryName());
+            assertThat(category.description()).isEqualTo(setupCategory.description());
         }
 
         @DisplayName("조회 - 기본 카테고리를 성공적으로 조회한다")
@@ -151,11 +149,8 @@ class CategoryServiceTest {
                     .isCustom(false)
                     .build());
 
-            // when
-            int defaultCategorySize = categoryService.getDefaultCategories().size();
-
-            // then
-            assertThat(defaultCategorySize).isEqualTo(1);
+            // when && then
+            assertThat(categoryService.getDefaultCategories()).hasSize(1);
         }
 
         @DisplayName("조회 - 사용자 이메일로 카테고리를 성공적으로 조회한다")
@@ -171,11 +166,8 @@ class CategoryServiceTest {
                     .isCustom(true)
                     .build());
 
-            // when
-            int userCategorySize = categoryService.getCategoriesByEmail("이메일").size();
-
-            // then
-            assertThat(userCategorySize).isEqualTo(1);
+            // when && then
+            assertThat(categoryService.getCategoriesByEmail("이메일")).hasSize(1);
         }
 
         @DisplayName("조회 - 기본 카테고리 + 사용자가 생성한 카테고리를 성공적으로 조회한다")
@@ -200,14 +192,10 @@ class CategoryServiceTest {
                     .isCustom(false)
                     .build());
 
-            // when
-            int userCategorySize = categoryService.getCategoriesForUser("이메일").size();
 
-            // then
-            assertThat(userCategorySize).isEqualTo(2);
+            // when && then
+            assertThat(categoryService.getByUserEmailAndDefaultCategories("이메일")).hasSize(2);
         }
-
-
     }
 
     @Nested
@@ -224,7 +212,7 @@ class CategoryServiceTest {
                     .userEmail("이메일")
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("categoryName must not be empty");
@@ -240,7 +228,7 @@ class CategoryServiceTest {
                     .userEmail("이메일")
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("categoryType must not be empty");
@@ -256,7 +244,7 @@ class CategoryServiceTest {
                     .description("카테고리 설명")
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("userEmail must not be empty");
@@ -272,7 +260,7 @@ class CategoryServiceTest {
                     .userEmail("이메일")
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("description must not be empty");
@@ -289,7 +277,7 @@ class CategoryServiceTest {
                     .userEmail("테스트이메일")
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.update(request))
                     .isInstanceOf(InvalidDataAccessApiUsageException.class)
                     .hasMessage("The given id must not be null");
@@ -307,7 +295,7 @@ class CategoryServiceTest {
                     .categoryId(9999999L)
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.update(request))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_NOT_FOUND.getMessage());
@@ -322,10 +310,10 @@ class CategoryServiceTest {
                     .categoryType(CategoryType.INCOME)
                     .description("수정된 카테고리 설명")
                     .userEmail("다른이메일")
-                    .categoryId(1L)
+                    .categoryId(setupCategory.id())
                     .build();
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.update(request))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_BOOK_FORBIDDEN.getMessage());
@@ -338,7 +326,7 @@ class CategoryServiceTest {
             Long categoryId = 9999999L;
             String userEmail = "테스트이메일";
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.delete(categoryId, userEmail))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_NOT_FOUND.getMessage());
@@ -348,10 +336,10 @@ class CategoryServiceTest {
         @Test
         void whenDeleteCategoryWithDifferentUserEmail_thenThrowException() {
             // given
-            Long categoryId = categoryRepository.findByCategoryCode("테스트코드").get().id();
+            Long categoryId = setupCategory.id();
             String userEmail = "다른이메일";
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.delete(categoryId, userEmail))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_BOOK_FORBIDDEN.getMessage());
@@ -363,8 +351,8 @@ class CategoryServiceTest {
             // given
             Long categoryId = 99999999L;
 
-            // when, then
-            assertThatThrownBy(() -> categoryService.getCategoryById(categoryId))
+            // when && then
+            assertThatThrownBy(() -> categoryService.getById(categoryId))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_NOT_FOUND.getMessage());
         }
@@ -375,7 +363,7 @@ class CategoryServiceTest {
             // given
             String categoryCode = "없는코드";
 
-            // when, then
+            // when && then
             assertThatThrownBy(() -> categoryService.getCategoryByCode(categoryCode))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.CATEGORY_NOT_FOUND.getMessage());

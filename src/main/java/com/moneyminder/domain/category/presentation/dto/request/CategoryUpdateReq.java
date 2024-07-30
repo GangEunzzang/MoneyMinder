@@ -1,6 +1,6 @@
 package com.moneyminder.domain.category.presentation.dto.request;
 
-import com.moneyminder.domain.category.application.dto.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import lombok.Builder;
 import org.hibernate.validator.constraints.Length;
 
 @Builder
-public record CategoryUpdateRequest(
+public record CategoryUpdateReq(
 
         @NotEmpty
         @Size(max = 255)

@@ -1,7 +1,7 @@
 package com.moneyminder.domain.category.Infrastructure.jpa.repository;
 
-import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
+import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
@@ -39,6 +39,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public Optional<Category> findByCategoryCode(String categoryCode) {
         return jpaRepository.findByCategoryCode(categoryCode)
                 .map(CategoryEntity::toDomain);
+    }
+
+    @Override
+    public Category getByCategoryCode(String categoryCode) {
+        return findByCategoryCode(categoryCode).orElseThrow(() -> new BaseException(ResultCode.CATEGORY_NOT_FOUND));
     }
 
     @Override

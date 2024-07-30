@@ -18,18 +18,14 @@ class CategoryControllerTest extends ControllerTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Autowired
-    private CategoryTestHelper categoryTestHelper;
-
     @DisplayName("카테고리 등록")
     @Test
     void givenCategoryCreateRequest_whenCreateCategory_thenSuccess() {
-
         // given
-        CategoryCreateReq request = categoryTestHelper.카테고리_등록_요청_생성();
+        CategoryCreateReq request = CategoryTestHelper.카테고리_등록_요청_생성();
 
         // when
-        ExtractableResponse<Response> response = categoryTestHelper.카테고리_등록_요청(request);
+        ExtractableResponse<Response> response = CategoryTestHelper.카테고리_등록_요청(request);
 
         // then
         assertAll(
@@ -42,12 +38,11 @@ class CategoryControllerTest extends ControllerTest {
     @DisplayName("카테고리 수정")
     @Test
     void givenCategoryUpdateRequest_whenUpdateCategory_thenSuccess() {
-
         // given
-        categoryTestHelper.카테고리_등록_요청(categoryTestHelper.카테고리_등록_요청_생성());
+        CategoryTestHelper.카테고리_등록_요청(CategoryTestHelper.카테고리_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> updateResponse = categoryTestHelper.카테고리_수정_요청(categoryTestHelper.카테고리_수정_요청_생성());
+        ExtractableResponse<Response> updateResponse = CategoryTestHelper.카테고리_수정_요청(CategoryTestHelper.카테고리_수정_요청_생성());
 
         // then
         assertAll(
@@ -60,12 +55,11 @@ class CategoryControllerTest extends ControllerTest {
     @DisplayName("카테고리 삭제")
     @Test
     void givenCategoryId_whenDeleteCategory_thenSuccess() {
-
         // given
-        categoryTestHelper.카테고리_등록_요청(categoryTestHelper.카테고리_등록_요청_생성());
+        CategoryTestHelper.카테고리_등록_요청(CategoryTestHelper.카테고리_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> deleteResponse = categoryTestHelper.카테고리_삭제_요청(1L);
+        ExtractableResponse<Response> deleteResponse = CategoryTestHelper.카테고리_삭제_요청(1L);
 
         // then
         assertAll(
@@ -77,12 +71,11 @@ class CategoryControllerTest extends ControllerTest {
     @DisplayName("카테고리 조회 - categoryId 조회")
     @Test
     void givenCategoryId_whenFindCategoryById_thenSuccess() {
-
         // given
-        categoryTestHelper.카테고리_등록_요청(categoryTestHelper.카테고리_등록_요청_생성());
+        CategoryTestHelper.카테고리_등록_요청(CategoryTestHelper.카테고리_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> response = categoryTestHelper.카테고리_조회_요청(1L);
+        ExtractableResponse<Response> response = CategoryTestHelper.카테고리_조회_요청(1L);
 
         // then
         assertAll(
@@ -94,12 +87,11 @@ class CategoryControllerTest extends ControllerTest {
     @DisplayName("카테고리 조회 - userEmail 조회")
     @Test
     void givenUserEmail_whenFindCategoryByUserEmail_thenSuccess() {
-
         // given
-        categoryTestHelper.카테고리_등록_요청(categoryTestHelper.카테고리_등록_요청_생성());
+        CategoryTestHelper.카테고리_등록_요청(CategoryTestHelper.카테고리_등록_요청_생성());
 
         // when
-        ExtractableResponse<Response> response = categoryTestHelper.카테고리_조회_요청_이메일();
+        ExtractableResponse<Response> response = CategoryTestHelper.카테고리_조회_요청_이메일();
 
         // then
         assertAll(
@@ -107,6 +99,4 @@ class CategoryControllerTest extends ControllerTest {
                 () -> assertThat(response.jsonPath().getString("data[0].categoryName")).isEqualTo("카테고리 이름")
         );
     }
-
-
 }

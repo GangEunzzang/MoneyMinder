@@ -10,7 +10,8 @@ import java.util.Arrays;
 public enum CategoryType {
 
     INCOME("수입", "001"),
-    EXPENSE("지출", "002");
+    EXPENSE("지출", "002"),
+    ETC("기타", "999");
 
     private final String description;
     private final String dbCode;
@@ -19,14 +20,14 @@ public enum CategoryType {
         return Arrays.stream(CategoryType.values())
                 .filter(categoryType -> categoryType.getDbCode().equals(dbCode))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown dbCode: " + dbCode));
+                .orElse(ETC);
     }
 
     public static CategoryType fromValue(String value) {
         return Arrays.stream(CategoryType.values())
                 .filter(categoryType -> categoryType.name().equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown value: " + value));
+                .orElse(ETC);
     }
 
 }

@@ -4,9 +4,9 @@ import com.moneyminder.domain.auth.domain.RefreshToken;
 import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.auth.domain.repository.RefreshTokenRepository;
 import com.moneyminder.domain.auth.properties.TokenProperties;
+import com.moneyminder.domain.user.domain.type.UserRole;
 import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
 import com.moneyminder.domain.user.repository.UserJpaRepository;
-import com.moneyminder.domain.user.domain.type.UserRole;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import io.jsonwebtoken.*;
@@ -58,8 +58,8 @@ public class JwtProvider {
         RefreshToken preRefreshToken = refreshTokenRepository.findByEmail(email)
                 .orElseGet(() -> RefreshToken.create(email, newRefreshToken));
 
-        preRefreshToken.update(newRefreshToken);
-        refreshTokenRepository.save(preRefreshToken);
+        RefreshToken updateRefreshToken = preRefreshToken.update(newRefreshToken);
+        refreshTokenRepository.save(updateRefreshToken);
 
         return TokenInfo.create(newAccessToken, newRefreshToken);
     }

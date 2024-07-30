@@ -15,6 +15,8 @@ public interface CategoryRepository {
 
     Optional<Category> findByCategoryCode(String categoryCode);
 
+    Category getByCategoryCode(String categoryCode);
+
     Category save(Category category);
 
     boolean existsByCategoryName(String categoryName);

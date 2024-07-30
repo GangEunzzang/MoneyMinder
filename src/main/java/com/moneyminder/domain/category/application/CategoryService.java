@@ -1,7 +1,8 @@
 package com.moneyminder.domain.category.application;
 
-import com.moneyminder.domain.category.application.dto.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
+import com.moneyminder.domain.category.application.dto.response.CategoryServiceRes;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
@@ -22,12 +23,13 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Category create(CategoryServiceCreateReq request) {
-        return categoryRepository.save(Category.create(request));
+    public CategoryServiceRes create(CategoryServiceCreateReq request) {
+        Category category = categoryRepository.save(Category.create(request));
+        return CategoryServiceRes.fromDomain(category);
     }
 
     @Transactional
-    public Category update(CategoryServiceUpdateReq request) {
+    public CategoryServiceRes update(CategoryServiceUpdateReq request) {
         Category category = categoryRepository.getById(request.categoryId());
 
         if (!category.userEmail().equals(request.userEmail())) {
@@ -35,7 +37,9 @@ public class CategoryService {
         }
 
         Category updateCategory = category.update(request);
-        return categoryRepository.save(updateCategory);
+        categoryRepository.save(updateCategory);
+
+        return CategoryServiceRes.fromDomain(updateCategory);
     }
 
     @Transactional
@@ -51,28 +55,35 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Category> getCategoriesForUser(String email) {
-        List<Category> defaultCategories = getDefaultCategories();
-        List<Category> userCategories = getCategoriesByEmail(email);
+    public List<CategoryServiceRes> getByUserEmailAndDefaultCategories(String email) {
+        List<CategoryServiceRes> defaultCategories = getDefaultCategories();
+        List<CategoryServiceRes> userCategories = getCategoriesByEmail(email);
 
         return Stream.concat(defaultCategories.stream(), userCategories.stream()).toList();
     }
 
-    public Category getCategoryById(Long categoryId) {
-        return categoryRepository.getById(categoryId);
+    public CategoryServiceRes getById(Long categoryId) {
+        Category category = categoryRepository.getById(categoryId);
+
+        return CategoryServiceRes.fromDomain(category);
     }
 
-    public Category getCategoryByCode(String categoryCode) {
-        return categoryRepository.findByCategoryCode(categoryCode)
-                .orElseThrow(() -> new BaseException(ResultCode.CATEGORY_NOT_FOUND));
+    public CategoryServiceRes getCategoryByCode(String categoryCode) {
+        Category category = categoryRepository.getByCategoryCode(categoryCode);
+
+        return CategoryServiceRes.fromDomain(category);
     }
 
-    public List<Category> getDefaultCategories() {
-        return categoryRepository.findByDefaultCategory();
+    public List<CategoryServiceRes> getDefaultCategories() {
+        return categoryRepository.findByDefaultCategory().stream()
+                .map(CategoryServiceRes::fromDomain)
+                .toList();
     }
 
-    public List<Category> getCategoriesByEmail(String email) {
-        return categoryRepository.findByUserEmail(email);
+    public List<CategoryServiceRes> getCategoriesByEmail(String email) {
+        return categoryRepository.findByUserEmail(email).stream()
+                .map(CategoryServiceRes::fromDomain)
+                .toList();
     }
 
 }

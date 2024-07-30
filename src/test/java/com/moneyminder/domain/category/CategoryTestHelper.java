@@ -1,29 +1,19 @@
 package com.moneyminder.domain.category;
 
-import com.moneyminder.domain.auth.application.JwtProvider;
+import com.moneyminder.AuthHelper;
 import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryUpdateRequest;
-import com.moneyminder.domain.user.domain.type.UserRole;
+import com.moneyminder.domain.category.presentation.dto.request.CategoryUpdateReq;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryTestHelper {
 
-    @Autowired
-    private final JwtProvider jwtProvider;
-
-    @Autowired
-    public CategoryTestHelper(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
-    }
-
-    public ExtractableResponse<Response> 카테고리_등록_요청(CategoryCreateReq request) {
-        String accessToken = jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    public static ExtractableResponse<Response> 카테고리_등록_요청(CategoryCreateReq request) {
+        String accessToken = AuthHelper.getAccessToken();
 
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -35,7 +25,7 @@ public class CategoryTestHelper {
                 .log().all().extract();
     }
 
-    public CategoryCreateReq 카테고리_등록_요청_생성() {
+    public static CategoryCreateReq 카테고리_등록_요청_생성() {
         return CategoryCreateReq.builder()
                 .categoryName("카테고리 이름")
                 .categoryType("EXPENSE")
@@ -44,8 +34,8 @@ public class CategoryTestHelper {
     }
 
 
-    public ExtractableResponse<Response> 카테고리_수정_요청(CategoryUpdateRequest request) {
-        String accessToken = jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    public static ExtractableResponse<Response> 카테고리_수정_요청(CategoryUpdateReq request) {
+        String accessToken = AuthHelper.getAccessToken();
 
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -57,8 +47,8 @@ public class CategoryTestHelper {
                 .log().all().extract();
     }
 
-    public CategoryUpdateRequest 카테고리_수정_요청_생성() {
-        return CategoryUpdateRequest.builder()
+    public static CategoryUpdateReq 카테고리_수정_요청_생성() {
+        return CategoryUpdateReq.builder()
                 .categoryId(1L)
                 .categoryName("수정된 카테고리 이름")
                 .categoryType("INCOME")
@@ -66,8 +56,8 @@ public class CategoryTestHelper {
                 .build();
     }
 
-    public ExtractableResponse<Response> 카테고리_삭제_요청(long categoryId) {
-        String accessToken = jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    public static ExtractableResponse<Response> 카테고리_삭제_요청(long categoryId) {
+        String accessToken = AuthHelper.getAccessToken();
 
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -78,8 +68,8 @@ public class CategoryTestHelper {
                 .log().all().extract();
     }
 
-    public ExtractableResponse<Response> 카테고리_조회_요청(long categoryId) {
-        String accessToken = jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    public static ExtractableResponse<Response> 카테고리_조회_요청(long categoryId) {
+        String accessToken = AuthHelper.getAccessToken();
 
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -90,8 +80,8 @@ public class CategoryTestHelper {
                 .log().all().extract();
     }
 
-    public ExtractableResponse<Response> 카테고리_조회_요청_이메일() {
-        String accessToken = jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+    public static ExtractableResponse<Response> 카테고리_조회_요청_이메일() {
+        String accessToken = AuthHelper.getAccessToken();
 
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

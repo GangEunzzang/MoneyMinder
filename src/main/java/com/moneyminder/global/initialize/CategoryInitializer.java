@@ -5,18 +5,19 @@ import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.domain.category.domain.type.DefaultCategory;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
+@Profile("!test")
 @RequiredArgsConstructor
 @Component
 public class CategoryInitializer {
 
     private final CategoryRepository categoryRepository;
 
-    private static final String DEFAULT_USER_EMAIL = "DEFAULT_CATEGORY";
 
     @PostConstruct
     @Transactional
@@ -34,7 +35,7 @@ public class CategoryInitializer {
                 .categoryCode(defaultCategory.getCategoryCode())
                 .description(defaultCategory.getCategoryName())
                 .isCustom(false)
-                .userEmail(DEFAULT_USER_EMAIL)
+                .userEmail(Category.DEFAULT_USER_EMAIL)
                 .build();
     }
 }

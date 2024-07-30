@@ -28,6 +28,7 @@ public enum DefaultCategory {
     TAX_INTEREST(CategoryType.EXPENSE, "세금/이자", "DC016"),
     OTHER_EXPENSE(CategoryType.EXPENSE, "기타비용", "DC017");
 
+
     private final CategoryType categoryType;
     private final String categoryName;
     private final String categoryCode;

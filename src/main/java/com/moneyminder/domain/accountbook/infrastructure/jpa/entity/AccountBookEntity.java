@@ -3,16 +3,17 @@ package com.moneyminder.domain.accountbook.infrastructure.jpa.entity;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.global.base.BaseTimeEntity;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "account_book", indexes = {
         @Index(name = "idx_accountbook_user_email", columnList = "user_email")

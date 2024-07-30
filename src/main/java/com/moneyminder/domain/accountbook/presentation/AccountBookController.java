@@ -1,11 +1,11 @@
 package com.moneyminder.domain.accountbook.presentation;
 
-import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
-import com.moneyminder.domain.accountbook.presentation.dto.AccountBookUpdateReq;
 import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
+import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
+import com.moneyminder.domain.accountbook.presentation.dto.AccountBookUpdateReq;
 import com.moneyminder.global.annotaion.CurrentUserEmail;
 import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
@@ -38,14 +38,14 @@ public class AccountBookController {
         return DataResponse.of(response);
     }
 
-    @DeleteMapping("/delete{accountId}")
+    @DeleteMapping("/delete/{accountId}")
     public APIResponse delete(@CurrentUserEmail String email, @PathVariable Long accountId) {
         accountBookService.delete(accountId, email);
 
         return DataResponse.empty();
     }
 
-    @GetMapping("/id{accountId}")
+    @GetMapping("/id/{accountId}")
     public DataResponse<AccountBookServiceRes> findByAccountId(@PathVariable Long accountId) {
         AccountBookServiceRes response = accountBookService.getById(accountId);
         return DataResponse.of(response);

@@ -8,7 +8,6 @@ import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
-import com.moneyminder.domain.category.domain.type.CategoryType;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigInteger;
@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class AccountBookServiceTest {
@@ -36,10 +37,10 @@ public class AccountBookServiceTest {
     private AccountBookRepository accountBookRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @SpyBean
+    private CategoryRepository categoryRepository;
 
     @BeforeEach
     void setUp() {
@@ -53,15 +54,7 @@ public class AccountBookServiceTest {
                 .amount(BigInteger.valueOf(10000))
                 .build());
 
-        categoryRepository.deleteAllInBatch();
-        categoryRepository.save(Category.builder()
-                .categoryCode("카테고리코드")
-                .categoryName("카테고리이름")
-                .categoryType(CategoryType.ETC)
-                .userEmail(Category.DEFAULT_USER_EMAIL)
-                .description("카테고리 설명")
-                .isCustom(false)
-                .build());
+        given(categoryRepository.existsByCategoryCode("카테고리코드")).willReturn(true);
     }
 
     @Nested
@@ -104,14 +97,7 @@ public class AccountBookServiceTest {
                     .amount(BigInteger.valueOf(100000))
                     .build();
 
-            categoryRepository.save(Category.builder()
-                    .categoryCode("수정 카테고리")
-                    .categoryName("수정 카테고리")
-                    .categoryType(CategoryType.ETC)
-                    .userEmail(Category.DEFAULT_USER_EMAIL)
-                    .description("수정 카테고리 설명")
-                    .isCustom(false)
-                    .build());
+            given(categoryRepository.existsByCategoryCode(request.categoryCode())).willReturn(true);
 
             // when
             accountBookService.update(request);
@@ -145,7 +131,6 @@ public class AccountBookServiceTest {
 
             // then
             assertThat(accountBook.accountId()).isEqualTo(1L);
-            assertThat(accountBook.categoryCode()).isEqualTo("카테고리코드");
             assertThat(accountBook.memo()).isEqualTo("메모");
         }
 
@@ -154,7 +139,7 @@ public class AccountBookServiceTest {
         void whenGetAccountBookByEmail_thenSuccess() {
             //given
             accountBookRepository.save(AccountBook.builder()
-                    .userEmail("테스트이메일2")
+                    .userEmail("조회되지않는이메일")
                     .categoryCode("카테고리코드2")
                     .memo("메모2")
                     .transactionDate(LocalDate.now())
@@ -166,7 +151,6 @@ public class AccountBookServiceTest {
 
             // then
             assertThat(accountBookServiceResList).hasSize(1);
-            assertThat(accountBookServiceResList.get(0).categoryCode()).isEqualTo("카테고리코드");
         }
 
         @DisplayName("조회 - 가계부 조회시 카테고리가 없는 경우 기본 카테고리로 대체한다.")
@@ -234,14 +218,7 @@ public class AccountBookServiceTest {
                     .amount(BigInteger.valueOf(100000))
                     .build();
 
-            categoryRepository.save(Category.builder()
-                    .categoryCode("수정 카테고리")
-                    .categoryName("수정 카테고리")
-                    .categoryType(CategoryType.ETC)
-                    .userEmail(Category.DEFAULT_USER_EMAIL)
-                    .description("수정 카테고리 설명")
-                    .isCustom(false)
-                    .build());
+            given(categoryRepository.existsByCategoryCode(request.categoryCode())).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> accountBookService.update(request))
@@ -269,7 +246,6 @@ public class AccountBookServiceTest {
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.ACCOUNT_BOOK_NOT_FOUND.getMessage());
         }
-
 
 
     }

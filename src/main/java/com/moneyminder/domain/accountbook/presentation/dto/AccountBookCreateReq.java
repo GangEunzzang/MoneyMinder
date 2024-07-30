@@ -2,8 +2,12 @@ package com.moneyminder.domain.accountbook.presentation.dto;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigInteger;
+import lombok.Builder;
 
+import java.math.BigInteger;
+import java.time.LocalDate;
+
+@Builder
 public record AccountBookCreateReq(
 
         @NotNull
@@ -12,6 +16,9 @@ public record AccountBookCreateReq(
         @NotNull
         String categoryCode,
 
+        @NotNull
+        LocalDate transactionDate,
+
         String memo
 ) {
 
@@ -19,6 +26,7 @@ public record AccountBookCreateReq(
         return AccountBookServiceCreateReq.builder()
                 .amount(amount)
                 .categoryCode(categoryCode)
+                .transactionDate(transactionDate)
                 .memo(memo)
                 .userEmail(email)
                 .build();

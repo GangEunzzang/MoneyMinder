@@ -9,22 +9,11 @@ import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
 import com.moneyminder.domain.user.repository.UserJpaRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import java.security.Key;
-import java.time.Instant;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +21,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.security.Key;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,7 +65,7 @@ public class JwtProvider {
     }
 
 
-    public TokenInfo reissueAccessToken(String refreshToken) {
+    public TokenInfo reissueToken(String refreshToken) {
         validateToken(refreshToken);
 
         RefreshToken currentRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
@@ -105,17 +100,18 @@ public class JwtProvider {
         );
     }
 
-    public void validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-        } catch (IllegalArgumentException e) {
-            throw new BaseException(ResultCode.JWT_INVALID);
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new BaseException(ResultCode.JWT_INVALID_SIGN);
+            return true;
         } catch (ExpiredJwtException e) {
             throw new BaseException(ResultCode.JWT_EXPIRED);
         } catch (UnsupportedJwtException e) {
             throw new BaseException(ResultCode.JWT_UNSUPPORTED);
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw new BaseException(ResultCode.JWT_INVALID_SIGN);
+        } catch (IllegalArgumentException e) {
+            throw new BaseException(ResultCode.JWT_INVALID);
         } catch (Exception e) {
             throw new BaseException(ResultCode.JWT_PROCESS_ERROR);
         }

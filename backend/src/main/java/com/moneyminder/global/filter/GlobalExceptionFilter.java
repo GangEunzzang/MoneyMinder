@@ -8,14 +8,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Slf4j
-@Component
+import java.io.IOException;
+
 public class GlobalExceptionFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -27,9 +24,6 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (BaseException e) {
             handleException(response, e.getResultCode(), e.getMessage());
-        } catch (Exception e) {
-            log.error("Unexpected error occurred: {}", e.getMessage());
-            handleException(response, ResultCode.INTERNAL_ERROR, "Unexpected error occurred");
         }
     }
 
@@ -37,6 +31,7 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
             throws IOException {
         response.setStatus(resultCode.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
         ErrorResponse errorResponse = ErrorResponse.of(resultCode, message);
         response.getWriter().write(toJson(errorResponse));
     }

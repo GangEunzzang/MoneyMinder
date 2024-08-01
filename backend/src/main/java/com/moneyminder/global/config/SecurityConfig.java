@@ -1,5 +1,6 @@
 package com.moneyminder.global.config;
 
+import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
 import com.moneyminder.domain.auth.infrastructure.filter.JwtAuthenticationFilter;
 import com.moneyminder.domain.auth.infrastructure.oauth2.handler.OAuth2FailureHandler;
@@ -17,7 +18,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,16 +27,13 @@ public class SecurityConfig {
     private final PrincipalOAuth2UserService oAuth2UserService;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
     private final OAuth2FailureHandler oauth2FailureHandler;
-    private final CustomOAuth2RedirectFilter customOAuth2RedirectFilter;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final GlobalExceptionFilter globalExceptionFilter;
+    private final JwtProvider jwtProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
-                                        "/**",
                                         "/login"
                                 )
                                 .permitAll()
@@ -44,7 +41,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .oauth2Login(oauth2 -> oauth2
@@ -55,23 +51,28 @@ public class SecurityConfig {
                         .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/*"))
                 )
 
-                .addFilterBefore(customOAuth2RedirectFilter, OAuth2AuthorizationRequestRedirectFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(globalExceptionFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(new CustomOAuth2RedirectFilter(), OAuth2AuthorizationRequestRedirectFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new GlobalExceptionFilter(), JwtAuthenticationFilter.class);
+
         return http.build();
     }
 
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().
-                requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-                .requestMatchers(new AntPathRequestMatcher("/3o3/swagger*/**"))
-                .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**"))
-                .requestMatchers(new AntPathRequestMatcher("/swagger-ui*/**"))
-                .requestMatchers(new AntPathRequestMatcher("/favicon.ico"))
-                .requestMatchers(new AntPathRequestMatcher("/css/**"))
-                .requestMatchers(new AntPathRequestMatcher("/js/**"))
-                .requestMatchers(new AntPathRequestMatcher("/img/**"))
-                .requestMatchers(new AntPathRequestMatcher("/lib/**"));
+        return web -> web.ignoring().requestMatchers(
+                "/h2-console/**",
+                "/v3/api-docs/**",
+                "/swagger-ui*/**",
+                "/favicon.ico",
+                "/css/**",
+                "/js/**",
+                "/img/**",
+                "/lib/**",
+                "/actuator/**",
+                "/error"
+        );
     }
+
 }

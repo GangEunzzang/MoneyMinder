@@ -45,10 +45,19 @@ jobs:
       run: docker push gangeunlee/moneyminder-backend:${{ github.sha }}
       
   deploy:
+  
     runs-on: ubuntu-latest
     needs: build
 
     steps:
+      # 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+     # docker-compose.yml 파일을 EC2로 전송
+      - name: Copy docker-compose.yml to EC2
+        run: scp -o StrictHostKeyChecking=no backend/docker-compose.yml ${{ secrets.AWS_EC2_USERNAME }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USERNAME }}/docker-compose.yml
+        
       # AWS 배포
       - name: SSH to EC2 and deploy
         uses: appleboy/ssh-action@v0.1.3

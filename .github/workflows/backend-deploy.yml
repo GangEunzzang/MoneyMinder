@@ -82,6 +82,6 @@ jobs:
           key: ${{ secrets.EC2_PUB_SSH_KEY }}
           port: 22
           script: |
-            cd /home/${{ secrets.EC2_USER }}
+            cd /home/${{ secrets.EC2_USER }}/backend
             sudo docker-compose down
             sudo docker-compose up -d 

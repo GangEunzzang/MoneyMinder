@@ -1,0 +1,44 @@
+version: '3.8'
+networks:
+  moneyMinder-network:
+    driver: bridge
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - moneyMinder-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - moneyMinder-network
+
+  moneyMinder-backend:
+    image: gangeunlee/moneyminder-backend:latest
+    container_name: moneyMinder-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - moneyMinder-network
+    environment:
+    - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+    - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+    - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
+    - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
+    - AUTH_TOKEN_SECRET_KEY=${AUTH_TOKEN_SECRET_KEY}
+
+
+

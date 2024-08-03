@@ -37,7 +37,7 @@ jobs:
       # 프로젝트의 도커 빌드
     - name: Build Docker image
       working-directory: backend
-      run: docker build -t gangeunlee/moneyminder-backend:${{ github.sha }} .
+      run: docker buildx build --push --platform linux/amd64 -t gangeunlee/moneyminder-backend:${{ github.sha }} .
 
       # Docker Hub로 빌드 이미지 푸쉬
     - name: Push Docker image

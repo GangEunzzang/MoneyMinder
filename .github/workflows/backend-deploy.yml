@@ -65,7 +65,7 @@ jobs:
 
       # 프로테메우스 설정 파일 서버로 전달
       - name: Send prometheus.yml 
-        uses: appleboy/scp-actionv@master
+        uses: appleboy/scp-action@master
         with:
           username: ec2-user
           host: ${{ secrets.EC2_HOST }}

@@ -54,10 +54,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-     # docker-compose.yml 파일을 EC2로 전송
+      # SSH 키 파일 생성
+      - name: Create SSH key file
+        run: |
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # docker-compose.yml 파일을 EC2로 전송
       - name: Copy docker-compose.yml to EC2
-        run: scp -o StrictHostKeyChecking=no backend/docker-compose.yml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.AWS_EC2_USER }}/docker-compose.yml
-        
+        run: scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa backend/docker-compose.yml ${{ secrets.AWS_EC2_USERNAME }}@${{ secrets.AWS_EC2_HOST }}:/home/${{ secrets.AWS_EC2_USERNAME }}/docker-compose.yml
+
       # AWS 배포
       - name: SSH to EC2 and deploy
         uses: appleboy/ssh-action@v0.1.3

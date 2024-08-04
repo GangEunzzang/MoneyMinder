@@ -4,13 +4,13 @@ spring:
       client:
         registration:
           google:
-            client-id: ㅁㄴㅇㄹㅁㄴㅇㄹ
-            client-secret: ㅁㄴㅇㄹㄴㅁㄹㅇ
+            client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+            client-secret: ${GOOGLE_OAUTH2_CLIENT_SECRET}
             scope: email, profile
 
 auth:
   token:
-    secretKey: asdf234asdfasdfasdf123asfdzxcvvzxvca234sadfasdfasfdasfd
+    secretKey: ${AUTH_TOKEN_SECRET_KEY}
     accessTokenExpiry: 1800000
     refreshTokenExpiry: 604800000
   oauth2:

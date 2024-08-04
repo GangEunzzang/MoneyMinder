@@ -25,13 +25,12 @@ spring:
 
   profiles:
     include: oauth2
-
+    active: local
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-
 
 

@@ -45,5 +45,14 @@ services:
       - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
       - AUTH_TOKEN_SECRET_KEY=${AUTH_TOKEN_SECRET_KEY}
 
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - moneyMinder-network
+    restart: always
+
 volumes:
   grafana-data:

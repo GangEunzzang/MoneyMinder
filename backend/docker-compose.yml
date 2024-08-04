@@ -9,6 +9,7 @@ services:
     container_name: prometheus
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
@@ -58,6 +59,7 @@ services:
     command: -config.file=/etc/loki/loki.yml
     volumes:
       - ./monitoring/loki.yml:/etc/loki/loki.yml
+      - loki-data:/loki
 
   promtail:
     image: grafana/promtail:latest
@@ -71,3 +73,5 @@ services:
 
 volumes:
   grafana-data:
+  prometheus-data:
+  loki-data:

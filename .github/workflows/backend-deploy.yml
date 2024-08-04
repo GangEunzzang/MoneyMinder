@@ -50,17 +50,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 필요한 파일들을 서버로 전송
+      # Docker Compose 파일 및 모니터링 설정 파일 서버로 전송
       - name: Send configuration files
         uses: appleboy/scp-action@master
         with:
-          username: ec2-user
+          username: ${{ secrets.EC2_USER }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: |
             backend/docker-compose.yml
-            backend/monitoring/*
-          target: "/home/ec2-user/backend"
+            backend/monitoring/prometheus.yml
+            backend/monitoring/loki.yml
+            backend/monitoring/promtail.yml
+          target: "/home/${{ secrets.EC2_USER }}/backend"
 
       # EC2 서버에 SSH 접속하여 Docker Compose 실행
       - name: SSH to EC2 and deploy
@@ -68,7 +70,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_PUB_SSH_KEY }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
             cd /home/${{ secrets.EC2_USER }}/backend
@@ -79,10 +81,4 @@ jobs:
             SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
             SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
             GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}
-            GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}
-            AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}
-            EOF
-            # Docker Compose를 사용하여 서비스 배포
-            sudo docker-compose pull
-            sudo docker-compose down
-            sudo docker-compose up -d
+            GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OA

@@ -2,6 +2,7 @@
 <configuration>
   <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
 
+  <property name="LOG_PATH" value="/log" />
   <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %clr(%5level) %cyan(%logger) - %msg%n" />
   <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %5level %logger - %msg%n" />
 
@@ -13,24 +14,24 @@
 
   <!-- File Appender for general logs -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>./log/application.log</file>
+    <file>${LOG_PATH}/application.log</file>
     <encoder>
       <pattern>${FILE_LOG_PATTERN}</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>./log/application.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+      <fileNamePattern>${LOG_PATH}/application.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
   </appender>
 
   <!-- File Appender for error logs -->
   <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>./log/application-error.log</file>
+    <file>${LOG_PATH}/application-error.log</file>
     <encoder>
       <pattern>${FILE_LOG_PATTERN}</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>./log/application-error.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+      <fileNamePattern>${LOG_PATH}/application-error.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
       <maxHistory>30</maxHistory>
     </rollingPolicy>
     <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -44,6 +45,8 @@
     <logger name="com.feelcoding.logbackdemo" level="DEBUG" />
     <root level="INFO">
       <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+      <appender-ref ref="ERROR_FILE" />
     </root>
   </springProfile>
 

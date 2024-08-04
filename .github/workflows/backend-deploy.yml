@@ -58,7 +58,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: backend/docker-compose.yml, backend/monitoring
-          target: /home/${{ secrets.EC2_USER }}/backend
+          target: /home/${{ secrets.EC2_USER }}
 
       # EC2 서버에 SSH 접속하여 Docker Compose 실행
       - name: SSH to EC2 and deploy
@@ -70,6 +70,7 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.EC2_USER }}/backend
+            
             # 환경 변수 설정 파일 생성
             echo "SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}" > .env
             echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> .env
@@ -78,6 +79,7 @@ jobs:
             echo "GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}" >> .env
             echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> .env
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
+            
             # Docker Compose를 사용하여 서비스 배포
             sudo docker-compose pull
             sudo docker-compose down

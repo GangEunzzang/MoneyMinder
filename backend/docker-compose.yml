@@ -56,7 +56,7 @@ services:
       - "3100:3100"
     networks:
       - moneyMinder-network
-    command: -config.file=/etc/loki/local-config.yaml    
+    command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - loki-data:/loki
 
@@ -69,6 +69,7 @@ services:
       - /home/ec2-user/backend/log:/log
       - ./monitoring/promtail.yml:/etc/promtail/promtail.yml
     command: -config.file=/etc/promtail/promtail.yml
+
 
 volumes:
   grafana-data:

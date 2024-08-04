@@ -57,9 +57,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: |
-            backend/docker-compose.yml
-            backend/monitoring/
+          source: backend/docker-compose.yml, backend/monitoring
           target: /home/${{ secrets.EC2_USER }}/backend
 
       # EC2 서버에 SSH 접속하여 Docker Compose 실행

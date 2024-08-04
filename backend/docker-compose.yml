@@ -36,14 +36,8 @@ services:
       - /home/ec2-user/backend/log:/log
     networks:
       - moneyMinder-network
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - GOOGLE_OAUTH2_CLIENT_ID=${GOOGLE_OAUTH2_CLIENT_ID}
-      - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
-      - AUTH_TOKEN_SECRET_KEY=${AUTH_TOKEN_SECRET_KEY}
+    env_file:
+      - .env
 
   node-exporter:
     image: prom/node-exporter:latest

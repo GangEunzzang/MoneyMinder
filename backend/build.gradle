@@ -89,3 +89,7 @@ tasks.withType(JavaCompile) {
 clean {
     delete file('src/main/generated')
 }
+
+test {
+    environment 'AUTH_TOKEN_SECRET_KEY', 'defaultSecretKeyForTestsdefaultSecretKeyForTests'
+}

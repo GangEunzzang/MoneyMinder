@@ -21,6 +21,8 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
     networks:
       - moneyMinder-network
 
@@ -30,15 +32,18 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    volumes:
+      - /home/ec2-user/backend/log:/log
     networks:
       - moneyMinder-network
     environment:
-    - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-    - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-    - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-    - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
-    - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
-    - AUTH_TOKEN_SECRET_KEY=${AUTH_TOKEN_SECRET_KEY}
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - GOOGLE_OAUTH2_CLIENT_ID=${GOOGLE_OAUTH2_CLIENT_ID}
+      - GOOGLE_OAUTH2_CLIENT_SECRET=${GOOGLE_OAUTH2_CLIENT_SECRET}
+      - AUTH_TOKEN_SECRET_KEY=${AUTH_TOKEN_SECRET_KEY}
 
-
-
+volumes:
+  grafana-data:

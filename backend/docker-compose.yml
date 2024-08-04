@@ -56,9 +56,8 @@ services:
       - "3100:3100"
     networks:
       - moneyMinder-network
-    command: -config.file=/etc/loki/loki.yml
+    command: -config.file=/etc/loki/local-config.yaml    
     volumes:
-      - ./monitoring/loki.yml:/etc/loki/loki.yml
       - loki-data:/loki
 
   promtail:

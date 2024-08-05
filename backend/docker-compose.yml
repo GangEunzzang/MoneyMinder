@@ -34,7 +34,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /home/ec2-user/backend/log:/log
+      - /home/ec2-user/backend/log:/app/moneyMinder/log
     networks:
       - moneyMinder-network
     environment:

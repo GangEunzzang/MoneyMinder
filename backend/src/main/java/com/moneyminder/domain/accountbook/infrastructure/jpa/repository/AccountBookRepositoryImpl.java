@@ -1,5 +1,6 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
@@ -51,6 +52,11 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     @Override
     public List<AccountBookServiceRes> findWithCategoryByEmail(String email) {
         return jpaRepository.findWithCategoryByEmail(email);
+    }
+
+    @Override
+    public List<AccountBookServiceRes> findWithCategoryByEmailAndCursorAndSearch(String email, Optional<Long> cursorId, AccountBookServiceSearchReq searchReq) {
+        return jpaRepository.findWithCategoryByEmailAndCursorAndSearch(email, cursorId, searchReq);
     }
 
 

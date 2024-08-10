@@ -2,6 +2,7 @@ package com.moneyminder.domain.accountbook.presentation;
 
 import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
@@ -10,7 +11,9 @@ import com.moneyminder.global.annotaion.CurrentUserEmail;
 import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -31,14 +35,16 @@ public class AccountBookController {
     private final AccountBookService accountBookService;
 
     @PostMapping("/create")
-    public DataResponse<AccountBookServiceRes> create(@CurrentUserEmail String email, @Valid @RequestBody AccountBookCreateReq request) {
+    public DataResponse<AccountBookServiceRes> create(@CurrentUserEmail String email,
+            @Valid @RequestBody AccountBookCreateReq request) {
         AccountBookServiceCreateReq serviceRequest = request.toService(email);
         AccountBookServiceRes response = accountBookService.create(serviceRequest);
         return DataResponse.of(response);
     }
 
     @PutMapping("/update")
-    public DataResponse<AccountBookServiceRes> update(@CurrentUserEmail String email, @Valid @RequestBody AccountBookUpdateReq request) {
+    public DataResponse<AccountBookServiceRes> update(@CurrentUserEmail String email,
+            @Valid @RequestBody AccountBookUpdateReq request) {
         AccountBookServiceUpdateReq serviceRequest = request.toService(email);
         AccountBookServiceRes response = accountBookService.update(serviceRequest);
         return DataResponse.of(response);
@@ -63,5 +69,22 @@ public class AccountBookController {
         return DataResponse.of(response);
     }
 
+    @GetMapping("/search")
+    public DataResponse<List<AccountBookServiceRes>> findBySearch(
+            @CurrentUserEmail String email,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(required = false) String categoryCode,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String memo
+    ) {
+        System.out.println("cursorId = " + cursorId);
 
+        AccountBookServiceSearchReq searchReq = AccountBookServiceSearchReq.from(categoryCode, startDate, endDate, memo);
+
+        System.out.println("searchReq = " + searchReq);
+
+        List<AccountBookServiceRes> response = accountBookService.getByUserEmailAndCursorAndSearch(email, Optional.ofNullable(cursorId), searchReq);
+        return DataResponse.of(response);
+    }
 }

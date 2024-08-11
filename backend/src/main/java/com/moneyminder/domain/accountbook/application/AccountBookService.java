@@ -1,6 +1,7 @@
 package com.moneyminder.domain.accountbook.application;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
@@ -10,6 +11,7 @@ import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,6 +63,11 @@ public class AccountBookService {
     @Transactional(readOnly = true)
     public List<AccountBookServiceRes> getByUserEmail(String email) {
         return accountBookRepository.findWithCategoryByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AccountBookServiceRes> getByUserEmailAndCursorAndSearch(String email, Optional<Long> cursorId, AccountBookServiceSearchReq searchReq) {
+        return accountBookRepository.findWithCategoryByEmailAndCursorAndSearch(email, cursorId, searchReq);
     }
 
     private AccountBookServiceRes mapToServiceResponse(AccountBook updatedAccountBook) {

@@ -60,6 +60,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly "io.micrometer:micrometer-registry-prometheus"
 
+    // commons-lang3 (유틸함수 지원)
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     runtimeOnly 'com.h2database:h2'

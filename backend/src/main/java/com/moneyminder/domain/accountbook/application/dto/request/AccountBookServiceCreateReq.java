@@ -27,7 +27,6 @@ public record AccountBookServiceCreateReq(
                 .transactionDate(transactionDate)
                 .memo(memo)
                 .build();
-
     }
 
 }

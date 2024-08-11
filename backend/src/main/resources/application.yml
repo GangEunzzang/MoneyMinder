@@ -9,10 +9,10 @@ server:
 
 spring:
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:szs
+    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:szs
+    url: jdbc:h2:tcp://localhost/~/testDB
     username: sa
-    password:
 
   jpa:
     hibernate:
@@ -22,6 +22,7 @@ spring:
         format_sql: false
         use_sql_comments: false
         show_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
 
   profiles:
     include: oauth2

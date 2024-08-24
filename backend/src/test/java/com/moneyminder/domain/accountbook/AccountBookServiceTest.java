@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
@@ -17,6 +18,7 @@ import com.moneyminder.global.exception.ResultCode;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,8 +45,9 @@ public class AccountBookServiceTest {
 
     @BeforeEach
     void setUp() {
-        accountBookRepository.deleteAllInBatch();
+        jdbcTemplate.update("TRUNCATE TABLE account_book");
         jdbcTemplate.update("ALTER TABLE account_book ALTER COLUMN id RESTART WITH 1");
+
         accountBookRepository.save(AccountBook.builder()
                 .userEmail("테스트이메일")
                 .categoryCode("카테고리코드")
@@ -181,6 +184,176 @@ public class AccountBookServiceTest {
             // then
             assertThat(accountBookServiceResList).isEmpty();
         }
+
+        @DisplayName("조회 - 검색조건에 카테고리 코드가 없는 경우 전체 카테고리로 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchCategoryIsNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일",
+                    Optional.empty(),
+                    AccountBookServiceSearchReq.builder().build()
+            );
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(2);
+        }
+
+        @DisplayName("조회 - 검색조건에 카테고리 코드가 있는 경우 해당 카테고리로 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchCategoryIsNotNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().categoryCode("카테고리코드2").build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(1);
+        }
+
+        @DisplayName("조회 - 검색조건에 메모가 있는 경우 해당 메모로 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchMemoIsNotNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().memo("메모2").build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(1);
+        }
+
+        @DisplayName("조회 - 검색조건에 시작일과 종료일이 있는 경우 해당 기간으로 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchDateIsNotNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(),
+                    AccountBookServiceSearchReq.builder().startDate(LocalDate.now().minusDays(1))
+                            .endDate(LocalDate.now().plusDays(1)).build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(2);
+        }
+
+        @DisplayName("조회 - 검색조건에 시작일과 종료일이 없는 경우 전체 기간으로 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchDateIsNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(),
+                    AccountBookServiceSearchReq.builder().startDate(null).endDate(null).build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(2);
+        }
+
+        @DisplayName("조회 - 검색조건에 시작일이 종료일보다 큰 경우 빈 리스트를 반환한다.")
+        @Test
+        void whenGetAccountBookBySearchDateIsInvalid_thenEmptyList() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(),
+                    AccountBookServiceSearchReq.builder().startDate(LocalDate.now().plusDays(1))
+                            .endDate(LocalDate.now()).build());
+
+            // then
+            assertThat(accountBookServiceResList).isEmpty();
+        }
+
+        @DisplayName("조회 - 검색조건에 시작일이 없는 경우 종료일까지 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchStartDateIsNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().endDate(LocalDate.now()).build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(2);
+        }
+
+        @DisplayName("조회 - 검색조건에 종료일이 없는 경우 시작일부터 조회한다.")
+        @Test
+        void whenGetAccountBookBySearchEndDateIsNull_thenSuccess() {
+            //given
+            accountBookRepository.save(AccountBook.builder()
+                    .userEmail("테스트이메일")
+                    .categoryCode("카테고리코드2")
+                    .memo("메모2")
+                    .transactionDate(LocalDate.now())
+                    .amount(BigInteger.valueOf(10000))
+                    .build());
+
+            // when
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+                    "테스트이메일", Optional.empty(),
+                    AccountBookServiceSearchReq.builder().startDate(LocalDate.now()).build());
+
+            // then
+            assertThat(accountBookServiceResList).hasSize(2);
+        }
+
     }
 
     @Nested

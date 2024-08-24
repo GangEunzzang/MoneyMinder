@@ -20,7 +20,7 @@ public class CategoryTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .post("/v1/api/categories/create")
+                .post("/api/v1/categories/create")
                 .then()
                 .log().all().extract();
     }
@@ -42,7 +42,7 @@ public class CategoryTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .put("/v1/api/categories/update")
+                .put("/api/v1/categories/update")
                 .then()
                 .log().all().extract();
     }
@@ -63,7 +63,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/v1/api/categories/delete/" + categoryId)
+                .delete("/api/v1/categories/delete/" + categoryId)
                 .then()
                 .log().all().extract();
     }
@@ -75,7 +75,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/v1/api/categories/id/" + categoryId)
+                .get("/api/v1/categories/id/" + categoryId)
                 .then()
                 .log().all().extract();
     }
@@ -87,7 +87,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/v1/api/categories/email")
+                .get("/api/v1/categories/email")
                 .then()
                 .log().all().extract();
     }

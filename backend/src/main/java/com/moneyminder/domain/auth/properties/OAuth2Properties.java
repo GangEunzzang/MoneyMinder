@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @ConfigurationProperties("auth.oauth2")
-public class OAuth2Properites {
+public class OAuth2Properties {
 
     List<String> authorizedRedirectUris = new ArrayList<>();
 }

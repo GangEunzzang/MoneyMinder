@@ -6,7 +6,7 @@ import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
 import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.auth.infrastructure.oauth2.service.OAuth2UserInfoService;
-import com.moneyminder.domain.auth.properties.OAuth2Properites;
+import com.moneyminder.domain.auth.properties.OAuth2Properties;
 import com.moneyminder.domain.user.domain.type.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final OAuth2Properites oAuth2Properites;
+    private final OAuth2Properties oAuth2Properties;
     private final OAuth2UserInfoService oAuth2UserInfoService;
 
     @Override
@@ -69,7 +69,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private boolean isAuthorizedRedirectUri(String uri) {
         URI redirectUrlOfClientRequest = URI.create(uri);
 
-        return oAuth2Properites.getAuthorizedRedirectUris()
+        return oAuth2Properties.getAuthorizedRedirectUris()
                 .stream()
                 .anyMatch(authorizedRedirectUri -> {
                     URI authorizedURI = URI.create(authorizedRedirectUri);

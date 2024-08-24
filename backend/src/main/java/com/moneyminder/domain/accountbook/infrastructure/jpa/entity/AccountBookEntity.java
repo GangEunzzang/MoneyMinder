@@ -14,10 +14,17 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE account_book SET is_deleted = TRUE WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+@DynamicInsert
 @Entity
 @Table(name = "account_book", indexes = {
         @Index(name = "idx_accountbook_user_email", columnList = "user_email")
@@ -44,14 +51,20 @@ public class AccountBookEntity extends BaseTimeEntity {
     @Comment("메모")
     private String memo;
 
+    @Comment("삭제 여부")
+    @ColumnDefault("false")
+    private Boolean isDeleted = Boolean.FALSE;
+
     @Builder
-    private AccountBookEntity(Long id, String categoryCode, String userEmail, BigInteger amount, LocalDate transactionDate, String memo) {
+    private AccountBookEntity(Long id, String categoryCode, String userEmail, BigInteger amount,
+            LocalDate transactionDate, String memo, boolean isDeleted) {
         this.id = id;
         this.categoryCode = categoryCode;
         this.userEmail = userEmail;
         this.amount = amount;
         this.transactionDate = transactionDate;
         this.memo = memo;
+        this.isDeleted = isDeleted;
     }
 
     public AccountBook toDomain() {

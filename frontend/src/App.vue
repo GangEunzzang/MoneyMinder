@@ -1,31 +1,49 @@
+
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <GoogleLogin /> <!-- GoogleLogin 컴포넌트를 여기에 추가 -->
+    <AppHeader />
+    <div class="main-content">
+      <router-view /> <!-- 라우팅된 컴포넌트를 여기에 렌더링 -->
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from '@/components/HelloWorld.vue'
-import GoogleLogin from '@/components/GoogleLogin.vue'
+import AppHeader from './components/AppHeader.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld,
-    GoogleLogin // GoogleLogin 컴포넌트를 여기에 추가
-  }
-}
+    AppHeader
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+body {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin: 0 auto 0 auto;
+  width: 1000px;
+  background-color: #ffffff;
+}
+
 </style>

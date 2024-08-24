@@ -19,6 +19,14 @@ configurations {
     }
 }
 
+sourceSets {
+    test {
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -63,6 +71,8 @@ dependencies {
     // commons-lang3 (유틸함수 지원)
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
+    // 메일 전송 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

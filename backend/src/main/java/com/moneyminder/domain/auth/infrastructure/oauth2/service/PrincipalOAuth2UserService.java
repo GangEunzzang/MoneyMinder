@@ -1,5 +1,6 @@
 package com.moneyminder.domain.auth.infrastructure.oauth2.service;
 
+import com.moneyminder.domain.auth.event.domain.UserRegisterEvent;
 import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.repository.UserRepository;
@@ -7,6 +8,7 @@ import com.moneyminder.domain.user.domain.type.SocialType;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PrincipalOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @Override
@@ -57,6 +60,8 @@ public class PrincipalOAuth2UserService implements OAuth2UserService<OAuth2UserR
                 SocialType.GOOGLE
         );
 
-        return userRepository.save(newUser);
+        User user = userRepository.save(newUser);
+        eventPublisher.publishEvent(new UserRegisterEvent(user.email(), user.name()));
+        return user;
     }
 }

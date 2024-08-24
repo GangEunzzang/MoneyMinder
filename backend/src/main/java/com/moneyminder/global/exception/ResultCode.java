@@ -10,6 +10,7 @@ public enum ResultCode {
 
     SUCCESS(200, HttpStatus.OK, "성공"),
     INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생"),
+    INVALID_INPUT_VALUE(400, HttpStatus.BAD_REQUEST, "유효성 검증 실패"),
 
     //user
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),

@@ -15,6 +15,15 @@ spring:
         format_sql: false
         use_sql_comments: false
         show_sql: true
-
-  profiles:
-    include: oauth2
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tester
+    password: tester
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

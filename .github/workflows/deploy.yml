@@ -38,7 +38,7 @@ jobs:
         working-directory: frontend
         run: |
           npm install
-          npm run build
+          npm run dev
 
       # Docker Hub 로그인
       - name: Log in to Docker Hub

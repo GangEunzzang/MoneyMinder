@@ -27,5 +27,3 @@ services:
       - "3001:3001"
     networks:
       - moneyMinder-network
-    env_file:
-      - .env.dev

@@ -33,13 +33,6 @@ jobs:
         with:
           node-version: '16'
 
-      # 프론트엔드 의존성 설치 및 빌드
-      - name: Install and Build frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run dev
-
       # Docker Hub 로그인
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

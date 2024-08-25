@@ -14,4 +14,4 @@ RUN npm install -g http-server
 
 EXPOSE 3001
 
-ENTRYPOINT [ "http-server", "dist", "-p", "3001" ]
+ENTRYPOINT [ "http-server", "dist", "-p", "3001", "dev" ]

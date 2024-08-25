@@ -19,10 +19,14 @@
 export default {
   methods: {
     loginWithGoogle() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google?frontend_redirect_uri=http://localhost:3001/oauth2/callback';
+      const apiBaseUrl = process.env.VUE_APP_API_BASE_URL;
+      const frontendUrl = process.env.VUE_APP_FRONTEND_URL;
+      window.location.href = `${apiBaseUrl}/oauth2/authorization/google?frontend_redirect_uri=${frontendUrl}oauth2/callback`;
     },
     loginWithKakao() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/kakao?frontend_redirect_uri=http://localhost:3001/oauth2/callback';
+      const apiBaseUrl = process.env.VUE_APP_API_BASE_URL;
+      const frontendUrl = process.env.VUE_APP_FRONTEND_URL;
+      window.location.href = `${apiBaseUrl}/oauth2/authorization/kakao?frontend_redirect_uri=${frontendUrl}oauth2/callback`;
     },
   },
 };

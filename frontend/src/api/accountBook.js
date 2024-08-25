@@ -31,7 +31,6 @@ export function create(accountBook) {
 }
 
 export function update(accountBook) {
-  console.log(accountBook);
   return handleResponse(api(true).put('/api/v1/accountBook/update', accountBook));
 }
 
@@ -40,9 +39,9 @@ export function deleteAccount(accountBookId) {
 }
 
 export default {
-  getAccountBookList,
-  getAccountBook,
-  createAccountBook,
-  updateAccountBook,
-  deleteAccountBook,
+  getList,
+  getById,
+  create,
+  update,
+  deleteAccount
 };

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import AccountBookCreateModal from './AccountBookCreateModal.vue.vue';
+import AccountBookCreateModal from '@/components/accountBook/AccountBookCreateModal.vue';
 
 export default {
   components: {

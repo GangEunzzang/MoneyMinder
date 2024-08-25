@@ -1,0 +1,29 @@
+version: '3.8'
+networks:
+  moneyMinder-network:
+    driver: bridge
+
+services:
+  moneyMinder-backend:
+    image: gangeunlee/moneyminder-backend:latest
+    container_name: moneyMinder-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/ec2-user/backend/log:/app/moneyMinder/log
+    networks:
+      - moneyMinder-network
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    env_file:
+      - .env
+
+  moneyMinder-frontend:
+    image: gangeunlee/moneyminder-frontend:latest
+    container_name: moneyMinder-frontend
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - moneyMinder-network

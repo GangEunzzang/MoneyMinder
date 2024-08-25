@@ -89,7 +89,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            cd /home/${{ secrets.EC2_USER }}/moneyminder/deploy
+            cd /home/${{ secrets.EC2_USER }}/moneyminder/config/deploy
             
             # 환경 변수 설정 파일 생성
             echo "SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}" > .env

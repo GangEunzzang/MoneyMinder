@@ -1,6 +1,5 @@
 server:
   port: 8080
-  forward-headers-strategy: native
 
 spring:
   datasource:
@@ -17,22 +16,3 @@ spring:
         use_sql_comments: false
         show_sql: false
         dialect: org.hibernate.dialect.H2Dialect
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USER_NAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"

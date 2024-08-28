@@ -10,8 +10,8 @@ spring:
 
 auth:
   token:
-    secretKey: ${AUTH_TOKEN_SECRET_KEY}
-    accessTokenExpiry: 1800000
+    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadf
+    accessTokenExpiry: 9900000
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris:
@@ -30,3 +30,26 @@ auth:
       - OPTIONS
     allowed-headers: '*'
     max-age: 3600
+
+
+
+---
+spring:
+  profiles: local
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+
+
+---
+spring:
+  profiles: dev
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: "https://moneyminder.co.kr/login/oauth2/code/google"

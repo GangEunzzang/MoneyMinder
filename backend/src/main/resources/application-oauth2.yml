@@ -31,26 +31,4 @@ auth:
     allowed-headers: '*'
     max-age: 3600
 
----
-spring:
-  config:
-    activate:
-      on-profile: local, test
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
 
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            redirect-uri: "https://moneyminder.co.kr/login/oauth2/code/google"

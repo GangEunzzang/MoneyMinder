@@ -15,7 +15,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException {
 
-        String frontRedirectUrl = request.getParameter("redirect_uri");
+        String frontRedirectUrl = request.getParameter("frontend_redirect_uri");
 
         frontRedirectUrl = UriComponentsBuilder.fromUriString(frontRedirectUrl)
                 .queryParam("error", exception.getLocalizedMessage())

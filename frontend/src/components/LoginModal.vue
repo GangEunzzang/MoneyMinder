@@ -21,12 +21,12 @@ export default {
     loginWithGoogle() {
       const apiBaseUrl = process.env.VUE_APP_API_BASE_URL;
       const frontendUrl = process.env.VUE_APP_FRONTEND_URL;
-      window.location.href = `${apiBaseUrl}/oauth2/authorization/google?frontend_redirect_uri=${frontendUrl}oauth2/callback`;
+      window.location.href = `${apiBaseUrl}/oauth2/authorization/google?frontend_redirect_uri=${frontendUrl}/oauth2/callback`;
     },
     loginWithKakao() {
       const apiBaseUrl = process.env.VUE_APP_API_BASE_URL;
       const frontendUrl = process.env.VUE_APP_FRONTEND_URL;
-      window.location.href = `${apiBaseUrl}/oauth2/authorization/kakao?frontend_redirect_uri=${frontendUrl}oauth2/callback`;
+      window.location.href = `${apiBaseUrl}/oauth2/authorization/kakao?frontend_redirect_uri=${frontendUrl}/oauth2/callback`;
     },
   },
 };

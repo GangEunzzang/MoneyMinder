@@ -1,47 +1,4 @@
-server:
-  port: 8080
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/moneyminder?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&connectionCollation=utf8mb4_general_ci
-#    username: root
-#    password:
-
 spring:
   profiles:
     include: oauth2
     active: local
-
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/testDB
-    username: sa
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: false
-        use_sql_comments: false
-        show_sql: false
-        dialect: org.hibernate.dialect.H2Dialect
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USER_NAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"

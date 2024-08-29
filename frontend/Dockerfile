@@ -1,4 +1,5 @@
-FROM node:latest
+# 1. Node.js 이미지 사용하여 애플리케이션 빌드
+FROM node:latest as build-stage
 
 WORKDIR /app/moneyMinder
 
@@ -8,10 +9,20 @@ RUN npm install
 
 COPY . .
 
-RUN npm run dev
+# Vue.js 애플리케이션 빌드
+RUN npm run build
 
-RUN npm install -g http-server
+# 2. NGINX 이미지 사용하여 빌드된 파일을 서빙
+FROM nginx:alpine as production-stage
 
-EXPOSE 3001
+# NGINX 설정 파일을 복사 (optional, 기본 설정을 사용할 경우 생략 가능)
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["http-server", "dist", "-p", "3001"]
+# 빌드된 파일을 NGINX의 기본 HTML 폴더로 복사
+COPY --from=build-stage /app/moneyMinder/dist /usr/share/nginx/html
+
+# NGINX 포트 노출
+EXPOSE 80
+
+# NGINX 실행
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,13 +1,26 @@
+# 1. JDK 이미지 사용하여 애플리케이션 빌드
+FROM openjdk:17-jdk-alpine as build
+
+WORKDIR /app
+
+# Gradle 관련 파일 복사
+COPY backend/gradlew backend/gradlew
+COPY backend/gradle backend/gradle
+COPY backend/build.gradle backend/settings.gradle ./
+
+# 소스 코드 복사
+COPY backend/src backend/src
+
+# 빌드 수행
+RUN ./gradlew build --no-daemon
+
+# 2. 실제 런타임에 사용될 JDK 베이스 이미지 설정
 FROM openjdk:17-jdk-alpine
 
 WORKDIR /app/moneyMinder
 
-ARG JAR_PATH=build/libs
-ARG RESOURCES_PATH=build/resources/main
+# 빌드 스테이지에서 생성된 JAR 파일 복사
+COPY --from=build /app/build/libs/*.jar ./moneyMinder.jar
 
-COPY ../../backend/${JAR_PATH}/*.jar /app/moneyMinder/moneyMinder.jar
-
-ARG SPRING_PROFILES_ACTIVE=dev
-ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-
+# 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "moneyMinder.jar"]

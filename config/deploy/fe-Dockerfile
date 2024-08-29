@@ -3,14 +3,14 @@ FROM node:latest as build-stage
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ../../frontend/package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY ../../frontend .
 
 # Vue.js 애플리케이션 빌드
-RUN npm run build
+RUN npm run dev
 
 # 2. NGINX 이미지 사용하여 빌드된 파일을 서빙
 FROM nginx:alpine as production-stage

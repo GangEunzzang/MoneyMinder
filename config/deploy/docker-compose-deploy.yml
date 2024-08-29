@@ -25,16 +25,12 @@ services:
       - moneyMinder-network
 
   nginx:
-    image: nginx:alpine  # nginx:alpine 이미지를 사용
+    image: nginx:alpine
     container_name: moneyMinder-nginx
     restart: always
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-    - /home/ec2-user/cert-backup/live:/etc/letsencrypt/live
-    - /home/ec2-user/cert-backup/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
-     - /home/ec2-user/cert-backup/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
-     - ./config/deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/deploy/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - moneyMinder-network

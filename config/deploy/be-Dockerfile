@@ -1,11 +1,12 @@
 FROM openjdk:17-jdk-alpine
 
-WORKDIR /app/moneyMinder
+WORKDIR /app
 
 ARG JAR_PATH=build/libs
 ARG RESOURCES_PATH=build/resources/main
 
-COPY ../../backend/${JAR_PATH}/*.jar /app/moneyMinder/moneyMinder.jar
+# backend 디렉토리에서 JAR 파일을 복사
+COPY backend/${JAR_PATH}/*.jar /app/moneyMinder.jar
 
 ARG SPRING_PROFILES_ACTIVE=dev
 ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}

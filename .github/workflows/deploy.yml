@@ -50,7 +50,7 @@ jobs:
     needs: build
 
     env:
-      DOCKER_COMPOSE_FILE: "config/deploy/docker-compose-deploy.yml"
+      DOCKER_COMPOSE_FILE: "docker-compose-deploy.yml"
 
     steps:
       - name: 코드 체크아웃

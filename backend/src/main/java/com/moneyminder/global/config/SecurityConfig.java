@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
-                                        "/login"
+                                        "/login/**"
                                 )
                                 .permitAll()
                                 .anyRequest().authenticated())

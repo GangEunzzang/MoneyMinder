@@ -5,9 +5,7 @@ networks:
 
 services:
   moneyMinder-backend:
-    build:
-      context: .
-      dockerfile: config/deploy/be-Dockerfile
+    image: gangeunlee/moneyminder-backend:latest
     container_name: moneyMinder-backend
     restart: always
     ports:
@@ -18,9 +16,7 @@ services:
       - moneyMinder-network
 
   moneyMinder-frontend:
-    build:
-      context: .
-      dockerfile: config/deploy/fe-Dockerfile
+    image: gangeunlee/moneyminder-frontend:latest
     container_name: moneyMinder-frontend
     restart: always
     ports:
@@ -29,15 +25,14 @@ services:
       - moneyMinder-network
 
   nginx:
-    build:
-      context: .
-      dockerfile: config/deploy/nginx.conf  # nginx.conf가 있는 경로로 지정
+    image: nginx:alpine  # nginx:alpine 이미지를 사용
     container_name: moneyMinder-nginx
     restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
+      - ./config/deploy/nginx.conf:/etc/nginx/nginx.conf  # nginx.conf를 컨테이너 내부로 마운트
       - /home/ec2-user/cert-backup/live:/etc/letsencrypt/live  # 인증서 마운트
     networks:
       - moneyMinder-network

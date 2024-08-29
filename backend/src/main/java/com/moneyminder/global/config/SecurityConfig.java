@@ -34,7 +34,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
-                                        "/login/**"
+                                        "/login/**",
+                                        "/oauth2/**"
+
                                 )
                                 .permitAll()
                                 .anyRequest().authenticated())
@@ -48,7 +50,7 @@ public class SecurityConfig {
                         .successHandler(oauth2SuccessHandler)
                         .failureHandler(oauth2FailureHandler)
                         .authorizationEndpoint(authorization -> authorization.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/*"))
+                        .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/{registrationId}"))
                 )
 
                 .addFilterBefore(new CustomOAuth2RedirectFilter(), OAuth2AuthorizationRequestRedirectFilter.class)

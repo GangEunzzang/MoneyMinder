@@ -20,7 +20,7 @@ services:
     container_name: moneyMinder-frontend
     restart: always
     ports:
-      - "3001:80"
+      - "3001:3001"
     networks:
       - moneyMinder-network
 

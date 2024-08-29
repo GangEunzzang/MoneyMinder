@@ -32,7 +32,9 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/ec2-user/moneyminder/config/deploy/nginx.conf:/etc/nginx/nginx.conf:ro  # 정확한 nginx.conf 경로를 확인
-      - /home/ec2-user/cert-backup/live:/etc/letsencrypt/live  # 인증서 마운트
+    - /home/ec2-user/cert-backup/live:/etc/letsencrypt/live
+    - /home/ec2-user/cert-backup/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+     - /home/ec2-user/cert-backup/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
+     - ./config/deploy/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - moneyMinder-network

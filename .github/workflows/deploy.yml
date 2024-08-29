@@ -63,7 +63,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
-          target: /home/${{ secrets.EC2_USER }}/moneyminder/config/deploy/
+          target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
       - name: Nginx 설정 파일 전송
         uses: appleboy/scp-action@master
@@ -72,7 +72,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: config/deploy/nginx.conf
-          target: /home/${{ secrets.EC2_USER }}/moneyminder/config/deploy/
+          target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
       # EC2 서버에 SSH 접속하여 Docker Compose 실행
       - name: EC2에 SSH 접속 및 배포

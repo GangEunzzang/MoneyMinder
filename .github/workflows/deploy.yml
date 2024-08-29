@@ -42,16 +42,14 @@ jobs:
 
       # Docker 이미지 빌드 및 푸쉬 (백엔드)
       - name: Build and Push Backend Docker image
-        working-directory: backend
         run: |
-          docker build --platform linux/amd64 -t gangeunlee/moneyminder-backend:latest .
+          docker build --platform linux/amd64 -t gangeunlee/moneyminder-backend:latest -f config/deploy/be-Dockerfile .
           docker push gangeunlee/moneyminder-backend:latest 
 
-      # Docker 이미지 빌드 및 푸쉬 (프론트엔드)
-      - name: Build and Push Frontend Docker image
-        working-directory: frontend
+      # Docker 이미지 빌드 및 푸쉬 (프론트엔드 + NGINX)
+      - name: Build and Push Frontend+NGINX Docker image
         run: |
-          docker build --platform linux/amd64 -t gangeunlee/moneyminder-frontend:latest .
+          docker build --platform linux/amd64 -t gangeunlee/moneyminder-frontend:latest -f config/deploy/fe-Dockerfile .
           docker push gangeunlee/moneyminder-frontend:latest 
 
   deploy:
@@ -59,7 +57,7 @@ jobs:
     needs: build
 
     env:
-      DOCKER_COMPOSE_FILE: "docker-compose-deploy.yml"
+      DOCKER_COMPOSE_FILE: "config/deploy/docker-compose-deploy.yml"
 
     steps:
       # 코드 체크아웃
@@ -73,8 +71,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
-          target: /home/${{ secrets.EC2_USER }}/moneyminder/
+          source: |
+            config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
+            config/deploy/nginx.conf
+          target: /home/${{ secrets.EC2_USER }}/moneyminder/config/deploy/
 
       # EC2 서버에 SSH 접속하여 Docker Compose 실행
       - name: SSH to EC2 and deploy
@@ -96,7 +96,7 @@ jobs:
             echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> .env
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
             
-            # Docker Compose를 사용하여 서비스 배포            
+            # Docker Compose를 사용하여 서비스 배포
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d

@@ -5,7 +5,9 @@ networks:
 
 services:
   moneyMinder-backend:
-    image: gangeunlee/moneyminder-backend:latest
+    build:
+      context: .
+      dockerfile: config/deploy/be-Dockerfile
     container_name: moneyMinder-backend
     restart: always
     ports:
@@ -14,16 +16,28 @@ services:
       - /home/ec2-user/backend/log:/app/moneyMinder/log
     networks:
       - moneyMinder-network
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-    env_file:
-      - .env
 
   moneyMinder-frontend:
-    image: gangeunlee/moneyminder-frontend:latest
+    build:
+      context: .
+      dockerfile: config/deploy/fe-Dockerfile
     container_name: moneyMinder-frontend
     restart: always
     ports:
-      - "3001:3001"
+      - "3001:80"
+    networks:
+      - moneyMinder-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: config/deploy/nginx.conf  # nginx.conf가 있는 경로로 지정
+    container_name: moneyMinder-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /home/ec2-user/cert-backup/live:/etc/letsencrypt/live  # 인증서 마운트
     networks:
       - moneyMinder-network

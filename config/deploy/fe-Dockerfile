@@ -15,6 +15,9 @@ RUN npm run dev
 # 2. NGINX 이미지 사용하여 빌드된 파일을 서빙
 FROM nginx:alpine as production-stage
 
+# Nginx 설정 파일을 복사
+COPY ./config/deploy/nginx.conf /etc/nginx/nginx.conf
+
 # 빌드된 파일을 NGINX의 기본 HTML 폴더로 복사
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 

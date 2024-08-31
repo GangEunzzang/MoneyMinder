@@ -95,7 +95,6 @@ jobs:
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
             
             # Docker Compose를 사용하여 서비스 배포
-            sudo docker stop moneyMinder-nginx
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d

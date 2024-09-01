@@ -14,3 +14,5 @@ services:
       - /home/ec2-user/backend/log:/app/moneyMinder/log
     networks:
       - moneyMinder-network
+    environment:
+      - TZ=Asia/Seoul

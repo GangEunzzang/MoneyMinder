@@ -16,3 +16,4 @@ spring:
         format_sql: false
         use_sql_comments: false
         show_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect

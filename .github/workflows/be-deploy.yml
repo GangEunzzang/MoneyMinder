@@ -75,6 +75,8 @@ jobs:
             echo "GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}" >> .env
             echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> .env
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
+            echo "MAIL_USER_NAME=${{ secrets.MAIL_USER_NAME }}" >> .env
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
             
             # Docker Compose를 사용하여 서비스 배포
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down

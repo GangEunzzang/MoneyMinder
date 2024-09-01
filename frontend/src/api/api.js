@@ -3,6 +3,7 @@ import axios from 'axios';
 // Toast 알림 기능은 main.js 또는 다른 Vue 컴포넌트에서 사용
 
 const instance = axios.create({
+  baseURL: process.env.VUE_APP_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
   },

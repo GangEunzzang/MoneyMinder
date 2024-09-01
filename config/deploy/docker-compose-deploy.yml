@@ -15,4 +15,7 @@ services:
     networks:
       - moneyMinder-network
     environment:
-      - TZ=Asia/Seoul
+      TZ: Asia/Seoul
+      SPRING_PROFILES_ACTIVE: dev
+    env_file:
+      - .env

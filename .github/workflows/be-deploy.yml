@@ -37,7 +37,6 @@ jobs:
           docker push gangeunlee/moneyminder-backend:latest 
 
   deploy:
-    if: needs.build.outputs.outcome == 'success'
     runs-on: ubuntu-latest
     needs: build
 

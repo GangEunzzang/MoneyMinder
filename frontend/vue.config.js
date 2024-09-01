@@ -6,7 +6,7 @@ module.exports = defineConfig({
     port: 3001,
     proxy: {
       '/api': {
-        target: process.env.VUE_APP_API_BASE_URL || 'http://localhost:8080/api', // 환경 변수에서 API URL 가져오기
+        target: process.env.VUE_APP_API_BASE_URL;
         changeOrigin: true,
         pathRewrite: { '^/api': '' },
       }

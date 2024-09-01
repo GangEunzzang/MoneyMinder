@@ -25,7 +25,8 @@ public class WebMvcConfig  implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://api.moneyminder.co.kr")
+                .allowedOrigins(
+                        "https://api.moneyminder.co.kr, https://moneyminder.co.kr, https://www.moneyminder.co.kr")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("*")

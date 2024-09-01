@@ -32,7 +32,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers(
+                                        "/login/**",
+                                        "/health/**"
+                                )
+                                .permitAll()
+                                .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

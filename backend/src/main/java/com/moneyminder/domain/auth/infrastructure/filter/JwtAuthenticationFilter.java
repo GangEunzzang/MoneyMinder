@@ -7,12 +7,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -35,5 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthentication(String accessToken) {
         Authentication authentication = jwtProvider.getAuthentication(accessToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().startsWith("/login/**, /oauth2/**, /health/**");
     }
 }

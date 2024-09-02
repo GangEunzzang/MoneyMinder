@@ -1,9 +1,10 @@
 <template>
   <header>
     <div class="nav-container">
-      <div class="logo-container">
+      <router-link to="/" class="logo-container">
         <img id="logo" src="@/assets/logo.png" alt="Logo" />
-      </div>
+        <span id="brand-name">MoneyMinder</span>
+      </router-link>
       <nav class="menu-container">
         <ul>
           <li><router-link to="/"> 홈</router-link></li>
@@ -18,7 +19,6 @@
     <login-modal v-if="isLoginModalVisible" @close="hideLoginModal"></login-modal>
   </header>
 </template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import LoginModal from './LoginModal.vue';
@@ -71,13 +71,21 @@ header {
 }
 
 #logo {
-  width: 190px;
+  width: 67px;
   height: 60px;
+}
+
+#brand-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000000;
+  font-family: "Nirmala UI";
 }
 
 .logo-container {
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
 .menu-container {

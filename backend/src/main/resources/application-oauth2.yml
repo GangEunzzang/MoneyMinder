@@ -21,8 +21,6 @@ auth:
       - https://www.moneyminder.co.kr
   cors:
     allowed-origins:
-      - http://localhost:8080
-      - http://localhost:3000
       - http://localhost:3001
       - https://www.moneyminder.co.kr
     allowed-methods:

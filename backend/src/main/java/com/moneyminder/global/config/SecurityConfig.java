@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class SecurityConfig {
 
     private final PrincipalOAuth2UserService oAuth2UserService;
@@ -36,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
                                         "/login/**",
-                                        "/health/**"
+                                        "/health/**",
+                                        "/api/auth/**"
                                 )
                                 .permitAll()
                                 .anyRequest().authenticated())

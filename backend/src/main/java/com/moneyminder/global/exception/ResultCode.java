@@ -1,9 +1,10 @@
 package com.moneyminder.global.exception;
 
-import java.util.Optional;
-import java.util.function.Predicate;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Getter
 public enum ResultCode {
@@ -22,12 +23,12 @@ public enum ResultCode {
 
 
     // jwt
-    JWT_NOT_FOUND(404, HttpStatus.NOT_FOUND, "토큰을 찾을 수 없습니다."),
-    JWT_INVALID_SIGN(401, HttpStatus.UNAUTHORIZED, "잘못된 서명"),
-    JWT_EXPIRED(403, HttpStatus.UNAUTHORIZED, "만료된 토큰"),
-    JWT_UNSUPPORTED(400, HttpStatus.BAD_REQUEST, "지원되지 않는 토큰"),
-    JWT_INVALID(400, HttpStatus.BAD_REQUEST,  "올바르지 않은 토큰"),
-    JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 에러"),
+    JWT_NOT_FOUND(2000, HttpStatus.NOT_FOUND, "토큰을 찾을 수 없습니다."),
+    JWT_INVALID_SIGN(2001, HttpStatus.UNAUTHORIZED, "잘못된 서명"),
+    JWT_EXPIRED(2002, HttpStatus.FORBIDDEN, "만료된 토큰"),
+    JWT_UNSUPPORTED(2003, HttpStatus.BAD_REQUEST, "지원되지 않는 토큰"),
+    JWT_INVALID(2004, HttpStatus.BAD_REQUEST, "올바르지 않은 토큰"),
+    JWT_PROCESS_ERROR(2005, HttpStatus.INTERNAL_SERVER_ERROR, "토큰 처리 에러"),
 
     // accountBook
     ACCOUNT_BOOK_NOT_FOUND(404, HttpStatus.NOT_FOUND, "가계부 데이터를 찾을 수 없습니다."),

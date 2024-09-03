@@ -4,7 +4,6 @@ function handleResponse(promise) {
   return promise
       .then(response => response.data.data) // 필요한 데이터만 추출
       .catch(error => {
-        console.error('API Error:', error.response?.data?.message || error.message);
         throw error; // 오류를 다시 던져서 호출한 쪽에서 처리할 수 있도록 함
       });
 }

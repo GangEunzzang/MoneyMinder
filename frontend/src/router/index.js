@@ -6,16 +6,11 @@ import AccountBook from '@/views/AccountBookPage.vue';
 import LoginCallback from '@/views/LoginCallback.vue';
 
 const routes = [
-    { path: '/', component: Home },
-    { path: '/my-page', component: MyPage },
-    { path: '/notification', component: Notification },
-    { path: '/account-book', component: AccountBook },
-    {
-        path: '/oauth2/callback',
-        name: 'LoginCallback',
-        component: LoginCallback,
-        props: true
-    } // 로그인 콜백 라우트
+    { path: '/', component: Home }, // 기본 라우터
+    { path: '/my-page', component: MyPage }, // 마이페이지
+    { path: '/notification', component: Notification }, // 알림 페이지
+    { path: '/account-book', component: AccountBook }, // 가계부
+    {path: '/oauth2/callback', component: LoginCallback, props: true} // 로그인 콜백 
 ];
 
 const router = createRouter({

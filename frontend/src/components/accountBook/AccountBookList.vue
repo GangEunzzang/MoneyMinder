@@ -194,7 +194,6 @@ export default {
     // 수정 모달 오픈
     openEditModal(book) {
       this.showEditModal = true;
-      console.log(book);
       this.currentBookToEdit = book;
     },
 

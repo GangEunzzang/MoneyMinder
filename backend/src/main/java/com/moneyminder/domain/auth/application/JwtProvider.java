@@ -55,11 +55,9 @@ public class JwtProvider {
         String newAccessToken = generateAccessToken(email, userRole);
         String newRefreshToken = generateRefreshToken();
 
-        RefreshToken preRefreshToken = refreshTokenRepository.findByEmail(email)
-                .orElseGet(() -> RefreshToken.create(email, newRefreshToken));
+        RefreshToken refreshToken = RefreshToken.create(email, newRefreshToken);
 
-        RefreshToken updateRefreshToken = preRefreshToken.update(newRefreshToken);
-        refreshTokenRepository.save(updateRefreshToken);
+        refreshTokenRepository.save(refreshToken);
 
         return TokenInfo.create(newAccessToken, newRefreshToken);
     }
@@ -77,8 +75,8 @@ public class JwtProvider {
         String newAccessToken = generateAccessToken(user.getEmail(), user.getUserRole());
         String newRefreshToken = generateRefreshToken();
 
-        RefreshToken updateRefreshToken = currentRefreshToken.update(newRefreshToken);
-        refreshTokenRepository.save(updateRefreshToken);
+        refreshTokenRepository.delete(currentRefreshToken);
+        refreshTokenRepository.save(RefreshToken.create(user.getEmail(), newRefreshToken));
 
         return TokenInfo.create(newAccessToken, newRefreshToken);
     }

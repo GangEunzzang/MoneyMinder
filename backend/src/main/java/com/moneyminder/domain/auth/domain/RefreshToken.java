@@ -1,12 +1,10 @@
 package com.moneyminder.domain.auth.domain;
 
-import com.moneyminder.domain.auth.infrastructure.jpa.entity.RefreshTokenEntity;
+import com.moneyminder.domain.auth.infrastructure.redis.entity.RefreshTokenRedis;
 import lombok.Builder;
 import org.springframework.util.Assert;
 
 public record RefreshToken(
-
-        Long id,
         String email,
         String tokenValue
 ) {
@@ -27,7 +25,6 @@ public record RefreshToken(
 
     public RefreshToken update(RefreshToken update) {
         return RefreshToken.builder()
-                .id(id)
                 .email(email)
                 .tokenValue(update.tokenValue())
                 .build();
@@ -35,15 +32,13 @@ public record RefreshToken(
 
     public RefreshToken update(String tokenValue) {
         return RefreshToken.builder()
-                .id(id)
                 .email(email)
                 .tokenValue(tokenValue)
                 .build();
     }
 
-    public RefreshTokenEntity toEntity() {
-        return RefreshTokenEntity.builder()
-                .id(id)
+    public RefreshTokenRedis toEntity() {
+        return RefreshTokenRedis.builder()
                 .email(email)
                 .tokenValue(tokenValue)
                 .build();

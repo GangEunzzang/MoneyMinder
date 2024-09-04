@@ -73,8 +73,18 @@ public class EmbeddedRedisConfig {
     /**
      * 해당 port를 사용중인 프로세스를 확인하는 sh 실행
      */
-    private Process executeGrepProcessCommand(int redisPort) throws IOException {
-        String command = String.format("netstat -nat | grep LISTEN|grep %d", redisPort);
+    private Process executeGrepProcessCommand(int port) throws IOException {
+        String OS = System.getProperty("os.name").toLowerCase();
+        System.out.println("OS = " + OS);
+        if (OS.contains("win")) {
+            log.info("OS is  " + OS + " " + port);
+            String command = String.format("netstat -nao | find \"LISTEN\" | find \"%d\"", port);
+            String[] shell = {"cmd.exe", "/y", "/c", command};
+
+            return Runtime.getRuntime().exec(shell);
+        }
+
+        String command = String.format("netstat -nat | grep LISTEN|grep %d", port);
         String[] shell = {"/bin/sh", "-c", command};
 
         return Runtime.getRuntime().exec(shell);

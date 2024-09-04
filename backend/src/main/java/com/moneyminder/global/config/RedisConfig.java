@@ -1,6 +1,7 @@
 package com.moneyminder.global.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,23 +11,21 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Slf4j
 @Configuration
 @EnableRedisRepositories
+@ConfigurationProperties(prefix = "spring.data.redis")
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host}")
     private String host;
 
-    @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("spring.data.redis.password")
-    private String password;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+        log.info("host: {}, port: {}", host, port);
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        config.setPassword(password);
         return new LettuceConnectionFactory(config);
     }
 
@@ -46,5 +45,11 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    public void setHost(String host) {
+        this.host = host;
+    }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
 }

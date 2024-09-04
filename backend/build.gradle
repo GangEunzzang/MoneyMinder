@@ -78,6 +78,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //embedded-redis
     compileOnly group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    testImplementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 

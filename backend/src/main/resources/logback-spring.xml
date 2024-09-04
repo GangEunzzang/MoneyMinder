@@ -41,7 +41,7 @@
     </filter>
   </appender>
 
-  <springProfile name="local">
+  <springProfile name="local|test">
     <logger name="com.feelcoding.logbackdemo" level="DEBUG" />
     <root level="INFO">
       <appender-ref ref="CONSOLE" />

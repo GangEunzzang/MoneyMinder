@@ -4,12 +4,28 @@ networks:
     driver: bridge
 
 services:
-  moneyMinder-backend:
+  moneyMinder-backend-blue:
     image: gangeunlee/moneyminder-backend:latest
-    container_name: moneyMinder-backend
+    container_name: moneyMinder-backend-blue
     restart: always
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Blue 인스턴스
+    volumes:
+      - /home/ec2-user/backend/log:/app/moneyMinder/log
+    networks:
+      - moneyMinder-network
+    environment:
+      TZ: Asia/Seoul
+      SPRING_PROFILES_ACTIVE: dev
+    env_file:
+      - .env
+
+  moneyMinder-backend-green:
+    image: gangeunlee/moneyminder-backend:latest
+    container_name: moneyMinder-backend-green
+    restart: always
+    ports:
+      - "8081:8080"  # Green 인스턴스
     volumes:
       - /home/ec2-user/backend/log:/app/moneyMinder/log
     networks:

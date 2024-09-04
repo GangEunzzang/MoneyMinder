@@ -56,6 +56,14 @@ jobs:
           source: config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
           target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
+      - name: 현재 배포 상태 확인 (Blue/Green 확인)
+        run: |
+          if curl -s http://localhost:8080 > /dev/null; then
+            echo "DEPLOY_TARGET=green" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_TARGET=blue" >> $GITHUB_ENV
+          fi 
+
       # EC2 서버에 SSH 접속하여 Docker Compose 실행
       - name: EC2에 SSH 접속 및 배포
         uses: appleboy/ssh-action@master
@@ -84,3 +92,18 @@ jobs:
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d
+
+            # 현재 배포 중이지 않은 인스턴스에 배포
+            if [ "${{ env.DEPLOY_TARGET }}" = "green" ]; then
+              sudo docker-compose -f docker-compose-deploy.yml up -d moneyMinder-backend-green
+            else
+              sudo docker-compose -f docker-compose-deploy.yml up -d moneyMinder-backend-blue
+            fi
+
+            # Nginx 설정 파일 업데이트 및 재시작 (Blue -> Green 전환)
+            if [ "${{ env.DEPLOY_TARGET }}" = "green" ]; then
+              sudo sed -i 's/backend_blue/backend_green/' /etc/nginx/conf.d/moneyMinder.conf
+            else
+              sudo sed -i 's/backend_green/backend_blue/' /etc/nginx/conf.d/moneyMinder.conf
+            fi
+            sudo systemctl restart nginx            

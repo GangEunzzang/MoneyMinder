@@ -18,7 +18,7 @@ spring:
         show_sql: false
         dialect: org.hibernate.dialect.MySQLDialect
 
-data:
-  redis:
-    host: ${SPRING_REDIS_HOST}
-    port: ${SPRING_REDIS_PORT}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}

@@ -2,20 +2,27 @@
 
 # 현재 시간 출력
 NOW_TIME=$(date +"%Y%m%d - %H:%M:%S")
-LOG_FILE="/moneyminder/log/deploy.log"
+LOG_FILE="/home/ec2-user/moneyminder/log/deploy.log"
 DOCKER_COMPOSE_FILE="docker-compose-deploy.yml"
+
+# 로그 파일이 없으면 생성
+if [ ! -f "$LOG_FILE" ]; then
+  mkdir -p $(dirname "$LOG_FILE")
+  touch "$LOG_FILE"
+fi
 
 # 로그 출력 함수
 log() {
   echo -e "$1" >> $LOG_FILE
 }
 
-# 로그 파일이 없으면 생성
-if [ ! -f "$LOG_FILE" ]; then
-  mkdir -p $(dirname "$LOG_FILE")  # 로그 파일 경로가 없으면 디렉토리 생성
-  touch "$LOG_FILE"  # 로그 파일 생성
-fi
-
+# 공통 Docker Compose 명령 함수
+docker_compose_cmd() {
+  local action=$1  # pull, up 등
+  local service=$2  # nginx, moneyMinder-backend-blue 등
+  log "Docker Compose: ${action} ${service}\n"
+  docker-compose -f ${DOCKER_COMPOSE_FILE} $action $service
+}
 
 # 로그 파일 시작
 log "\n\n\n\n=============== <빌드 시작> ==============="
@@ -26,19 +33,20 @@ IS_GREEN=$(docker ps | grep green)
 
 # Nginx 컨테이너 실행
 DEFAULT_CONF="/etc/nginx/nginx.conf"
-docker-compose -f ${DOCKER_COMPOSE_FILE} up -d nginx
-log " Nginx 컨테이너 실행 완료 \n\n"
 
+docker_compose_cmd "pull" "nginx"
+docker_compose_cmd "up -d" "nginx"
+log " Nginx 컨테이너 실행 완료 \n\n"
 
 # Green 컨테이너가 실행 중일 경우 Blue로 배포
 if [[ -n $IS_GREEN ]]; then
   log " Green 컨테이너가 실행 중입니다. Blue 컨테이너로 배포합니다.\n"
 
   log "1. 도커 이미지 빌드 시작 \n"
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull moneyMinder-backend-blue
+  docker_compose_cmd "pull" "moneyMinder-backend-blue"
 
   log "2. 도커 컨테이너 실행 시작 \n"
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d moneyMinder-backend-blue
+  docker_compose_cmd "up -d" "moneyMinder-backend-blue"
 
   log "3. Health Check 시작 \n"
   health_check "moneyMinder-backend-blue" "8080"
@@ -46,16 +54,15 @@ if [[ -n $IS_GREEN ]]; then
   log "4. Nginx 설정 변경 시작 \n"
   change_nginx_config "blue"
 
-
 # Blue 컨테이너가 실행중이거나 둘 다 실행 중이 아닐 경우 Green으로 배포
 else
   log " Blue 컨테이너가 실행 중이거나 둘 다 실행 중이 아닙니다. Green 컨테이너로 배포합니다.\n"
 
   log "1. 도커 이미지 빌드 시작 \n"
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull moneyMinder-backend-green
+  docker_compose_cmd "pull" "moneyMinder-backend-green"
 
   log "2. 도커 컨테이너 실행 시작 \n"
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d moneyMinder-backend-green
+  docker_compose_cmd "up -d" "moneyMinder-backend-green"
 
   log "3. Health Check 시작 "
   health_check "moneyMinder-backend-green" "8081"
@@ -63,8 +70,6 @@ else
   log "4. Nginx 설정 변경 시작 \n"
   change_nginx_config "green"
 fi
-
-
 
 # Health Check
 health_check() {
@@ -111,7 +116,7 @@ change_nginx_config() {
     log "Nginx 설정이 Blue로 변경되었습니다.\n"
   else
     # proxy_pass를 backend_green으로 변경 (컨테이너 내부에서 명령 실행)
-    docker exec nginx sed -i 's#http://green#http://blue#g' $NGINX_CONF
+    docker exec nginx sed -i 's#http://blue#http://green#g' $NGINX_CONF
     log "Nginx 설정이 Green으로 변경되었습니다.\n"
   fi
 

@@ -33,7 +33,7 @@ health_check() {
     success=$(echo $response | jq '.status' | grep 'UP')
 
     if [[ -n $success ]]; then
-      log "Health Check 성공\n"
+      log "   - Health Check 성공\n"
       return 0  # 성공 시 0 반환 (정상)
     else
       log "  - Health Check 실패.. Response: ${response}"
@@ -57,8 +57,6 @@ health_check() {
 # nginx.conf 변경
 change_nginx_config() {
   local target=$1  # Blue 또는 Green으로 배포할 대상
-
-  log "4. Nginx 설정 변경 시작\n"
 
   NGINX_CONF="/home/ec2-user/moneyminder/config/deploy/nginx.conf"
 

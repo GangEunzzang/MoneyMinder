@@ -27,30 +27,6 @@ services:
     networks:
       - moneyMinder-network
 
-  moneyMinder-backend:
-    image: gangeunlee/moneyminder-backend:latest
-    container_name: moneyMinder-backend
-    restart: always
-    ports:
-      - "8080:8080"
-    volumes:
-      - /home/ec2-user/backend/log:/app/moneyMinder/log
-    networks:
-      - moneyMinder-network
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-    env_file:
-      - .env
-
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    ports:
-      - "9100:9100"
-    networks:
-      - moneyMinder-network
-    restart: always
-
   loki:
     image: grafana/loki:latest
     container_name: loki

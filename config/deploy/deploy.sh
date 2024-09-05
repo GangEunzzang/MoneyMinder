@@ -29,7 +29,7 @@ health_check() {
   local port=$2
 
   for i in {1..10}; do
-    response=$(curl -s http://${container_name}:${port}/actuator/health)
+    response=$(curl -s http://localhost:${port}/actuator/health)
     success=$(echo $response | jq '.status' | grep 'UP')
 
     if [[ -n $success ]]; then

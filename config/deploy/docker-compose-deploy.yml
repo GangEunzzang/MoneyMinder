@@ -35,3 +35,13 @@ services:
       SPRING_PROFILES_ACTIVE: dev
     env_file:
       - .env
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf/:/etc/nginx/conf.d/
+      - ./logs/nginx/:/var/log/nginx/

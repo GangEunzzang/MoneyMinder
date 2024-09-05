@@ -40,38 +40,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
-    env:
-      DOCKER_COMPOSE_FILE: "docker-compose-deploy.yml"
-
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v2
 
-      - name: Docker Compose 파일 전송
+      - name: 파일 전송
         uses: appleboy/scp-action@master
         with:
           username: ${{ secrets.EC2_USER }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
-          target: /home/${{ secrets.EC2_USER }}/moneyminder/
-
-      - name: Nginx 설정 파일 전송
-        uses: appleboy/scp-action@master
-        with:
-          username: ${{ secrets.EC2_USER }}
-          host: ${{ secrets.EC2_HOST }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "config/deploy/nginx.conf"
-          target: /home/${{ secrets.EC2_USER }}/moneyminder/
-      
-      - name: deploy.sh 파일 전송
-        uses: appleboy/scp-action@master
-        with:
-          username: ${{ secrets.EC2_USER }}
-          host: ${{ secrets.EC2_HOST }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "config/deploy/deploy.sh"
+          source: config/deploy
           target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
       - name: EC2에 환경변수 파일 생성 및 deploy.sh 파일 실행

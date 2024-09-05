@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# 현재 시간 출력
-NOW_TIME=$(date +"%Y.%m.%d - %H:%M:%S")
 LOG_FILE="/home/ec2-user/moneyminder/log/deploy.log"
 DOCKER_COMPOSE_FILE="docker-compose-deploy.yml"
 
@@ -85,7 +83,7 @@ change_nginx_config() {
 # 빌드 시작
 log "\n\n\n\n-----------------------------------------------"
 log "배포 시작"
-log "시작시간 : $NOW_TIME"
+log "시작시간 : $(date +"%Y.%m.%d - %H:%M:%S")"
 log "-----------------------------------------------"
 
 # Green 컨테이너 실행 중인지 확인
@@ -131,5 +129,5 @@ fi
 
 log "-----------------------------------------------"
 log "배포가 완료되었습니다."
-log "종료시간 : $NOW_TIME"
+log "종료시간 : $(date +"%Y.%m.%d - %H:%M:%S")"
 log "-----------------------------------------------"

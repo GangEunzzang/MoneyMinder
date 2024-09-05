@@ -56,13 +56,22 @@ jobs:
           source: config/deploy/${{ env.DOCKER_COMPOSE_FILE }}
           target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
-      - name: Nginx 설정 파일 전송 및 deploy.sh 파일 전송
+      - name: Nginx 설정 파일 전송
         uses: appleboy/scp-action@master
         with:
           username: ${{ secrets.EC2_USER }}
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "config/deploy/nginx.conf config/deploy/deploy.sh"
+          source: "config/deploy/nginx.conf"
+          target: /home/${{ secrets.EC2_USER }}/moneyminder/
+      
+      - name: deploy.sh 파일 전송
+        uses: appleboy/scp-action@master
+        with:
+          username: ${{ secrets.EC2_USER }}
+          host: ${{ secrets.EC2_HOST }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "config/deploy/deploy.sh"
           target: /home/${{ secrets.EC2_USER }}/moneyminder/
 
       - name: EC2에 SSH 접속 및 배포

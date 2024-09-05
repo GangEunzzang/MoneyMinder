@@ -3,6 +3,7 @@
 # 현재 시간 출력
 NOW_TIME=$(date +"%Y%m%d - %H:%M:%S")
 LOG_FILE="/moneyminder/log/deploy.log"
+DOCKER_COMPOSE_FILE="docker-compose-deploy.yml"
 
 # 로그 출력 함수
 log() {
@@ -25,7 +26,7 @@ IS_GREEN=$(docker ps | grep green)
 
 # Nginx 컨테이너 실행
 DEFAULT_CONF="/etc/nginx/nginx.conf"
-docker-compose up -d nginx
+docker-compose -f ${DOCKER_COMPOSE_FILE} up -d nginx
 log " Nginx 컨테이너 실행 완료 \n\n"
 
 
@@ -34,16 +35,16 @@ if [[ -n $IS_GREEN ]]; then
   log " Green 컨테이너가 실행 중입니다. Blue 컨테이너로 배포합니다.\n"
 
   log "1. 도커 이미지 빌드 시작 \n"
-  docker-compose pull moneyMinder-backend-blue
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull moneyMinder-backend-blue
 
   log "2. 도커 컨테이너 실행 시작 \n"
-  docker-compose up -d moneyMinder-backend-blue
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d moneyMinder-backend-blue
 
   log "3. Health Check 시작 \n"
   health_check "moneyMinder-backend-blue" "8080"
 
   log "4. Nginx 설정 변경 시작 \n"
-  sudo sed -i 's/proxy_pass http:\/\/green;/proxy_pass http:\/\/blue;/' $NGINX_CONF
+  change_nginx_config "blue"
 
 
 # Blue 컨테이너가 실행중이거나 둘 다 실행 중이 아닐 경우 Green으로 배포
@@ -51,13 +52,16 @@ else
   log " Blue 컨테이너가 실행 중이거나 둘 다 실행 중이 아닙니다. Green 컨테이너로 배포합니다.\n"
 
   log "1. 도커 이미지 빌드 시작 \n"
-  docker-compose pull moneyMinder-backend-green
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull moneyMinder-backend-green
 
   log "2. 도커 컨테이너 실행 시작 \n"
-  docker-compose up -d moneyMinder-backend-green
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d moneyMinder-backend-green
 
   log "3. Health Check 시작 "
   health_check "moneyMinder-backend-green" "8081"
+
+  log "4. Nginx 설정 변경 시작 \n"
+  change_nginx_config "green"
 fi
 
 

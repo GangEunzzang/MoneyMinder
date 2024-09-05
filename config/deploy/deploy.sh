@@ -59,10 +59,10 @@ change_nginx_config() {
   NGINX_CONF="/home/ec2-user/moneyminder/config/deploy/nginx.conf"
 
   if [[ "$target" == "blue" ]]; then
-    docker exec nginx sed -i 's#http://green#http://blue#g' $NGINX_CONF
+    sed -i 's#http://green#http://blue#g' $NGINX_CONF
     log "Nginx 설정이 Blue로 변경되었습니다.\n"
   else
-    docker exec nginx sed -i 's#http://blue#http://green#g' $NGINX_CONF
+    sed -i 's#http://blue#http://green#g' $NGINX_CONF
     log "Nginx 설정이 Green으로 변경되었습니다.\n"
   fi
 

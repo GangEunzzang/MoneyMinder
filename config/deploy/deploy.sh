@@ -59,13 +59,12 @@ change_nginx_config() {
   NGINX_CONF="/home/ec2-user/moneyminder/config/deploy/nginx.conf"
 
   if [[ "$target" == "blue" ]]; then
-    sed -i 's#http://green#http://blue#g' $NGINX_CONF
-    log "Nginx 설정이 Blue로 변경되었습니다.\n"
+    sed -i 's#moneyMinder-backend-green:8081#moneyMinder-backend-blue:8080#g' $NGINX_CONF
+    log "Nginx 설정이 Blue로 변경되었습니다."
   else
-    sed -i 's#http://blue#http://green#g' $NGINX_CONF
-    log "Nginx 설정이 Green으로 변경되었습니다.\n"
+    sed -i 's#moneyMinder-backend-blue:8080#moneyMinder-backend-green:8081#g' $NGINX_CONF
+    log "Nginx 설정이 Green으로 변경되었습니다."
   fi
-
   docker exec nginx nginx -t && docker exec nginx nginx -s reload
 
   if [[ $? -eq 0 ]]; then

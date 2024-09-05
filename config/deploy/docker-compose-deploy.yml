@@ -43,5 +43,5 @@ services:
     ports:
       - '80:80'
     volumes:
-      - ./nginx.conf/:/etc/nginx/conf.d/
-      - ./logs/nginx/:/var/log/nginx/
+      - /home/ec2-user/moneyMinder/deploy/config/nginx.conf/:/etc/nginx/conf.d/
+      - /home/ec2-user/moneyMinder/logs/nginx/:/var/log/nginx/

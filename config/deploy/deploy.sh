@@ -36,20 +36,20 @@ health_check() {
       log "Health Check 성공\n"
       return 0  # 성공 시 0 반환 (정상)
     else
-      log "Health Check의 응답이 없거나 status가 UP이 아닙니다.\n"
-      log "Health Check Response: ${response}\n"
+      log "  - Health Check 실패.. Response: ${response}"
     fi
 
     if [[ $i -eq 10 ]]; then
-      log "Health Check 실패\n"
-      log "Nginx에 연결하지 않고 배포를 종료합니다.\n"
-      log "컨테이너를 종료합니다.\n"
-      log "종료시간 : $NOW_TIME \n"
+      log "-----------------------------------------------"
+      log "Health Check 실패"
+      log "Nginx에 연결하지 않고 배포를 종료합니다."
+      log "컨테이너를 종료합니다."
+      log "-----------------------------------------------"
       docker stop ${container_name}
       exit 1
     fi
 
-    log "Health Check 실패... 10초 후 재시도합니다.\n"
+    log "  - 10초 후 재시도합니다.\n"
     sleep 10
   done
 }
@@ -85,8 +85,10 @@ change_nginx_config() {
 
 
 # 빌드 시작
-log "\n\n\n\n=============== <빌드 시작> ==============="
-log " 시작시간 : $NOW_TIME \n"
+log "\n\n\n\n-----------------------------------------------"
+log "배포 시작"
+log "시작시간 : $NOW_TIME"
+log "-----------------------------------------------"
 
 # Green 컨테이너 실행 중인지 확인
 IS_GREEN=$(docker ps | grep green)
@@ -129,3 +131,7 @@ else
   change_nginx_config "green"
 fi
 
+log "-----------------------------------------------"
+log "배포가 완료되었습니다."
+log "종료시간 : $NOW_TIME"
+log "-----------------------------------------------"

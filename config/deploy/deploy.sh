@@ -9,6 +9,11 @@ log() {
   echo -e "$1" >> $LOG_FILE
 }
 
+# 로그 파일이 없으면 생성
+if [ ! -f "$LOG_FILE" ]; then
+  mkdir -p $(dirname "$LOG_FILE")  # 로그 파일 경로가 없으면 디렉토리 생성
+  touch "$LOG_FILE"  # 로그 파일 생성
+fi
 
 
 # 로그 파일 시작

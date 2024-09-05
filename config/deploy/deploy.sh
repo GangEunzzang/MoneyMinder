@@ -59,16 +59,13 @@ change_nginx_config() {
   NGINX_CONF="/home/ec2-user/moneyminder/config/deploy/nginx.conf"
 
   if [[ "$target" == "blue" ]]; then
-    # proxy_pass를 backend_blue로 변경 (컨테이너 내부에서 명령 실행)
     docker exec nginx sed -i 's#http://green#http://blue#g' $NGINX_CONF
     log "Nginx 설정이 Blue로 변경되었습니다.\n"
   else
-    # proxy_pass를 backend_green으로 변경 (컨테이너 내부에서 명령 실행)
     docker exec nginx sed -i 's#http://blue#http://green#g' $NGINX_CONF
     log "Nginx 설정이 Green으로 변경되었습니다.\n"
   fi
 
-  # 컨테이너 내부에서 Nginx 설정 확인 및 재시작
   docker exec nginx nginx -t && docker exec nginx nginx -s reload
 
   if [[ $? -eq 0 ]]; then
@@ -110,6 +107,9 @@ if [[ -n $IS_GREEN ]]; then
   log "4. Nginx 설정 변경 시작 \n"
   change_nginx_config "blue"
 
+  log "5. Green 컨테이너 종료 \n"
+  docker stop moneyMinder-backend-green
+
 # Blue 컨테이너가 실행중이거나 둘 다 실행 중이 아닐 경우 Green으로 배포
 else
   log " Blue 컨테이너가 실행 중이거나 둘 다 실행 중이 아닙니다. Green 컨테이너로 배포합니다.\n"
@@ -125,6 +125,9 @@ else
 
   log "4. Nginx 설정 변경 시작 \n"
   change_nginx_config "green"
+
+  log "5. Blue 컨테이너 종료 \n"
+  docker stop moneyMinder-backend-blue
 fi
 
 log "-----------------------------------------------"

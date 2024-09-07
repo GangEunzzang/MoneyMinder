@@ -52,6 +52,4 @@ services:
       - moneyMinder-network
     environment:
       TZ: Asia/Seoul
-    depends_on:
-      - certbot
 

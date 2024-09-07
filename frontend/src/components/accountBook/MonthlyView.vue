@@ -161,10 +161,6 @@ export default {
       });
     },
 
-    mounted() {
-      this.fetchTransactions();
-    },
-
     createTransactionMap() {
       let incomeSum = 0;
       let expenseSum = 0;
@@ -188,7 +184,10 @@ export default {
       this.totalIncome = incomeSum;  // 계산한 총 수입 저장
       this.totalExpense = expenseSum;  // 계산한 총 지출 저장
     }
-  }
+  },
+  mounted() {
+    this.fetchTransactions();
+  },
 }
 </script>
 
@@ -280,11 +279,11 @@ export default {
   display: flex;
   justify-content: space-evenly;
   padding: 10px;
-  background-color: #53c99d;
+  background-color: #529cf6;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  font-size: 1rem;
+  margin: 20px auto;
+  width: 50%;
 }
 
 .summary-item {
@@ -294,7 +293,7 @@ export default {
 }
 
 .summary-item span {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #ffffff;
 }
 

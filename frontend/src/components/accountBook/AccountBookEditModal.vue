@@ -9,7 +9,7 @@
         </div>
 
         <div class="form-group">
-          <label for="memo">메모</label>
+          <label for="memo">상세 내역</label>
           <input type="text" id="memo" v-model="formData.memo"/>
         </div>
 

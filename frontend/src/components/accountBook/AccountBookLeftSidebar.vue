@@ -1,8 +1,13 @@
 <template>
   <div :class="['sidebar', { collapsed: isCollapsed }]">
-    <button class="collapse-btn" @click="toggleSidebar">
-      {{ isCollapsed ? ' >>' : '<<' }} <!-- 사이드바 접기/펼치기 버튼 -->
-    </button>
+    <!-- 사이드바 열고 닫는 토글 버튼 -->
+    <div class="toggle-container" @click="toggleSidebar">
+      <div :class="['toggle-button', { 'on': isCollapsed }]">
+        <div class="toggle-circle"></div>
+      </div>
+    </div>
+
+    <!-- 사이드바 메뉴 -->
     <ul>
       <!-- 대메뉴 항목 -->
       <li v-for="item in menuItems" :key="item.name">
@@ -14,23 +19,25 @@
         </div>
 
         <!-- 서브메뉴 -->
-        <ul v-if="item.isOpen && !isCollapsed" class="submenu">
-          <li
-              v-for="subItem in item.subMenu"
-              :key="subItem.name"
-              @click="selectMenuItem(subItem.name)"
-              :class="{ active: selectedItem === subItem.name }"
-          >
-            <!-- 서브메뉴는 페이지 이동을 위한 router-link 유지 -->
-            <router-link :to="subItem.route">
-              {{ subItem.label }}
-            </router-link>
-          </li>
-        </ul>
+        <transition name="fade-slide">
+          <ul v-if="item.isOpen && !isCollapsed" class="submenu">
+            <li
+                v-for="subItem in item.subMenu"
+                :key="subItem.name"
+                @click="selectMenuItem(subItem.name)"
+                :class="{ active: selectedItem === subItem.name }"
+            >
+              <router-link :to="subItem.route">
+                {{ subItem.label }}
+              </router-link>
+            </li>
+          </ul>
+        </transition>
       </li>
     </ul>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -39,7 +46,7 @@ export default {
   },
   data() {
     return {
-      isCollapsed: false, // 사이드바 접기 상태를 관리
+      isCollapsed: false, // 사이드바 토글 상태
       menuItems: [
         {
           name: 'Dashboard',
@@ -47,8 +54,8 @@ export default {
           icon: '📊',
           isOpen: false,
           subMenu: [
-            { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
-            { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
+            {name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view'},
+            {name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view'},
           ],
         },
         {
@@ -57,8 +64,12 @@ export default {
           icon: '💸',
           isOpen: false,
           subMenu: [
-            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
-            { name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management' },
+            {name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list'},
+            {
+              name: 'transactionManagement',
+              label: '∙ 수입/지출 관리',
+              route: '/account-book/transaction-management'
+            },
           ],
         },
         {
@@ -67,8 +78,12 @@ export default {
           icon: '📂',
           isOpen: false,
           subMenu: [
-            { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
-            { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
+            {
+              name: 'categoryManagement',
+              label: '∙ 카테고리 관리',
+              route: '/account-book/category-management'
+            },
+            {name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget'},
           ],
         },
         {
@@ -77,7 +92,7 @@ export default {
           icon: '💰',
           isOpen: false,
           subMenu: [
-            { name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings' },
+            {name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings'},
           ],
         },
       ],
@@ -85,7 +100,7 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      this.isCollapsed = !this.isCollapsed; // 사이드바 접기/펼치기 토글
+      this.isCollapsed = !this.isCollapsed; // 토글 상태 전환
     },
     toggleSubMenu(name) {
       this.menuItems.forEach((item) => {
@@ -106,17 +121,16 @@ export default {
 <style scoped>
 .sidebar {
   width: 180px;
-  height: 80vh;
-  background-color: #ffffff;
+  height: 50vh;
   padding: 15px;
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
   display: flex;
-  flex-direction: column;
-  border-right: 1px solid #e9ecef;
+  flex-direction: column; /* 버튼과 메뉴가 세로로 배치되도록 설정 */
+  align-items: flex-start;
+  border: 1px solid #e9ecef;
   transition: width 0.3s ease, padding 0.3s ease;
   position: fixed;
-  left: 20px;
-  top: 10vh;
+  left: 0;
+  top: 20vh;
   border-radius: 0 20px 20px 0;
   overflow: hidden;
 }
@@ -131,17 +145,6 @@ a {
   padding: 15px 5px;
 }
 
-.collapse-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 1em;
-  cursor: pointer;
-  padding: 0;
-}
-
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -152,20 +155,22 @@ a {
   cursor: pointer;
   border-radius: 5px;
   color: #333333;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  margin-bottom: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 20px 0;
   white-space: nowrap;
-}
-
-.sidebar li:hover {
-  background-color: #f5f5f5;
+  font-size: 1.05rem;
+  font-weight: bold;
 }
 
 .sidebar li.active {
-  background-color: #e0e0e0;
-  color: #007bff;
-  border-left: 4px solid #007bff;
-  padding-left: 11px;
+  border-radius: 12px;
+  background-color: #f3f6ff;
+  color: #425ad5;
+}
+
+.sidebar li.active:hover {
+  background-color: #e1e8ff;
+  color: #2c3ebc;
 }
 
 .icon {
@@ -178,30 +183,81 @@ a {
 }
 
 .submenu {
-  padding-left: 15px;
+  padding-left: 30px;
   margin-top: 5px;
+  position: relative;
+  width: 150px;
 }
 
 .submenu li {
-  padding: 8px 15px;
-  font-size: 0.9em;
+  padding: 8px 10px;
+  font-size: 0.8em;
   color: #333333;
   transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 400;
+  margin: 10px 0;
 }
 
 .submenu li:hover {
-  background-color: #f5f5f5;
+  background-color: rgba(199, 199, 199, 0.13);
+  border-radius: 12px;
 }
 
 .sidebar ul li ul {
   margin-top: 1.3rem;
 }
 
-.sidebar ul li ul li.active {
-  background-color: #e0e0e0;
-  color: #007bff;
-  border-left: 4px solid #007bff;
-  padding-left: 11px;
+/* 부드러운 슬라이드 애니메이션 */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.fade-slide-enter, .fade-slide-leave-to /* .slide-leave-active 이전 */
+{
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+
+/** 토글 버튼 디자인 */
+.toggle-container {
+  position: absolute;
+  top: 10px; /* 상단에 위치 */
+  right: 10px; /* 사이드바의 오른쪽에 위치 */
+  width: 50px; /* 토글 버튼 가로 크기 */
+  height: 25px; /* 토글 버튼 세로 크기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.toggle-button {
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  background-color: #4caf50;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button.on {
+  background-color: #ccc;
+}
+
+.toggle-circle {
+  width: 23px;
+  height: 23px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px; /* 버튼 내부에서 중앙에 위치 */
+  right: 1px;
+  transition: left 0.3s ease;
+}
+
+.toggle-button.on .toggle-circle {
+  right: calc(100% - 24px); /* ON 상태일 때 오른쪽으로 이동 */
 }
 
 </style>

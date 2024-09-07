@@ -4,13 +4,16 @@
       {{ isCollapsed ? ' >>' : '<<' }} <!-- 사이드바 접기/펼치기 버튼 -->
     </button>
     <ul>
+      <!-- 대메뉴 항목 -->
       <li v-for="item in menuItems" :key="item.name">
-        <router-link :to="item.route" @click="toggleSubMenu(item.name)">
+        <div @click="toggleSubMenu(item.name)">
           <div :class="{ active: selectedItem === item.name }">
             <span class="icon">{{ item.icon }}</span>
             <span v-if="!isCollapsed" class="label">{{ item.label }}</span>
           </div>
-        </router-link>
+        </div>
+
+        <!-- 서브메뉴 -->
         <ul v-if="item.isOpen && !isCollapsed" class="submenu">
           <li
               v-for="subItem in item.subMenu"
@@ -18,6 +21,7 @@
               @click="selectMenuItem(subItem.name)"
               :class="{ active: selectedItem === subItem.name }"
           >
+            <!-- 서브메뉴는 페이지 이동을 위한 router-link 유지 -->
             <router-link :to="subItem.route">
               {{ subItem.label }}
             </router-link>
@@ -41,7 +45,6 @@ export default {
           name: 'Dashboard',
           label: '대시보드',
           icon: '📊',
-          route: '/account-book/monthly-view', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
             { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
@@ -52,10 +55,9 @@ export default {
           name: 'transactions',
           label: '수입/지출',
           icon: '💸',
-          route: '/account-book/transaction-list', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/list' },
+            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
             { name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management' },
           ],
         },
@@ -63,7 +65,6 @@ export default {
           name: 'categories',
           label: '카테고리',
           icon: '📂',
-          route: '/account-book/category-management', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
             { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
@@ -74,10 +75,9 @@ export default {
           name: 'budget',
           label: '예산',
           icon: '💰',
-          route: '/account-book/budget-settings', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            {name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings'},
+            { name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings' },
           ],
         },
       ],
@@ -90,14 +90,14 @@ export default {
     toggleSubMenu(name) {
       this.menuItems.forEach((item) => {
         if (item.name === name) {
-          item.isOpen = !item.isOpen;
+          item.isOpen = !item.isOpen; // 선택한 대메뉴만 열리고 닫힘
         } else {
-          item.isOpen = false; // 다른 메뉴는 접음
+          item.isOpen = false; // 다른 대메뉴는 닫힘
         }
       });
     },
     selectMenuItem(name) {
-      this.$emit('select', name); // 선택된 항목을 부모 컴포넌트로 전달
+      this.$emit('select', name); // 선택된 서브메뉴 항목을 부모 컴포넌트로 전달
     },
   },
 };
@@ -105,8 +105,8 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 180px; /* 슬림한 사이드바 */
-  height: 80vh; /* 위아래가 짤리도록 설정 */
+  width: 180px;
+  height: 80vh;
   background-color: #ffffff;
   padding: 15px;
   box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
@@ -115,15 +115,20 @@ export default {
   border-right: 1px solid #e9ecef;
   transition: width 0.3s ease, padding 0.3s ease;
   position: fixed;
-  left: 20px; /* 왼쪽에서 약간 띄움 */
+  left: 20px;
   top: 10vh;
-  border-radius: 0 20px 20px 0; /* 오른쪽 모서리 둥글게 */
+  border-radius: 0 20px 20px 0;
   overflow: hidden;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .sidebar.collapsed {
-  width: 60px; /* 축소된 사이드바 너비 */
-  padding: 15px 5px; /* 축소된 상태에서의 패딩 */
+  width: 60px;
+  padding: 15px 5px;
 }
 
 .collapse-btn {
@@ -148,8 +153,8 @@ export default {
   border-radius: 5px;
   color: #333333;
   transition: background-color 0.2s ease, color 0.2s ease;
-  margin-bottom: 10px; /* 메뉴 간 간격 추가 */
-  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 설정 */
+  margin-bottom: 10px;
+  white-space: nowrap;
 }
 
 .sidebar li:hover {
@@ -164,12 +169,12 @@ export default {
 }
 
 .icon {
-  font-size: 1.5em; /* 아이콘 크기 */
+  font-size: 1.5em;
   margin-right: 10px;
 }
 
 .label {
-  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 설정 */
+  white-space: nowrap;
 }
 
 .submenu {
@@ -198,4 +203,5 @@ export default {
   border-left: 4px solid #007bff;
   padding-left: 11px;
 }
+
 </style>

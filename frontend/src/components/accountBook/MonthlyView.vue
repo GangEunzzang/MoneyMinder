@@ -8,43 +8,48 @@
       <button @click="nextMonth">▶</button>
     </div>
 
-    <!-- 캘린더 테이블 컴포넌트 -->
-    <table class="calendar-table">
-      <thead>
-      <tr>
-        <th v-for="header in headers" :key="header">{{ header }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="row in rows" :key="row.id">
-        <td v-for="column in row.columns" :key="column.key">
-          <div>{{ column.render }}</div>
-          <div v-if="column.render && transactionsMap[column.render]" class="small-text">
-            <span v-if="transactionsMap[column.render].income > 0" class="income-text">+ {{
-                transactionsMap[column.render].income.toLocaleString()
-              }}</span>
-            <br v-if="transactionsMap[column.render].income > 0 && transactionsMap[column.render].expense > 0">
-            <span v-if="transactionsMap[column.render].expense > 0" class="expense-text">- {{
-                transactionsMap[column.render].expense.toLocaleString()
-              }}</span>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-    <!-- 선택된 월의 총 지출 및 총 수입 표시 -->
-    <div class="summary-box">
-      <div class="summary-item">
-        <span>총 지출</span>
-        <span class="expense-amount">{{ totalExpense.toLocaleString() }}원</span>
-      </div>
-      <div class="summary-item">
-        <span>총 수입</span>
-        <span class="income-amount">{{ totalIncome.toLocaleString() }}원</span>
-      </div>
+    <!-- 로딩 상태일 때 로딩 메시지 표시 -->
+    <div v-if="isLoading">
+      <p>로딩 중입니다...</p>
     </div>
 
+    <!-- 로딩이 완료되면 캘린더 및 데이터 표시 -->
+    <div v-else>
+      <table class="calendar-table">
+        <thead>
+        <tr>
+          <th v-for="header in headers" :key="header">{{ header }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="row in rows" :key="row.id">
+          <td v-for="column in row.columns" :key="column.key">
+            <div>{{ column.render }}</div>
+            <div v-if="column.render && transactionsMap[column.render]" class="small-text">
+              <span v-if="transactionsMap[column.render].income > 0" class="income-text">
+                + {{ transactionsMap[column.render].income.toLocaleString() }}
+              </span>
+              <br v-if="transactionsMap[column.render].income > 0 && transactionsMap[column.render].expense > 0">
+              <span v-if="transactionsMap[column.render].expense > 0" class="expense-text">
+                - {{ transactionsMap[column.render].expense.toLocaleString() }}
+              </span>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="summary-box">
+        <div class="summary-item">
+          <span>총 지출</span>
+          <span class="expense-amount">{{ totalExpense.toLocaleString() }}원</span>
+        </div>
+        <div class="summary-item">
+          <span>총 수입</span>
+          <span class="income-amount">{{ totalIncome.toLocaleString() }}원</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -62,6 +67,7 @@ export default {
       transactionsMap: {}, // 날짜별 수입/지출 맵
       totalIncome: 0,  // 총 수입
       totalExpense: 0,  // 총 지출
+      isLoading: false, // 로딩 상태 추가
     };
   },
   computed: {
@@ -143,6 +149,7 @@ export default {
       return components;
     },
     fetchTransactions() {
+      this.isLoading = true;
       const startDate = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-01`;
       const endDate = new Date(this.currentYear, this.currentMonth, 0).toISOString().split('T')[0];
 
@@ -150,6 +157,9 @@ export default {
       .then((response) => {
         this.transactions = response;
         this.createTransactionMap();
+      })
+      .finally(() => {
+        this.isLoading = false;
       })
       .catch((error) => {
         console.error(error);

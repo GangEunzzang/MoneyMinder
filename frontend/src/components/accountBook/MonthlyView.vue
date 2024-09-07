@@ -8,13 +8,8 @@
       <button @click="nextMonth">▶</button>
     </div>
 
-    <!-- 로딩 상태일 때 로딩 메시지 표시 -->
-    <div v-if="isLoading">
-      <p>로딩 중입니다...</p>
-    </div>
-
     <!-- 로딩이 완료되면 캘린더 및 데이터 표시 -->
-    <div v-else>
+    <div v-if="!isLoading">
       <table class="calendar-table">
         <thead>
         <tr>

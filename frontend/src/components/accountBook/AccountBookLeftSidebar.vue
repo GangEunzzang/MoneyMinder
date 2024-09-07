@@ -5,10 +5,12 @@
     </button>
     <ul>
       <li v-for="item in menuItems" :key="item.name">
-        <div @click="toggleSubMenu(item.name)" :class="{ active: selectedItem === item.name }">
-          <span class="icon">{{ item.icon }}</span>
-          <span v-if="!isCollapsed" class="label">{{ item.label }}</span>
-        </div>
+        <router-link :to="item.route" @click="toggleSubMenu(item.name)">
+          <div :class="{ active: selectedItem === item.name }">
+            <span class="icon">{{ item.icon }}</span>
+            <span v-if="!isCollapsed" class="label">{{ item.label }}</span>
+          </div>
+        </router-link>
         <ul v-if="item.isOpen && !isCollapsed" class="submenu">
           <li
               v-for="subItem in item.subMenu"
@@ -16,7 +18,9 @@
               @click="selectMenuItem(subItem.name)"
               :class="{ active: selectedItem === subItem.name }"
           >
-            {{ subItem.label }}
+            <router-link :to="subItem.route">
+              {{ subItem.label }}
+            </router-link>
           </li>
         </ul>
       </li>
@@ -34,42 +38,46 @@ export default {
       isCollapsed: false, // 사이드바 접기 상태를 관리
       menuItems: [
         {
-          name: 'dashboard',
+          name: 'Dashboard',
           label: '대시보드',
           icon: '📊',
+          route: '/account-book/monthly-view', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            { name: 'monthlyView', label: '∙ 월별 보기' },
-            { name: 'calendarView', label: '∙ 달력 보기' },
+            { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
+            { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
           ],
         },
         {
           name: 'transactions',
           label: '수입/지출',
           icon: '💸',
+          route: '/account-book/transaction-list', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            { name: 'transactionList', label: '∙ 수입/지출 내역' },
-            { name: 'transactionManagement', label: '∙ 수입/지출 관리' },
+            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/list' },
+            { name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management' },
           ],
         },
         {
           name: 'categories',
           label: '카테고리',
           icon: '📂',
+          route: '/account-book/category-management', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            { name: 'categoryManagement', label: '∙ 카테고리 관리' },
-            { name: 'categoryBudget', label: '∙ 카테고리별 예산등록' },
+            { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
+            { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
           ],
         },
         {
           name: 'budget',
           label: '예산',
           icon: '💰',
+          route: '/account-book/budget-settings', // 라우터 경로 설정
           isOpen: false,
           subMenu: [
-            {name: 'budgetSettings', label: '∙ 예산 설정'},
+            {name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings'},
           ],
         },
       ],

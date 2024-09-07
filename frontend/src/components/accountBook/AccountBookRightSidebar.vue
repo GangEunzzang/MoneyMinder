@@ -1,6 +1,6 @@
 <template>
-  <div class="right-sidebar">
-    <button class="add-button" @click="openModal">+</button>
+  <div class="right-sidebar" @click="openModal">
+    <button class="add-button">+</button>
   </div>
   <!-- 모달 창 -->
   <AccountBookCreateModal
@@ -47,7 +47,8 @@ export default {
   border-bottom-left-radius: 30px;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transform: translateY(-50%);
-  z-index: 1000; /* 사이드바가 모달보다 아래에 표시되지 않도록 z-index 조정 */
+  z-index: 1000;
+  cursor: pointer;
 }
 
 .add-button {
@@ -58,8 +59,4 @@ export default {
   cursor: pointer;
 }
 
-.add-button:hover {
-  color: #ffffff;
-  background-color: #0056b3;
-}
 </style>

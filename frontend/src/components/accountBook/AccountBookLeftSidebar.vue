@@ -65,7 +65,7 @@ export default {
           isOpen: false,
           subMenu: [
             { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
-            { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
+            // { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
           ],
         },
         {
@@ -75,8 +75,7 @@ export default {
           isOpen: false,
           subMenu: [
             { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
-            {name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management',
-            },
+            // {name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management',
           ],
         },
         {
@@ -86,7 +85,7 @@ export default {
           isOpen: false,
           subMenu: [
             { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
-            { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
+            // { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
           ],
         },
         {

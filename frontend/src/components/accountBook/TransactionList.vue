@@ -225,7 +225,8 @@ export default {
   background-color: #f9f9f9;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  max-width: 1100px;
+  width: 100%;
+  overflow-y: auto;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 

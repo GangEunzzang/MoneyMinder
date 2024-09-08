@@ -156,7 +156,7 @@ export default {
   border-radius: 0 20px 20px 0;
   overflow: hidden;
   background-color: white;
-  z-index: 9999;
+  z-index: 10;
 }
 
 

@@ -205,7 +205,7 @@ a {
 
 .label {
   white-space: nowrap;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #959596;
 }
 

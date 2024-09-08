@@ -3,18 +3,27 @@
     <!-- 사이드바 열고 닫는 토글 버튼 -->
     <div class="toggle-container" @click="toggleSidebar">
       <div :class="['toggle-button', { 'on': isCollapsed }]">
-        <div class="toggle-circle"></div>
+        <div class="toggle-circle">
+          <div class="small-circle"></div> <!-- 작은 원 추가 -->
+        </div>
       </div>
     </div>
 
     <!-- 사이드바 메뉴 -->
-    <ul>
+    <ul class="main-menu">
       <!-- 대메뉴 항목 -->
-      <li v-for="item in menuItems" :key="item.name">
+      <li class="main-menu-li"
+          v-for="item in menuItems"
+          :key="item.name"
+          :class="{ active: isMenuActive(item) }"
+          @mouseover="hoverMenu(item.name)"
+          @mouseleave="hoverMenu(null)"
+      >
         <div @click="toggleSubMenu(item.name)">
           <div :class="{ active: selectedItem === item.name }">
-            <span class="icon">{{ item.icon }}</span>
-            <span v-if="!isCollapsed" class="label">{{ item.label }}</span>
+            <font-awesome-icon :icon="item.icon" class="icon" />
+            <!-- 라벨을 전부 펼쳐진 상태일 때만 노출 -->
+            <span v-if="showLabels" class="label">{{ item.label }}</span>
           </div>
         </div>
 
@@ -38,7 +47,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   props: {
@@ -47,52 +55,50 @@ export default {
   data() {
     return {
       isCollapsed: false, // 사이드바 토글 상태
+      showLabels: true, // 라벨 표시 여부
+      hoveredMenu: null, // 호버된 대메뉴 상태
       menuItems: [
         {
           name: 'Dashboard',
           label: '대시보드',
-          icon: '📊',
+          icon: 'home',
           isOpen: false,
           subMenu: [
-            {name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view'},
-            {name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view'},
+            { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
+            { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
           ],
         },
         {
           name: 'transactions',
           label: '수입/지출',
-          icon: '💸',
+          icon: 'wallet',
           isOpen: false,
           subMenu: [
-            {name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list'},
+            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
             {
               name: 'transactionManagement',
               label: '∙ 수입/지출 관리',
-              route: '/account-book/transaction-management'
+              route: '/account-book/transaction-management',
             },
           ],
         },
         {
           name: 'categories',
           label: '카테고리',
-          icon: '📂',
+          icon: 'folder-open',
           isOpen: false,
           subMenu: [
-            {
-              name: 'categoryManagement',
-              label: '∙ 카테고리 관리',
-              route: '/account-book/category-management'
-            },
-            {name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget'},
+            { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
+            { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
           ],
         },
         {
           name: 'budget',
           label: '예산',
-          icon: '💰',
+          icon: 'money-bill-wave',
           isOpen: false,
           subMenu: [
-            {name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings'},
+            { name: 'budgetSettings', label: '∙ 예산 설정', route: '/account-book/budget-settings' },
           ],
         },
       ],
@@ -101,6 +107,14 @@ export default {
   methods: {
     toggleSidebar() {
       this.isCollapsed = !this.isCollapsed; // 토글 상태 전환
+      this.showLabels = false; // 토글 중에는 라벨 숨김
+
+      // 트랜지션 후에 라벨을 보여줌
+      setTimeout(() => {
+        if (!this.isCollapsed) {
+          this.showLabels = true; // 펼쳐진 후에 라벨을 다시 보여줌
+        }
+      }, 300); // 트랜지션 시간과 맞춰 설정
     },
     toggleSubMenu(name) {
       this.menuItems.forEach((item) => {
@@ -114,6 +128,14 @@ export default {
     selectMenuItem(name) {
       this.$emit('select', name); // 선택된 서브메뉴 항목을 부모 컴포넌트로 전달
     },
+    hoverMenu(name) {
+      this.hoveredMenu = name; // 현재 호버된 대메뉴 저장
+    },
+    isMenuActive(item) {
+      // 대메뉴가 active인지 확인 (현재 페이지의 서브메뉴에 포함되었는지 체크)
+      const currentRoute = this.$route.path;
+      return item.subMenu.some(subItem => currentRoute === subItem.route) || this.selectedItem === item.name;
+    },
   },
 };
 </script>
@@ -124,7 +146,7 @@ export default {
   height: 50vh;
   padding: 15px;
   display: flex;
-  flex-direction: column; /* 버튼과 메뉴가 세로로 배치되도록 설정 */
+  flex-direction: column;
   align-items: flex-start;
   border: 1px solid #e9ecef;
   transition: width 0.3s ease, padding 0.3s ease;
@@ -133,7 +155,9 @@ export default {
   top: 20vh;
   border-radius: 0 20px 20px 0;
   overflow: hidden;
+  background-color: white;
 }
+
 
 a {
   text-decoration: none;
@@ -145,6 +169,15 @@ a {
   padding: 15px 5px;
 }
 
+.sidebar.collapsed li {
+  width: 1rem;
+  margin: 30px auto;
+}
+
+.sidebar.collapsed ul {
+  margin-top: 60px;
+}
+
 .sidebar ul {
   list-style: none;
   padding: 0;
@@ -154,7 +187,7 @@ a {
   padding: 10px 15px;
   cursor: pointer;
   border-radius: 5px;
-  color: #333333;
+  color: white;
   transition: background-color 0.3s ease, color 0.3s ease;
   margin: 20px 0;
   white-space: nowrap;
@@ -162,31 +195,22 @@ a {
   font-weight: bold;
 }
 
-.sidebar li.active {
-  border-radius: 12px;
-  background-color: #f3f6ff;
-  color: #425ad5;
-}
-
-.sidebar li.active:hover {
-  background-color: #e1e8ff;
-  color: #2c3ebc;
-}
-
 .icon {
-  font-size: 1.5em;
+  font-size: 1.1em;
   margin-right: 10px;
+  color: #575353;
 }
 
 .label {
   white-space: nowrap;
+  font-size: 1.1rem;
+  color: #959596;
 }
 
 .submenu {
   padding-left: 30px;
   margin-top: 5px;
   position: relative;
-  width: 150px;
 }
 
 .submenu li {
@@ -198,34 +222,63 @@ a {
   margin: 10px 0;
 }
 
+.sidebar ul li ul {
+  margin-top: 1.3rem;
+}
+
+.main-menu {
+  margin-top: 4.5rem;
+}
+
+.main-menu-li {
+  width: 10rem;
+}
+
+/* 대메뉴 호버 효과 */
+.main-menu-li:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 서브메뉴 호버 효과 */
 .submenu li:hover {
   background-color: rgba(199, 199, 199, 0.13);
   border-radius: 12px;
 }
 
-.sidebar ul li ul {
-  margin-top: 1.3rem;
+/* 대메뉴 active 상태 스타일 */
+.main-menu-li.active {
+  background-color: #e0e0e0;
+  color: #000000;
 }
+
+.sidebar li.active .icon, .sidebar li.active .label {
+  color: #000000;
+}
+
+/* 서브메뉴 active 상태 스타일 */
+.submenu li.active {
+  background-color: #c0c0c0;
+  border-radius: 12px;
+}
+
 
 /* 부드러운 슬라이드 애니메이션 */
 .fade-slide-enter-active, .fade-slide-leave-active {
   transition: opacity 0.1s ease, transform 0.1s ease;
 }
 
-.fade-slide-enter, .fade-slide-leave-to /* .slide-leave-active 이전 */
-{
+.fade-slide-enter, .fade-slide-leave-to /* .slide-leave-active 이전 */ {
   opacity: 0;
   transform: translateY(-10px);
 }
 
-
-/** 토글 버튼 디자인 */
+/* 토글 버튼 디자인 */
 .toggle-container {
   position: absolute;
-  top: 10px; /* 상단에 위치 */
-  right: 10px; /* 사이드바의 오른쪽에 위치 */
-  width: 50px; /* 토글 버튼 가로 크기 */
-  height: 25px; /* 토글 버튼 세로 크기 */
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,28 +289,45 @@ a {
   width: 100%;
   height: 100%;
   border-radius: 50px;
-  background-color: #4caf50;
+  background-color: #1d1e2a;
   position: relative;
   transition: background-color 0.3s ease;
 }
 
 .toggle-button.on {
-  background-color: #ccc;
-}
-
-.toggle-circle {
-  width: 23px;
-  height: 23px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 1px; /* 버튼 내부에서 중앙에 위치 */
-  right: 1px;
-  transition: left 0.3s ease;
+  background-color: #e8e5e5;
 }
 
 .toggle-button.on .toggle-circle {
-  right: calc(100% - 24px); /* ON 상태일 때 오른쪽으로 이동 */
+  background-color: black;
 }
 
+.toggle-button.on .small-circle {
+  background-color: white;
+}
+
+.toggle-circle {
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  transition: right 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-button.on .toggle-circle {
+  right: calc(100% - 24px);
+}
+
+.small-circle {
+  width: 8px;
+  height: 8px;
+  background-color: black;
+  border-radius: 50%;
+}
 </style>

@@ -75,10 +75,7 @@ export default {
           isOpen: false,
           subMenu: [
             { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
-            {
-              name: 'transactionManagement',
-              label: '∙ 수입/지출 관리',
-              route: '/account-book/transaction-management',
+            {name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management',
             },
           ],
         },
@@ -109,12 +106,16 @@ export default {
       this.isCollapsed = !this.isCollapsed; // 토글 상태 전환
       this.showLabels = false; // 토글 중에는 라벨 숨김
 
+      if (this.isCollapsed) {
+        this.menuItems.forEach(item => item.isOpen = false);
+      }
+
       // 트랜지션 후에 라벨을 보여줌
       setTimeout(() => {
         if (!this.isCollapsed) {
           this.showLabels = true; // 펼쳐진 후에 라벨을 다시 보여줌
         }
-      }, 300); // 트랜지션 시간과 맞춰 설정
+      }, 400); // 트랜지션 시간과 맞춰 설정
     },
     toggleSubMenu(name) {
       this.menuItems.forEach((item) => {
@@ -156,6 +157,7 @@ export default {
   border-radius: 0 20px 20px 0;
   overflow: hidden;
   background-color: white;
+  z-index: 9999;
 }
 
 
@@ -220,6 +222,7 @@ a {
   transition: background-color 0.2s ease, color 0.2s ease;
   font-weight: 400;
   margin: 10px 0;
+  border-radius: 12px;
 }
 
 .sidebar ul li ul {
@@ -237,11 +240,12 @@ a {
 /* 대메뉴 호버 효과 */
 .main-menu-li:hover {
   background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 /* 서브메뉴 호버 효과 */
 .submenu li:hover {
-  background-color: rgba(199, 199, 199, 0.13);
+  background-color: rgba(49, 46, 46, 0.13);
   border-radius: 12px;
 }
 
@@ -249,28 +253,22 @@ a {
 .main-menu-li.active {
   background-color: #e0e0e0;
   color: #000000;
-}
-
-.sidebar li.active .icon, .sidebar li.active .label {
-  color: #000000;
+  border-radius: 12px;
 }
 
 /* 서브메뉴 active 상태 스타일 */
 .submenu li.active {
   background-color: #c0c0c0;
   border-radius: 12px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.sidebar li.active .icon, .sidebar li.active .label {
+  color: #000000;
 }
 
 
-/* 부드러운 슬라이드 애니메이션 */
-.fade-slide-enter-active, .fade-slide-leave-active {
-  transition: opacity 0.1s ease, transform 0.1s ease;
-}
-
-.fade-slide-enter, .fade-slide-leave-to /* .slide-leave-active 이전 */ {
-  opacity: 0;
-  transform: translateY(-10px);
-}
 
 /* 토글 버튼 디자인 */
 .toggle-container {

@@ -153,13 +153,13 @@ export default {
 }
 
 .category-management h2 {
-  margin-bottom: 30px;
-  color: #222;
-  font-size: 26px;
-  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 600;
   text-align: center;
-  border-bottom: 2px solid #eaeaea;
-  padding-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
 }
 
 .tabs {

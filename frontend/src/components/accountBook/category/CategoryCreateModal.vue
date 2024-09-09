@@ -125,7 +125,7 @@ export default {
 
 button {
   padding: 10px 18px;
-  font-size: 0.95rem;
+  font-size: 0.7rem;
   background-color: #007bff;
   color: #fff;
   border: none;

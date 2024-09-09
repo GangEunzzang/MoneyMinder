@@ -94,7 +94,7 @@ export default {
           icon: 'money-bill-wave',
           isOpen: false,
           subMenu: [
-            { name: 'budgetManagement', label: '∙ 예산 관리', route: '/account-book/budget/budget-management' },
+            { name: 'budgetManagement', label: '∙ 예산 관리', route: '/account-book/budget-management' },
           ],
         },
       ],

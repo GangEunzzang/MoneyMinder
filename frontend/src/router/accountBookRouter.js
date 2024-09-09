@@ -17,6 +17,11 @@ export const accountBookRoutes = [
         path: 'category-management',
         name: 'categoryManagement',
         component: () => import('@/components/accountBook/category/CategoryManagement.vue'),
+      },
+      {
+        path: 'budget-management',
+        name: 'budgetManagement',
+        component: () => import('@/components/accountBook/budget/BudgetManagement.vue'),
       }
     ],
   },

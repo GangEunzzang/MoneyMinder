@@ -139,7 +139,6 @@ export default {
 </script>
 
 <style scoped>
-/* 같은 스타일을 사용합니다 */
 .modal-overlay {
   position: fixed;
   top: 0;

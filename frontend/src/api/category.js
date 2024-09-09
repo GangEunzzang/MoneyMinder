@@ -1,3 +1,5 @@
+// category.js
+
 import { api } from './api';
 
 function handleResponse(promise) {
@@ -8,30 +10,26 @@ function handleResponse(promise) {
       });
 }
 
-export function getCategoryList() {
-  return handleResponse(api(true).get('/api/v1/categories/email'));
-}
+const CategoryAPI = {
+  getCategoryList() {
+    return handleResponse(api(true).get('/api/v1/categories/email'));
+  },
 
-export function getCategory(categoryId) {
-  return handleResponse(api(true).get(`/api/v1/categories/id/${categoryId}`));
-}
+  getCategory(categoryId) {
+    return handleResponse(api(true).get(`/api/v1/categories/id/${categoryId}`));
+  },
 
-export function createCategory(category) {
-  return handleResponse(api(true).post('/api/v1/categories/create', category));
-}
+  createCategory(category) {
+    return handleResponse(api(true).post('/api/v1/categories/create', category));
+  },
 
-export function updateCategory(category) {
-  return handleResponse(api(true).put('/api/v1/categories/update', category));
-}
+  updateCategory(category) {
+    return handleResponse(api(true).put('/api/v1/categories/update', category));
+  },
 
-export function deleteCategory(categoryId) {
-  return handleResponse(api(true).delete(`/api/v1/categories/delete/${categoryId}`));
-}
-
-export default {
-  getCategoryList,
-  getCategory,
-  createCategory,
-  updateCategory,
-  deleteCategory,
+  deleteCategory(categoryId) {
+    return handleResponse(api(true).delete(`/api/v1/categories/delete/${categoryId}`));
+  }
 };
+
+export default CategoryAPI;

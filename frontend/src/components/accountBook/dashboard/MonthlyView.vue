@@ -70,6 +70,7 @@ export default {
     formattedMonth() {
       return `${this.currentYear}. ${this.currentMonth}`;
     },
+
     rows() {
       return this.generateCalendarRows(this.currentYear, this.currentMonth);
     },

@@ -11,20 +11,13 @@ import com.moneyminder.global.annotaion.CurrentUserEmail;
 import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -78,11 +71,7 @@ public class AccountBookController {
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) String memo
     ) {
-        System.out.println("cursorId = " + cursorId);
-
         AccountBookServiceSearchReq searchReq = AccountBookServiceSearchReq.from(categoryCode, startDate, endDate, memo);
-
-        System.out.println("searchReq = " + searchReq);
 
         List<AccountBookServiceRes> response = accountBookService.getByUserEmailAndCursorAndSearch(email, Optional.ofNullable(cursorId), searchReq);
         return DataResponse.of(response);

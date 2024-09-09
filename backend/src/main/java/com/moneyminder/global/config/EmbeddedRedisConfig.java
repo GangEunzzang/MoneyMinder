@@ -75,7 +75,6 @@ public class EmbeddedRedisConfig {
      */
     private Process executeGrepProcessCommand(int port) throws IOException {
         String OS = System.getProperty("os.name").toLowerCase();
-        System.out.println("OS = " + OS);
         if (OS.contains("win")) {
             log.info("OS is  " + OS + " " + port);
             String command = String.format("netstat -nao | find \"LISTEN\" | find \"%d\"", port);

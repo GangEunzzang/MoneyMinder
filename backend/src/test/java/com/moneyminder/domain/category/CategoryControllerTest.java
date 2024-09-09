@@ -1,8 +1,5 @@
 package com.moneyminder.domain.category;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
 import com.moneyminder.ControllerTest;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
@@ -12,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CategoryControllerTest extends ControllerTest {
 
@@ -68,7 +68,7 @@ class CategoryControllerTest extends ControllerTest {
         );
     }
 
-    @DisplayName("카테고리 조회 - categoryId 조회")
+    @DisplayName("카테고리 조회 - id 조회")
     @Test
     void givenCategoryId_whenFindCategoryById_thenSuccess() {
         // given

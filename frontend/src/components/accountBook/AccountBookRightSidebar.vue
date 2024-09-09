@@ -3,18 +3,18 @@
     <button class="add-button">+</button>
   </div>
   <!-- 모달 창 -->
-  <AccountBookCreateModal
+  <TransactionCreateModal
       :isOpen="isModalOpen"
       @close="closeModal"
   />
 </template>
 
 <script>
-import AccountBookCreateModal from '@/components/accountBook/AccountBookCreateModal.vue';
+import TransactionCreateModal from '@/components/accountBook/transaction/TransactionCreateModal.vue';
 
 export default {
   components: {
-    AccountBookCreateModal,
+    TransactionCreateModal,
   },
   data() {
     return {

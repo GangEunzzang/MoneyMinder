@@ -9,10 +9,10 @@
         <ul>
           <li><router-link to="/"> 홈</router-link></li>
           <li><router-link to="/account-book"> 가계부</router-link></li>
-          <li><router-link to="/notification">알림</router-link></li>
+<!--          <li><router-link to="/notification">알림</router-link></li>-->
           <li v-if="!isLoggedIn"><a href="#" @click.prevent="showLoginModal"> 로그인</a></li>
           <li v-else><a href="#" @click.prevent="logout"> 로그아웃</a></li>
-          <li><router-link to="/my-page"> 마이페이지</router-link></li>
+<!--          <li><router-link to="/my-page"> 마이페이지</router-link></li>-->
         </ul>
       </nav>
     </div>
@@ -96,7 +96,7 @@ header {
 .menu-container ul {
   display: flex;
   align-items: center;
-  column-gap: 4px;
+  column-gap: 2rem;
   margin: 0;
   padding: 0;
 }

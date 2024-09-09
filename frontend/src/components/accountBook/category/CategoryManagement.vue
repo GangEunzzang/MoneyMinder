@@ -30,6 +30,10 @@
         <div class="form-group">
           <label for="category-name">카테고리 이름</label>
           <input type="text" v-model="selectedCategory.name" id="category-name" />
+          <label for = "description">카테고리 설명</label>
+          <input type="text" v-model="selectedCategory.description" id="description" />
+          <input type="hidden" v-model="selectedCategory.type" />
+
         </div>
         <button @click="saveCategory">저장</button>
       </div>
@@ -104,7 +108,7 @@ export default {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   max-width: 1100px;
-  width: 80%;
+  width: 90%;
 }
 
 .category-management h2 {

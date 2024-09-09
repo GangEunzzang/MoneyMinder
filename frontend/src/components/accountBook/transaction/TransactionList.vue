@@ -59,7 +59,7 @@
       </div>
     </div>
 
-    <AccountBookEditModal
+    <TransactionEditModal
         v-if="showEditModal"
         :isOpen="showEditModal"
         :bookToEdit="currentBookToEdit"
@@ -76,11 +76,11 @@
 
 <script>
 import AccountBookAPI from "@/api/accountBook"; // 가계부 API 호출 함수 임포트
-import AccountBookEditModal from '@/components/accountBook/AccountBookEditModal.vue';
+import TransactionEditModal from '@/components/accountBook/transaction/TransactionEditModal.vue';
 
 export default {
   components: {
-    AccountBookEditModal
+    TransactionEditModal
   },
 
   name: "AccountBookList",

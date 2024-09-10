@@ -23,7 +23,7 @@ public record CategoryUpdateReq(
         String description,
 
         @NotNull
-        Long id
+        Long categoryId
 
 ) {
 
@@ -32,7 +32,7 @@ public record CategoryUpdateReq(
                 .categoryName(categoryName)
                 .categoryType(CategoryType.fromValue(categoryType))
                 .description(description)
-                .categoryId(id)
+                .categoryId(categoryId)
                 .userEmail(email)
                 .build();
     }

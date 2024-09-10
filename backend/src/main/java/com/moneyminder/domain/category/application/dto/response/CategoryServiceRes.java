@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CategoryServiceRes(
-        Long id,
+        Long categoryId,
         String categoryName,
         String categoryCode,
         String categoryType,
@@ -15,7 +15,7 @@ public record CategoryServiceRes(
 
     public static CategoryServiceRes fromDomain(Category category) {
         return CategoryServiceRes.builder()
-                .id(category.id())
+                .categoryId(category.id())
                 .categoryName(category.categoryName())
                 .categoryCode(category.categoryCode())
                 .categoryType(category.categoryType().name())

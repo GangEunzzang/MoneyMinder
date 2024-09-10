@@ -68,7 +68,7 @@ class CategoryControllerTest extends ControllerTest {
         );
     }
 
-    @DisplayName("카테고리 조회 - id 조회")
+    @DisplayName("카테고리 조회 - categoryId 조회")
     @Test
     void givenCategoryId_whenFindCategoryById_thenSuccess() {
         // given

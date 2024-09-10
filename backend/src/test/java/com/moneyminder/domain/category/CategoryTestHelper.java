@@ -49,7 +49,7 @@ public class CategoryTestHelper {
 
     public static CategoryUpdateReq 카테고리_수정_요청_생성() {
         return CategoryUpdateReq.builder()
-                .id(1L)
+                .categoryId(1L)
                 .categoryName("수정된 카테고리 이름")
                 .categoryType("INCOME")
                 .description("수정된 카테고리 설명")

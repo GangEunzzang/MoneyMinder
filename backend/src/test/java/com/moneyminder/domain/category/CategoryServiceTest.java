@@ -1,8 +1,5 @@
 package com.moneyminder.domain.category;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.moneyminder.domain.category.application.CategoryService;
 import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
 import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
@@ -20,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class CategoryServiceTest {
@@ -65,7 +65,7 @@ class CategoryServiceTest {
 
             // when
             CategoryServiceRes createdCategory = categoryService.create(request);
-            Category fetchedCategory = categoryRepository.findById(createdCategory.id()).get();
+            Category fetchedCategory = categoryRepository.findById(createdCategory.categoryId()).get();
 
             // then
             assertThat(fetchedCategory.categoryName()).isEqualTo("카테고리");

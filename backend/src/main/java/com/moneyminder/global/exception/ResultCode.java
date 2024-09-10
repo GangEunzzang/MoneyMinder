@@ -38,6 +38,12 @@ public enum ResultCode {
     CATEGORY_NOT_FOUND(404, HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
     CATEGORY_BOOK_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
 
+    // budget
+    BUDGET_NOT_FOUND(404, HttpStatus.NOT_FOUND, "예산 데이터를 찾을 수 없습니다."),
+    BUDGET_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
+    BUDGET_ALREADY_EXISTS(409, HttpStatus.CONFLICT, "이미 존재하는 예산입니다."),
+
+
     ;
     private final Integer code;
     private final HttpStatus httpStatus;

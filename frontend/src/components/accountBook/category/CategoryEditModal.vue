@@ -17,6 +17,9 @@
           <button type="submit">저장</button>
           <button type="button" @click="closeModal" class="cancel-button">취소</button>
         </div>
+
+        <input type="hidden" v-model="editedCategory.categoryId" />
+
       </form>
     </div>
   </div>
@@ -40,7 +43,6 @@ export default {
       this.$emit('close');
     },
     submitForm() {
-      console.log(this.editedCategory)
       CategoryAPI.updateCategory(this.editedCategory)
           .then(() => {
             this.$emit('close');

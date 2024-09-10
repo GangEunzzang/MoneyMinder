@@ -25,14 +25,14 @@
             <span>카테고리 이름</span>
           </li>
 
-          <li v-for="category in filteredCategories" :key="category.id" class="category-list-body">
+          <li v-for="category in filteredCategories" :key="category.categoryId" class="category-list-body">
             <span>{{ category.categoryName }}</span>
             <div class="actions" v-if="category.isCustom">
               <div class="action-icon" @click="openEditModal(category)">
                 ✏️
                 <span class="tooltip">수정하기</span>
               </div>
-              <div class="action-icon" @click="confirmDelete(category.id)">
+              <div class="action-icon" @click="confirmDelete(category.categoryId)">
                 🗑️
                 <span class="tooltip">삭제하기</span>
               </div>
@@ -100,6 +100,7 @@ export default {
       this.showCreateModal = false;
     },
     openEditModal(category) {
+      console.log(category);
       this.selectedCategory = category;
       this.showEditModal = true;
     },
@@ -111,19 +112,21 @@ export default {
       this.showCreateModal = false;
     },
     updateCategory(updatedCategory) {
-      const index = this.categories.findIndex(category => category.id === updatedCategory.id);
+      const index = this.categories.findIndex(category => category.categoryId === updatedCategory.categoryId);
       if (index !== -1) {
         this.categories.splice(index, 1, updatedCategory);
       }
       this.showEditModal = false;
     },
-    confirmDelete(id) {
+    confirmDelete(categoryId) {
       if (confirm("삭제하시겠습니까?")) {
-        this.deleteCategory(id);
+        this.deleteCategory(categoryId);
       }
     },
-    deleteCategory(id) {
-      this.categories = this.categories.filter(category => category.id !== id);
+    deleteCategory(categoryId) {
+      CategoryAPI.deleteCategory(categoryId)
+          .then(() => {this.categories = this.categories.filter(category => category.categoryId !== categoryId);})
+          .catch(error => {console.error('Error deleting category:', error);});
     },
     getCategoryList() {
       CategoryAPI.getCategoryList()
@@ -287,18 +290,16 @@ export default {
 }
 
 .category-list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
   background-color: rgba(52, 185, 80, 0.77);
-  border-bottom: 2px solid #eaeaea;
   font-weight: 600;
   color: white;
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 20px;
 }
 
 .category-list-header span {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   flex: 1;
   text-align: center;
 }
@@ -313,11 +314,11 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 11px 0;
+  padding:10px 0;
   border-bottom: 1px solid #ebebeb;
   transition: background-color 0.3s ease;
   position: relative;
-  border-radius: 15px;
+  border-radius: 20px;
 }
 
 .category-list-body:hover {

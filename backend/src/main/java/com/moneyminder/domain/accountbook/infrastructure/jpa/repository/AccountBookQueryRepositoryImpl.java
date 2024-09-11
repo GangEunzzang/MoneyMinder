@@ -2,7 +2,7 @@ package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
-import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceRes;
+import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceDefaultRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
 
     @Override
     public AccountBookServiceDefaultRes findWithCategoryById(Long id) {
-        return queryFactory.select(new QAccountBookServiceRes(
+        return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,
@@ -38,7 +38,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
 
     @Override
     public List<AccountBookServiceDefaultRes> findWithCategoryByEmail(String email) {
-        return queryFactory.select(new QAccountBookServiceRes(
+        return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,

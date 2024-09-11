@@ -20,6 +20,7 @@ export function getList(cursorId = null, categoryCode = '', startDate = '', endD
   }));
 }
 
+
 export function getById(accountBookId) {
   return handleResponse(api(true).get(`/api/v1/accountBook/id/${accountBookId}`));
 }

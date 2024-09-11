@@ -1,1 +1,1 @@
-![system_architecture.png](system_architecture.png)
+![system_architecture.png](docs%2Fsystem_architecture.png)

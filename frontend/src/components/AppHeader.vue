@@ -8,7 +8,6 @@
       <nav class="menu-container">
         <ul>
           <li><router-link to="/"> 홈</router-link></li>
-          <li><router-link to="/account-book"> 가계부</router-link></li>
 <!--          <li><router-link to="/notification">알림</router-link></li>-->
           <li v-if="!isLoggedIn"><a href="#" @click.prevent="showLoginModal"> 로그인</a></li>
           <li v-else><a href="#" @click.prevent="logout"> 로그아웃</a></li>

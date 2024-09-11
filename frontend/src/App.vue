@@ -1,10 +1,7 @@
-
 <template>
   <div id="app">
-    <AppHeader />
-    <div class="main-content">
-      <router-view /> <!-- 라우팅된 컴포넌트를 여기에 렌더링 -->
-    </div>
+    <AppHeader /> <!-- 헤더는 여전히 고정됨 -->
+    <router-view /> <!-- 라우팅된 페이지를 여기서 렌더링 -->
   </div>
 </template>
 
@@ -13,12 +10,13 @@ import AppHeader from './components/AppHeader.vue';
 
 export default {
   components: {
-    AppHeader
+    AppHeader,
   },
 };
 </script>
 
 <style>
+/* 필요에 따라 스타일을 유지 */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 body {
@@ -37,13 +35,5 @@ html {
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
-
-.main-content {
-  margin: 0 auto 0 auto;
-  width: 1000px;
-  background-color: #ffffff;
-}
-
 </style>

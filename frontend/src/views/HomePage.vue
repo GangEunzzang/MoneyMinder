@@ -1,15 +1,30 @@
 <template>
-  <div>
-    <h1>Welcome to the Home Page</h1>
+  <div class="home-page">
+    <AppLeftSidebar />
+    <div class="content">
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script>
+import AppLeftSidebar from '@/components/AppLeftSidebar.vue';
+
 export default {
-  name: 'HomePage',
+  components: {
+    AppLeftSidebar,
+  },
 };
 </script>
 
 <style scoped>
-/* 스타일을 추가할 경우 이곳에 */
+.home-page {
+  display: flex;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+}
 </style>

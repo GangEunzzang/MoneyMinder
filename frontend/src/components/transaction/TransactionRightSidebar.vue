@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import TransactionCreateModal from '@/components/accountBook/transaction/TransactionCreateModal.vue';
+import TransactionCreateModal from '@/components/transaction/TransactionCreateModal.vue';
 
 export default {
   components: {

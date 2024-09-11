@@ -76,7 +76,7 @@
 
 <script>
 import AccountBookAPI from "@/api/accountBook"; // 가계부 API 호출 함수 임포트
-import TransactionEditModal from '@/components/accountBook/transaction/TransactionEditModal.vue';
+import TransactionEditModal from '@/components/transaction/TransactionEditModal.vue';
 
 export default {
   components: {
@@ -225,7 +225,7 @@ export default {
   background-color: #f9f9f9;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 100%;
+  width: 60%;
   overflow-y: auto;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }

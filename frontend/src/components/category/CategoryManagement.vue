@@ -146,13 +146,11 @@ export default {
 
 <style scoped>
 .category-management {
-  margin: auto;
   padding: 40px 20px;
   background-color: #f9fafc;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  max-width: 900px;
-  width: 50%;
+  width: 35%;
 }
 
 .category-management h2 {

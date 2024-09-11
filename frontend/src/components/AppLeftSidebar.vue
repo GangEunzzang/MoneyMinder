@@ -64,7 +64,7 @@ export default {
           icon: 'home',
           isOpen: false,
           subMenu: [
-            { name: 'monthlyView', label: '∙ 월별 보기', route: '/account-book/monthly-view' },
+            {name: 'monthlyView', label: '∙ 월별 보기', route: '/monthly-view'},
             // { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
           ],
         },
@@ -74,7 +74,7 @@ export default {
           icon: 'wallet',
           isOpen: false,
           subMenu: [
-            { name: 'transactionList', label: '∙ 수입/지출 내역', route: '/account-book/transaction-list' },
+            {name: 'transactionList', label: '∙ 수입/지출 내역', route: '/transaction-list'},
             // {name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management',
           ],
         },
@@ -84,7 +84,7 @@ export default {
           icon: 'folder-open',
           isOpen: false,
           subMenu: [
-            { name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/account-book/category-management' },
+            {name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/category-management'},
             // { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
           ],
         },
@@ -94,7 +94,7 @@ export default {
           icon: 'money-bill-wave',
           isOpen: false,
           subMenu: [
-            { name: 'budgetManagement', label: '∙ 예산 관리', route: '/account-book/budget-management' },
+            {name: 'budgetManagement', label: '∙ 예산 관리', route: '/budget-management'},
           ],
         },
       ],
@@ -150,7 +150,7 @@ export default {
   align-items: flex-start;
   border: 1px solid #e9ecef;
   transition: width 0.3s ease, padding 0.3s ease;
-  position: fixed;
+  position: sticky;
   left: 0;
   top: 20vh;
   border-radius: 0 20px 20px 0;
@@ -266,7 +266,6 @@ a {
 .sidebar li.active .icon, .sidebar li.active .label {
   color: #000000;
 }
-
 
 
 /* 토글 버튼 디자인 */

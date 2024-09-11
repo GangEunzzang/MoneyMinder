@@ -1,7 +1,7 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,7 +20,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public AccountBookServiceRes findWithCategoryById(Long id) {
+    public AccountBookServiceDefaultRes findWithCategoryById(Long id) {
         return queryFactory.select(new QAccountBookServiceRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
@@ -37,7 +37,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public List<AccountBookServiceRes> findWithCategoryByEmail(String email) {
+    public List<AccountBookServiceDefaultRes> findWithCategoryByEmail(String email) {
         return queryFactory.select(new QAccountBookServiceRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
@@ -54,9 +54,9 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public List<AccountBookServiceRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+    public List<AccountBookServiceDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
 
-        return queryFactory.select(new QAccountBookServiceRes(
+        return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,

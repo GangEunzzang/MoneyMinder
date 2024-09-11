@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 
 
-public record AccountBookServiceRes(
+public record AccountBookServiceDefaultRes(
 
         Long accountId,
 
@@ -29,14 +29,14 @@ public record AccountBookServiceRes(
 
     @QueryProjection
     @Builder
-    public AccountBookServiceRes {
+    public AccountBookServiceDefaultRes {
         categoryCode = categoryCode == null ? Category.DEFAULT_CATEGORY_CODE : categoryCode;
         categoryName = categoryName == null ? Category.DEFAULT_CATEGORY_NAME : categoryName;
         categoryType = categoryType == null ? CategoryType.ETC : categoryType;
     }
 
-    public static AccountBookServiceRes fromDomain(AccountBook accountBook, Category category) {
-        return AccountBookServiceRes.builder()
+    public static AccountBookServiceDefaultRes fromDomain(AccountBook accountBook, Category category) {
+        return AccountBookServiceDefaultRes.builder()
                 .accountId(accountBook.accountId())
                 .amount(accountBook.amount())
                 .transactionDate(accountBook.transactionDate())

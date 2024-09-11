@@ -15,40 +15,40 @@
       <li class="main-menu-li"
           v-for="item in menuItems"
           :key="item.name"
-          :class="{ active: isMenuActive(item) }"
+          :class="{ active: isMenuActive(item), collapsed: isCollapsed }"
           @mouseover="hoverMenu(item.name)"
           @mouseleave="hoverMenu(null)"
       >
-        <div @click="toggleSubMenu(item.name)">
-          <div :class="{ active: selectedItem === item.name }">
-            <font-awesome-icon :icon="item.icon" class="icon" />
-            <!-- 라벨을 전부 펼쳐진 상태일 때만 노출 -->
-            <span v-if="showLabels" class="label">{{ item.label }}</span>
-          </div>
-        </div>
-
-        <!-- 서브메뉴 -->
-        <transition name="fade-slide">
-          <ul v-if="item.isOpen && !isCollapsed" class="submenu">
-            <li
-                v-for="subItem in item.subMenu"
-                :key="subItem.name"
-                @click="selectMenuItem(subItem.name)"
-                :class="{ active: selectedItem === subItem.name }"
-            >
-              <router-link :to="subItem.route">
-                {{ subItem.label }}
-              </router-link>
-            </li>
-          </ul>
-        </transition>
+        <router-link :to="item.route" class="menu-item">
+          <font-awesome-icon :icon="item.icon" class="icon"/>
+          <!-- 라벨을 전부 펼쳐진 상태일 때만 노출 -->
+          <span v-if="showLabels" class="label">{{ item.label }}</span>
+        </router-link>
       </li>
     </ul>
+
+    <div class="auth-section">
+      <a v-if="!isLoggedIn" href="#" @click.prevent="showLoginModal" class="auth-link">
+        <font-awesome-icon icon="sign-in-alt" class="icon" />
+        <span v-if="showLabels" class="label">로그인</span>
+      </a>
+      <a v-else href="#" @click.prevent="logout" class="auth-link">
+        <font-awesome-icon icon="sign-out-alt" class="icon" />
+        <span v-if="showLabels" class="label">로그아웃</span>
+      </a>
+    </div>
+    <login-modal v-if="LoginModal" @close="closeLoginModal"></login-modal>
+
   </div>
 </template>
 
 <script>
+import LoginModal from './LoginModal.vue';
 export default {
+  components: {
+    LoginModal,
+  },
+
   props: {
     selectedItem: String, // 부모로부터 현재 선택된 항목을 받아옴
   },
@@ -57,49 +57,42 @@ export default {
       isCollapsed: false, // 사이드바 토글 상태
       showLabels: true, // 라벨 표시 여부
       hoveredMenu: null, // 호버된 대메뉴 상태
+      LoginModal: false, // 로그인 모달 표시 여부
       menuItems: [
         {
           name: 'Dashboard',
           label: '대시보드',
           icon: 'home',
-          isOpen: false,
-          subMenu: [
-            {name: 'monthlyView', label: '∙ 월별 보기', route: '/monthly-view'},
-            // { name: 'calendarView', label: '∙ 달력 보기', route: '/account-book/calendar-view' },
-          ],
+          route: '/monthly-view', // 바로 이동할 경로 설정
         },
         {
           name: 'transactions',
-          label: '수입/지출',
+          label: '거래내역',
           icon: 'wallet',
-          isOpen: false,
-          subMenu: [
-            {name: 'transactionList', label: '∙ 수입/지출 내역', route: '/transaction-list'},
-            // {name: 'transactionManagement', label: '∙ 수입/지출 관리', route: '/account-book/transaction-management',
-          ],
+          route: '/transaction-list', // 바로 이동할 경로 설정
         },
         {
           name: 'categories',
           label: '카테고리',
           icon: 'folder-open',
-          isOpen: false,
-          subMenu: [
-            {name: 'categoryManagement', label: '∙ 카테고리 관리', route: '/category-management'},
-            // { name: 'categoryBudget', label: '∙ 카테고리별 예산등록', route: '/account-book/category-budget' },
-          ],
+          route: '/category-management', // 바로 이동할 경로 설정
         },
         {
           name: 'budget',
           label: '예산',
           icon: 'money-bill-wave',
-          isOpen: false,
-          subMenu: [
-            {name: 'budgetManagement', label: '∙ 예산 관리', route: '/budget-management'},
-          ],
+          route: '/budget-management', // 바로 이동할 경로 설정
         },
       ],
     };
   },
+
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+  },
+
   methods: {
     toggleSidebar() {
       this.isCollapsed = !this.isCollapsed; // 토글 상태 전환
@@ -116,25 +109,24 @@ export default {
         }
       }, 400); // 트랜지션 시간과 맞춰 설정
     },
-    toggleSubMenu(name) {
-      this.menuItems.forEach((item) => {
-        if (item.name === name) {
-          item.isOpen = !item.isOpen; // 선택한 대메뉴만 열리고 닫힘
-        } else {
-          item.isOpen = false; // 다른 대메뉴는 닫힘
-        }
-      });
-    },
-    selectMenuItem(name) {
-      this.$emit('select', name); // 선택된 서브메뉴 항목을 부모 컴포넌트로 전달
-    },
     hoverMenu(name) {
       this.hoveredMenu = name; // 현재 호버된 대메뉴 저장
     },
     isMenuActive(item) {
-      // 대메뉴가 active인지 확인 (현재 페이지의 서브메뉴에 포함되었는지 체크)
-      const currentRoute = this.$route.path;
-      return item.subMenu.some(subItem => currentRoute === subItem.route) || this.selectedItem === item.name;
+      // 대메뉴가 active인지 확인 (현재 페이지의 경로와 맞는지 체크)
+      return this.$route.path === item.route;
+    },
+
+    showLoginModal() {
+      this.LoginModal = true;
+    },
+
+    closeLoginModal() {
+      this.LoginModal = false;
+    },
+
+    logout() {
+      this.$store.dispatch('logout');
     },
   },
 };
@@ -143,22 +135,18 @@ export default {
 <style scoped>
 .sidebar {
   width: 180px;
-  height: 50vh;
   padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  border: 1px solid #e9ecef;
   transition: width 0.3s ease, padding 0.3s ease;
   position: sticky;
   left: 0;
-  top: 20vh;
-  border-radius: 0 20px 20px 0;
+  border-radius: 20px 0 0 20px;
   overflow: hidden;
-  background-color: white;
-  z-index: 10;
+  background-color: #25252b;
+  z-index: 1000;
 }
-
 
 a {
   text-decoration: none;
@@ -186,85 +174,79 @@ a {
 
 .sidebar li {
   padding: 10px 15px;
+  width: 120%;
   cursor: pointer;
-  border-radius: 5px;
-  color: white;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, border-radius 0.3s ease;
   margin: 20px 0;
   white-space: nowrap;
-  font-size: 1.05rem;
-  font-weight: bold;
+  border-radius: 17px;
 }
 
 .icon {
   font-size: 1.1em;
   margin-right: 10px;
-  color: #575353;
+  color: white;
+  transition: color 0.3s ease;
 }
 
 .label {
   white-space: nowrap;
-  font-size: 0.95rem;
-  color: #959596;
-}
-
-.submenu {
-  padding-left: 30px;
-  margin-top: 5px;
-  position: relative;
-}
-
-.submenu li {
-  padding: 8px 10px;
-  font-size: 0.8em;
-  color: #333333;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  font-weight: 400;
-  margin: 10px 0;
-  border-radius: 12px;
-}
-
-.sidebar ul li ul {
-  margin-top: 1.3rem;
+  font-size: 0.9rem;
+  color: #989898;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .main-menu {
-  margin-top: 4.5rem;
-}
-
-.main-menu-li {
-  width: 10rem;
-}
-
-/* 대메뉴 호버 효과 */
-.main-menu-li:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-}
-
-/* 서브메뉴 호버 효과 */
-.submenu li:hover {
-  background-color: rgba(49, 46, 46, 0.13);
-  border-radius: 12px;
+  margin-top: 5rem;
 }
 
 /* 대메뉴 active 상태 스타일 */
 .main-menu-li.active {
-  background-color: #e0e0e0;
-  color: #000000;
-  border-radius: 12px;
+  background-color: #7f6df4;
+  border-radius: 17px;
+  font-weight: 700;
 }
 
-/* 서브메뉴 active 상태 스타일 */
-.submenu li.active {
-  background-color: #c0c0c0;
-  border-radius: 12px;
-  color: #000000;
+
+.main-menu-li:hover {
+  background-color: rgba(147, 138, 236, 0.8);
+  border-radius: 17px;
+  color: white;
+}
+
+.main-menu-li:hover .icon {
+  color: #fff;
+}
+
+.main-menu-li:hover .label {
+  color: #fff;
+}
+
+.main-menu-li.active:hover {
+  background-color: #715cf8;
+  color: white;
   font-weight: bold;
 }
 
+.main-menu-li:not(.collapsed):hover {
+  transform: translateX(5px); /* 접혀있지 않을 때만 적용 */
+}
+
+.main-menu-li.collapsed {
+  transform: none; /* 접혀있을 때는 앞으로 밀리지 않음 */
+}
+
 .sidebar li.active .icon, .sidebar li.active .label {
-  color: #000000;
+  color: white;
+}
+
+.main-menu-li:not(.collapsed):hover {
+  transform: translateX(5px); /* 접혀있지 않을 때만 적용 */
+}
+
+.main-menu-li.collapsed {
+  transform: none; /* 접혀있을 때는 앞으로 밀리지 않음 */
 }
 
 
@@ -326,4 +308,12 @@ a {
   background-color: black;
   border-radius: 50%;
 }
+
+.auth-section {
+  position: absolute;
+  bottom: 20rem;
+  margin: 20px 0;
+  padding: 10px 15px;
+}
+
 </style>

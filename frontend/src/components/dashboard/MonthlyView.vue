@@ -196,10 +196,9 @@ export default {
 <style scoped>
 .monthly-view {
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 16px;
+  background-color: #000000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 35%;
+  width: 100%
 }
 
 .monthly-view h2 {

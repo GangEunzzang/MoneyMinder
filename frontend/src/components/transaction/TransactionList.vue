@@ -66,6 +66,8 @@
         @close="closeEditModal"
     />
 
+    <TransactionRightSidebar/>
+
     <!-- 더보기 버튼 -->
     <div v-if="hasMoreData && filteredAndSortedBooks.length > 0" class="load-more">
       <button @click="fetchAccountBooks()">더보기</button>
@@ -77,10 +79,12 @@
 <script>
 import AccountBookAPI from "@/api/accountBook"; // 가계부 API 호출 함수 임포트
 import TransactionEditModal from '@/components/transaction/TransactionEditModal.vue';
+import TransactionRightSidebar from '@/components/transaction/TransactionRightSidebar.vue';
 
 export default {
   components: {
-    TransactionEditModal
+    TransactionEditModal,
+    TransactionRightSidebar
   },
 
   name: "AccountBookList",

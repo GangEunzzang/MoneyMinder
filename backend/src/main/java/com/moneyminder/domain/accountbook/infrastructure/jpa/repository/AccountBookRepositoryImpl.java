@@ -7,10 +7,11 @@ import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepositor
 import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookEntity;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -55,8 +56,8 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     }
 
     @Override
-    public List<AccountBookServiceRes> findWithCategoryByEmailAndCursorAndSearch(String email, Optional<Long> cursorId, AccountBookServiceSearchReq searchReq) {
-        return jpaRepository.findWithCategoryByEmailAndCursorAndSearch(email, cursorId, searchReq);
+    public List<AccountBookServiceRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+        return jpaRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 
 

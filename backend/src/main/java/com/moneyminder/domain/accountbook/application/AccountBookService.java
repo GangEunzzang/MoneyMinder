@@ -10,12 +10,12 @@ import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,15 +66,15 @@ public class AccountBookService {
     }
 
     @Transactional(readOnly = true)
-    public List<AccountBookServiceRes> getByUserEmailAndCursorAndSearch(String email, Optional<Long> cursorId, AccountBookServiceSearchReq searchReq) {
-        return accountBookRepository.findWithCategoryByEmailAndCursorAndSearch(email, cursorId, searchReq);
+    public List<AccountBookServiceRes> getByUserEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+        return accountBookRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 
-    private AccountBookServiceRes mapToServiceResponse(AccountBook updatedAccountBook) {
-        Category category = categoryRepository.findByCategoryCode(updatedAccountBook.categoryCode())
+    private AccountBookServiceRes mapToServiceResponse(AccountBook accountBook) {
+        Category category = categoryRepository.findByCategoryCode(accountBook.categoryCode())
                 .orElseGet(Category::defaultCategory);
 
-        return AccountBookServiceRes.fromDomain(updatedAccountBook, category);
+        return AccountBookServiceRes.fromDomain(accountBook, category);
     }
 
     private void validateCategoryCode(String categoryCode) {

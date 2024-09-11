@@ -1,9 +1,5 @@
 package com.moneyminder.domain.accountbook;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-
 import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
@@ -15,10 +11,6 @@ import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class AccountBookServiceTest {
@@ -198,9 +198,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
-                    Optional.empty(),
                     AccountBookServiceSearchReq.builder().build()
             );
 
@@ -221,8 +220,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().categoryCode("카테고리코드2").build());
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일", AccountBookServiceSearchReq.builder().categoryCode("카테고리코드2").build());
 
             // then
             assertThat(accountBookServiceResList).hasSize(1);
@@ -241,8 +240,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().memo("메모2").build());
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일", AccountBookServiceSearchReq.builder().memo("메모2").build());
 
             // then
             assertThat(accountBookServiceResList).hasSize(1);
@@ -261,8 +260,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(),
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now().minusDays(1))
                             .endDate(LocalDate.now().plusDays(1)).build());
 
@@ -283,8 +282,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(),
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(null).endDate(null).build());
 
             // then
@@ -304,8 +303,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(),
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now().plusDays(1))
                             .endDate(LocalDate.now()).build());
 
@@ -326,8 +325,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(), AccountBookServiceSearchReq.builder().endDate(LocalDate.now()).build());
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일", AccountBookServiceSearchReq.builder().endDate(LocalDate.now()).build());
 
             // then
             assertThat(accountBookServiceResList).hasSize(2);
@@ -346,8 +345,8 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndCursorAndSearch(
-                    "테스트이메일", Optional.empty(),
+            List<AccountBookServiceRes> accountBookServiceResList = accountBookService.getByUserEmailAndSearch(
+                    "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now()).build());
 
             // then

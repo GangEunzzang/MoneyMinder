@@ -1,18 +1,18 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
-import static com.moneyminder.domain.accountbook.infrastructure.jpa.entity.QAccountBookEntity.accountBookEntity;
-import static com.moneyminder.domain.category.Infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
-
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
 import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static com.moneyminder.domain.accountbook.infrastructure.jpa.entity.QAccountBookEntity.accountBookEntity;
+import static com.moneyminder.domain.category.Infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
 
 @RequiredArgsConstructor
 public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepository {
@@ -54,8 +54,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public List<AccountBookServiceRes> findWithCategoryByEmailAndCursorAndSearch(String email, Optional<Long> cursorId,
-            AccountBookServiceSearchReq searchReq) {
+    public List<AccountBookServiceRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
 
         return queryFactory.select(new QAccountBookServiceRes(
                         accountBookEntity.id,
@@ -73,7 +72,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
                         lessThanEqualDate(searchReq.endDate()),
                         eqCategoryCode(searchReq.categoryCode()),
                         containsMemo(searchReq.memo()),
-                        lessThanCursorId(cursorId))
+                        lessThanCursorId(searchReq.cursorId()))
                 .orderBy(accountBookEntity.id.desc())
                 .limit(20)
                 .fetch();
@@ -95,7 +94,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
         return StringUtils.isBlank(memo) ? null : accountBookEntity.memo.contains(memo);
     }
 
-    private BooleanExpression lessThanCursorId(Optional<Long> cursorId) {
-        return cursorId.map(accountBookEntity.id::lt).orElse(null);
+    private BooleanExpression lessThanCursorId(Long cursorId) {
+        return cursorId == null ? null : accountBookEntity.id.lt(cursorId);
     }
 }

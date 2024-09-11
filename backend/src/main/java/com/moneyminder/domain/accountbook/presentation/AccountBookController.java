@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -71,9 +70,9 @@ public class AccountBookController {
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) String memo
     ) {
-        AccountBookServiceSearchReq searchReq = AccountBookServiceSearchReq.from(categoryCode, startDate, endDate, memo);
+        AccountBookServiceSearchReq searchReq = AccountBookServiceSearchReq.from(categoryCode, startDate, endDate, memo, cursorId);
 
-        List<AccountBookServiceRes> response = accountBookService.getByUserEmailAndCursorAndSearch(email, Optional.ofNullable(cursorId), searchReq);
+        List<AccountBookServiceRes> response = accountBookService.getByUserEmailAndSearch(email, searchReq);
         return DataResponse.of(response);
     }
 }

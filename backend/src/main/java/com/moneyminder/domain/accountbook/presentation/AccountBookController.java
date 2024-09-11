@@ -75,8 +75,4 @@ public class AccountBookController {
         List<AccountBookServiceDefaultRes> response = accountBookService.getByUserEmailAndSearch(email, searchReq);
         return DataResponse.of(response);
     }
-
-    @GetMapping("/expenses/summary")
-    public DataResponse<>
-
 }

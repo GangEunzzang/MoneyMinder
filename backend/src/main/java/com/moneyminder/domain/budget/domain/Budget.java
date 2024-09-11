@@ -14,7 +14,9 @@ public record Budget(
         Integer year,
         Integer month,
         BigInteger amount,
-        String userEmail
+        String userEmail,
+
+        String categoryCode
 ) {
 
     @Builder
@@ -23,6 +25,7 @@ public record Budget(
         Assert.isTrue(month >= 1 && month <= 12, "month must be between 1 and 12");
         Assert.notNull(amount, "amount must not be null");
         Assert.notNull(userEmail, "userEmail must not be null");
+        Assert.notNull(categoryCode, "categoryCode must not be null");
     }
 
     public static Budget create(BudgetServiceCreateReq create) {
@@ -31,6 +34,7 @@ public record Budget(
                 .month(create.month())
                 .userEmail(create.userEmail())
                 .amount(create.amount())
+                .categoryCode(create.categoryCode())
                 .build();
     }
 
@@ -40,6 +44,7 @@ public record Budget(
                 .year(year)
                 .month(month)
                 .userEmail(userEmail)
+                .categoryCode(categoryCode)
                 .amount(update.amount())
                 .build();
     }
@@ -51,6 +56,7 @@ public record Budget(
                 .budgetMonth(month)
                 .amount(amount)
                 .userEmail(userEmail)
+                .categoryCode(categoryCode)
                 .build();
     }
 

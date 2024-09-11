@@ -6,6 +6,7 @@ import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdate
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
+import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +15,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class BudgetServiceTest {
@@ -33,10 +36,14 @@ public class BudgetServiceTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @SpyBean
+    private CategoryRepository categoryRepository;
+
     private final Budget setupBudget = Budget.builder()
             .year(2021)
             .month(1)
             .userEmail("테스트")
+            .categoryCode("카테고리코드")
             .amount(BigInteger.valueOf(100000))
             .build();
 
@@ -45,6 +52,8 @@ public class BudgetServiceTest {
         jdbcTemplate.execute("TRUNCATE TABLE budget");
         jdbcTemplate.execute("ALTER TABLE budget ALTER COLUMN id RESTART WITH 1");
         budgetRepository.save(setupBudget);
+
+        given(categoryRepository.existsByCategoryCode("카테고리코드")).willReturn(true);
     }
 
     @Nested
@@ -58,6 +67,7 @@ public class BudgetServiceTest {
                     .year(2021)
                     .month(2)
                     .userEmail("테스트")
+                    .categoryCode("카테고리코드")
                     .amount(BigInteger.valueOf(100000))
                     .build();
 
@@ -126,6 +136,7 @@ public class BudgetServiceTest {
                     .month(2)
                     .userEmail("테스트")
                     .amount(BigInteger.valueOf(100000))
+                    .categoryCode("카테고리코드")
                     .build());
 
             budgetRepository.save(budget);
@@ -180,12 +191,31 @@ public class BudgetServiceTest {
                     .month(1)
                     .userEmail("테스트")
                     .amount(BigInteger.valueOf(100000))
+                    .categoryCode("카테고리코드")
                     .build();
 
             // when, then
             assertThatThrownBy(() -> budgetService.create(request))
                     .isInstanceOf(BaseException.class)
                     .hasFieldOrPropertyWithValue("resultCode", ResultCode.BUDGET_ALREADY_EXISTS);
+        }
+
+        @DisplayName("생성 - 존재하지 않는 카테고리 코드로 예산을 생성할 경우 예외를 발생시킨다.")
+        @Test
+        void whenCreateBudgetNotFoundCategory_thenThrowException() {
+            // given
+            BudgetServiceCreateReq request = BudgetServiceCreateReq.builder()
+                    .year(2021)
+                    .month(2)
+                    .userEmail("테스트")
+                    .amount(BigInteger.valueOf(100000))
+                    .categoryCode("존재하지않는카테고리코드")
+                    .build();
+
+            // when, then
+            assertThatThrownBy(() -> budgetService.create(request))
+                    .isInstanceOf(BaseException.class)
+                    .hasFieldOrPropertyWithValue("resultCode", ResultCode.CATEGORY_NOT_FOUND);
         }
 
         @DisplayName("수정 - 사용자의 이메일이 다를 경우 예외를 발생시킨다.")

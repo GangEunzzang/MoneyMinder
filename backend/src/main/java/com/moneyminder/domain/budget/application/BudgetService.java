@@ -5,6 +5,7 @@ import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdate
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
+import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,14 @@ import java.util.List;
 @Service
 public class BudgetService {
 
+    private final CategoryRepository categoryRepository;
     private final BudgetRepository budgetRepository;
 
     @Transactional
     public BudgetServiceRes create(BudgetServiceCreateReq request) {
+        if (!categoryRepository.existsByCategoryCode(request.categoryCode())) {
+            throw new BaseException(ResultCode.CATEGORY_NOT_FOUND);
+        }
 
         budgetRepository.findByUserEmailAndYearAndtMonth(request.userEmail(), request.year(), request.month())
                 .ifPresent(budget -> {

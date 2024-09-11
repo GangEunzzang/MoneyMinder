@@ -3,11 +3,14 @@ package com.moneyminder.domain.budget;
 import com.moneyminder.ControllerTest;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
 import com.moneyminder.domain.budget.presentation.dto.BudgetCreateReq;
+import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigInteger;
@@ -15,11 +18,20 @@ import java.math.BigInteger;
 import static com.moneyminder.domain.budget.BudgetTestHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
 
 public class BudgetControllerTest extends ControllerTest {
 
     @Autowired
     private BudgetRepository budgetRepository;
+
+    @SpyBean
+    private CategoryRepository categoryRepository;
+
+    @BeforeEach
+    void setupMocks() {
+        when(categoryRepository.existsByCategoryCode(org.mockito.ArgumentMatchers.anyString())).thenReturn(true);
+    }
 
     @DisplayName("예산 등록")
     @Test

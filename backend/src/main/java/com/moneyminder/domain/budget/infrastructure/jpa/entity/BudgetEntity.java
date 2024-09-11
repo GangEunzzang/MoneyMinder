@@ -35,15 +35,19 @@ public class BudgetEntity extends BaseTimeEntity {
     @Comment("예산 금액")
     private BigInteger amount = BigInteger.ZERO;
 
+    @Comment("카테고리 코드")
+    private String categoryCode;
+
     @Comment("유저 이메일")
     private String userEmail;
 
     @Builder
-    public BudgetEntity(Long id, Integer budgetYear, Integer budgetMonth, BigInteger amount, String userEmail) {
+    private BudgetEntity(Long id, Integer budgetYear, Integer budgetMonth, BigInteger amount, String categoryCode, String userEmail) {
         this.id = id;
         this.budgetYear = budgetYear;
         this.budgetMonth = budgetMonth;
         this.amount = amount;
+        this.categoryCode = categoryCode;
         this.userEmail = userEmail;
     }
 
@@ -54,6 +58,7 @@ public class BudgetEntity extends BaseTimeEntity {
                 .month(budgetMonth)
                 .amount(amount)
                 .userEmail(userEmail)
+                .categoryCode(categoryCode)
                 .build();
     }
 }

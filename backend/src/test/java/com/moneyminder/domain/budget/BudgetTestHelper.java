@@ -32,6 +32,7 @@ public class BudgetTestHelper {
                 .year(year)
                 .month(month)
                 .amount(amount)
+                .categoryCode("C01")
                 .build();
     }
 

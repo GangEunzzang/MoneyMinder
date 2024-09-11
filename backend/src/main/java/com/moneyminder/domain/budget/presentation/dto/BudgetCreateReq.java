@@ -22,7 +22,10 @@ public record BudgetCreateReq(
         @NotNull
         @Min(value = 1, message = "Month must be at least 1")
         @Max(value = 12, message = "Month must be at most 12")
-        String month
+        String month,
+
+        @NotNull
+        String categoryCode
 ) {
 
     public BudgetServiceCreateReq toService(String email) {
@@ -31,6 +34,7 @@ public record BudgetCreateReq(
                 .year(Integer.valueOf(year))
                 .month(Integer.valueOf(month))
                 .userEmail(email)
+                .categoryCode(categoryCode)
                 .build();
     }
 }

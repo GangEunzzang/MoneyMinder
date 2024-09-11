@@ -9,6 +9,7 @@ public record BudgetServiceCreateReq(
         Integer year,
         Integer month,
         String userEmail,
-        BigInteger amount
+        BigInteger amount,
+        String categoryCode
 ) {
 }

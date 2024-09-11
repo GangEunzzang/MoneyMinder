@@ -102,45 +102,4 @@ public class BudgetControllerTest extends ControllerTest {
         );
     }
 
-    @DisplayName("예산 조회 - year, month 조회")
-    @Test
-    void givenYearAndMonth_whenFindBudgetByYearAndMonth_thenSuccess() {
-
-        // given
-        예산_등록_요청(예산_등록_요청_생성("2021", "1", BigInteger.TEN));
-
-        // when
-        ExtractableResponse<Response> response = 연도_월별_예산_조회_요청(2021, 1);
-
-        // then
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getString("data.year")).isEqualTo("2021"),
-                () -> assertThat(response.jsonPath().getString("data.month")).isEqualTo("1"),
-                () -> assertThat(response.jsonPath().getString("data.amount")).isEqualTo(BigInteger.TEN.toString())
-        );
-    }
-
-    @DisplayName("예산 조회 - year 조회")
-    @Test
-    void givenYear_whenFindBudgetByYear_thenSuccess() {
-        // given
-        예산_등록_요청(예산_등록_요청_생성("2021", "1", BigInteger.TEN));
-        예산_등록_요청(예산_등록_요청_생성("2021", "2", BigInteger.TEN));
-        예산_등록_요청(예산_등록_요청_생성("2022", "1", BigInteger.TEN));
-
-        // when
-        ExtractableResponse<Response> response = 연도별_예산_조회_요청(2021);
-
-        // then
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getList("data")).hasSize(2),
-                () -> assertThat(response.jsonPath().getString("data[0].year")).isEqualTo("2021"),
-                () -> assertThat(response.jsonPath().getString("data[0].month")).isEqualTo("1"),
-                () -> assertThat(response.jsonPath().getString("data[0].amount")).isEqualTo(BigInteger.TEN.toString())
-        );
-    }
-
-
 }

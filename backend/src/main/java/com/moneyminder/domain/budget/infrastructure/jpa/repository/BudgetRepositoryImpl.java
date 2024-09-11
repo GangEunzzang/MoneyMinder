@@ -1,5 +1,7 @@
 package com.moneyminder.domain.budget.infrastructure.jpa.repository;
 
+import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
+import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
 import com.moneyminder.domain.budget.infrastructure.jpa.entity.BudgetEntity;
@@ -43,15 +45,8 @@ public class BudgetRepositoryImpl implements BudgetRepository {
     }
 
     @Override
-    public List<Budget> findByUserEmailAndYear(String userEmail, Integer year) {
-        return budgetJpaRepository.findByUserEmailAndBudgetYear(userEmail, year).stream()
-                .map(BudgetEntity::toDomain)
-                .toList();
-    }
-
-    @Override
-    public Optional<Budget> findByUserEmailAndYearAndtMonth(String userEmail, Integer year, Integer month) {
-        return budgetJpaRepository.findByUserEmailAndBudgetYearAndBudgetMonth(userEmail, year, month).map(BudgetEntity::toDomain);
+    public List<BudgetServiceRes> findByEmailAndSearch(String email, BudgetServiceSearchReq searchReq) {
+        return budgetJpaRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 
 

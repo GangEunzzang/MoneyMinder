@@ -1,5 +1,7 @@
 package com.moneyminder.domain.budget.domain.repository;
 
+import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
+import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
 
 import java.util.List;
@@ -17,9 +19,6 @@ public interface BudgetRepository {
 
     Optional<Budget> findById(Long id);
 
-    List<Budget> findByUserEmailAndYear(String userEmail, Integer year);
-
-    Optional<Budget> findByUserEmailAndYearAndtMonth(String userEmail, Integer year, Integer month);
-
+    List<BudgetServiceRes> findByEmailAndSearch(String email, BudgetServiceSearchReq searchReq);
 
 }

@@ -2,6 +2,7 @@ package com.moneyminder.domain.budget;
 
 import com.moneyminder.domain.budget.application.BudgetService;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceCreateReq;
+import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdateReq;
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -142,56 +144,79 @@ public class BudgetServiceTest {
             budgetRepository.save(budget);
 
             // when
-            BudgetServiceRes response = budgetService.getByUserEmailAndYear(email, year).get(0);
+            List<BudgetServiceRes> yearBudgetList = budgetService.getByEmailAndSearch(email,
+                    BudgetServiceSearchReq.builder()
+                            .year(year)
+                            .build()
+            );
 
             // then
-            assertThat(response.year()).isEqualTo(year);
+            assertThat(yearBudgetList.size()).isEqualTo(1);
+            assertThat(yearBudgetList.get(0).year()).isEqualTo(year);
         }
 
         @DisplayName("조회 - 성공적으로 사용자의 연도와 월별 예산을 조회한다.")
         @Test
         void whenGetBudgetByUserEmailAndYearAndMonth_thenSuccess() {
             // given
-            String email = "테스트";
-            Integer year = 2021;
-            Integer month = 1;
+            String email = setupBudget.userEmail();
+            Integer year = setupBudget.year();
+            Integer month = setupBudget.month();
 
             // when
-            BudgetServiceRes response = budgetService.getByUserEmailAndYearAndMonth(email, year, month);
+            List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email,
+                    BudgetServiceSearchReq.builder()
+                            .year(year)
+                            .month(month)
+                            .build()
+            );
 
             // then
-            assertThat(response.year()).isEqualTo(year);
-            assertThat(response.month()).isEqualTo(month);
+            assertThat(response.get(0).year()).isEqualTo(year);
+            assertThat(response.get(0).month()).isEqualTo(month);
         }
 
         @DisplayName("조회 - 연도별 예산 조회시 해당 연도의 예산이 없을 경우 빈 리스트를 반환한다.")
         @Test
         void whenGetBudgetByUserEmailAndYear_thenEmptyList() {
             // given
-            String email = "테스트";
-            Integer year = 2022;
+            String email = "없는유저";
 
             // when
-            var response = budgetService.getByUserEmailAndYear(email, year);
+            List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email, BudgetServiceSearchReq.builder().build());
 
             // then
             assertThat(response).isEmpty();
         }
+
+        @DisplayName("조회 - 연도와 월별 예산 조회시 해당 연도와 월의 예산이 없을 경우 빈 리스트를 반환한다.")
+        @Test
+        void whenGetBudgetByUserEmailAndYearAndMonth_thenEmptyList() {
+            // given
+            String email = "없는유저";
+
+            // when
+            List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email, BudgetServiceSearchReq.builder().build());
+
+            // then
+            assertThat(response).isEmpty();
+        }
+
     }
 
     @Nested
     class 예외테스트 {
 
-        @DisplayName("생성 - 사용자의 연도와 월이 중복되는 예산이 이미 존재할 경우 예외를 발생시킨다.")
+        @DisplayName("생성 - 사용자의 연도와 월, 카테고리가 중복되는 예산이 이미 존재할 경우 예외를 발생시킨다.")
         @Test
         void whenCreateBudget_thenThrowException() {
             // given
             BudgetServiceCreateReq request = BudgetServiceCreateReq.builder()
-                    .year(2021)
-                    .month(1)
-                    .userEmail("테스트")
+                    .year(setupBudget.year())
+                    .month(setupBudget.month())
+                    .userEmail(setupBudget.userEmail())
                     .amount(BigInteger.valueOf(100000))
-                    .categoryCode("카테고리코드")
+                    .categoryCode(setupBudget.categoryCode())
                     .build();
 
             // when, then

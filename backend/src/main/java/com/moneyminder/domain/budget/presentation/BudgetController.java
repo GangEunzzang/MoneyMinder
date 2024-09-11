@@ -2,6 +2,7 @@ package com.moneyminder.domain.budget.presentation;
 
 import com.moneyminder.domain.budget.application.BudgetService;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceCreateReq;
+import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdateReq;
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.presentation.dto.BudgetCreateReq;
@@ -56,17 +57,17 @@ public class BudgetController {
         return DataResponse.of(response);
     }
 
-    @GetMapping("/year")
-    public DataResponse<List<BudgetServiceRes>> findByYear(@CurrentUserEmail String email, @RequestParam Integer year) {
-        List<BudgetServiceRes> response = budgetService.getByUserEmailAndYear(email, year);
+    @GetMapping("/search")
+    public DataResponse<List<BudgetServiceRes>> findBySearch(
+            @CurrentUserEmail String email,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) String categoryCode
+    ) {
+        BudgetServiceSearchReq searchReq = BudgetServiceSearchReq.from(categoryCode, year, month);
 
+        List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email, searchReq);
         return DataResponse.of(response);
     }
 
-    @GetMapping("/year/month")
-    public DataResponse<BudgetServiceRes> findByYearAndMonth(@CurrentUserEmail String email, @RequestParam Integer year, @RequestParam Integer month) {
-        BudgetServiceRes response = budgetService.getByUserEmailAndYearAndMonth(email, year, month);
-
-        return DataResponse.of(response);
-    }
 }

@@ -32,8 +32,6 @@ public class BudgetService {
         BudgetServiceSearchReq search = BudgetServiceSearchReq.from(request.categoryCode(), request.year(), request.month());
         List<BudgetServiceRes> exists = budgetRepository.findByEmailAndSearch(request.userEmail(), search);
 
-        System.out.println("exists = " + exists.size());
-
         if (!exists.isEmpty()) {
             throw new BaseException(ResultCode.BUDGET_ALREADY_EXISTS);
         }

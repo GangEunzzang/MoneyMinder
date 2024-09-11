@@ -3,7 +3,7 @@ package com.moneyminder.domain.accountbook.application;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.category.domain.Category;
@@ -26,14 +26,14 @@ public class AccountBookService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public AccountBookServiceRes create(AccountBookServiceCreateReq createRequest) {
+    public AccountBookServiceDefaultRes create(AccountBookServiceCreateReq createRequest) {
         validateCategoryCode(createRequest.categoryCode());
         AccountBook accountBook = accountBookRepository.save(createRequest.toDomain());
         return mapToServiceResponse(accountBook);
     }
 
     @Transactional
-    public AccountBookServiceRes update(AccountBookServiceUpdateReq updateRequest) {
+    public AccountBookServiceDefaultRes update(AccountBookServiceUpdateReq updateRequest) {
         validateCategoryCode(updateRequest.categoryCode());
 
         AccountBook currentAccountBook = accountBookRepository.getById(updateRequest.accountId());
@@ -55,26 +55,26 @@ public class AccountBookService {
         accountBookRepository.delete(accountBook);
     }
 
-    public AccountBookServiceRes getById(Long accountId) {
+    public AccountBookServiceDefaultRes getById(Long accountId) {
         return accountBookRepository.findWithCategoryById(accountId)
                 .orElseThrow(() -> new BaseException(ResultCode.ACCOUNT_BOOK_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public List<AccountBookServiceRes> getByUserEmail(String email) {
+    public List<AccountBookServiceDefaultRes> getByUserEmail(String email) {
         return accountBookRepository.findWithCategoryByEmail(email);
     }
 
     @Transactional(readOnly = true)
-    public List<AccountBookServiceRes> getByUserEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+    public List<AccountBookServiceDefaultRes> getByUserEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
         return accountBookRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 
-    private AccountBookServiceRes mapToServiceResponse(AccountBook accountBook) {
+    private AccountBookServiceDefaultRes mapToServiceResponse(AccountBook accountBook) {
         Category category = categoryRepository.findByCategoryCode(accountBook.categoryCode())
                 .orElseGet(Category::defaultCategory);
 
-        return AccountBookServiceRes.fromDomain(accountBook, category);
+        return AccountBookServiceDefaultRes.fromDomain(accountBook, category);
     }
 
     private void validateCategoryCode(String categoryCode) {

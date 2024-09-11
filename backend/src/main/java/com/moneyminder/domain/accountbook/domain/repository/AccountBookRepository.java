@@ -1,7 +1,7 @@
 package com.moneyminder.domain.accountbook.domain.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 
 import java.util.List;
@@ -19,9 +19,9 @@ public interface AccountBookRepository {
 
     Optional<AccountBook> findById(Long id);
 
-    Optional<AccountBookServiceRes> findWithCategoryById(Long id);
+    Optional<AccountBookServiceDefaultRes> findWithCategoryById(Long id);
 
-    List<AccountBookServiceRes> findWithCategoryByEmail(String email);
+    List<AccountBookServiceDefaultRes> findWithCategoryByEmail(String email);
 
-    List<AccountBookServiceRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq);
+    List<AccountBookServiceDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq);
 }

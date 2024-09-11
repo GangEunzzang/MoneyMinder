@@ -6,6 +6,7 @@ import com.moneyminder.domain.budget.application.dto.response.QBudgetServiceRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class BudgetQueryRepositoryImpl implements BudgetQueryRepository {
     }
 
     public BooleanExpression eqCategoryCode(String categoryCode) {
-        return categoryCode != null ? budgetEntity.categoryCode.eq(categoryCode) : null;
+        return StringUtils.isBlank(categoryCode) ? null : budgetEntity.categoryCode.eq(categoryCode);
     }
 
     public BooleanExpression eqYear(Integer year) {

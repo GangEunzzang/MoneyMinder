@@ -4,7 +4,8 @@
       <div class="category-chart">
         <canvas id="categoryPieChart"></canvas>
         <div class="total-expense-label">
-          <p>총 지출: {{ totalExpense.toLocaleString() }} 원</p>
+          <p>총 예산 </p>
+          <p class="total-budget">₩{{ totalExpense.toLocaleString() }} </p>
         </div>
       </div>
     </div>
@@ -12,7 +13,7 @@
 
 <script>
 import { Chart, registerables } from 'chart.js';
-import BudgetAPI from '@/api/budget';  // budgetAPI를 import합니다.
+import BudgetAPI from '@/api/budget';
 Chart.register(...registerables);
 
 export default {
@@ -59,17 +60,21 @@ export default {
 
             // 차트와 카테고리 업데이트
             this.updateTopCategories();
-            this.createPieChart();
+            this.createDoughnutChart();
           })
           .catch(error => {
             console.error('Error fetching budget data:', error);
           });
     },
-    createPieChart() {
+
+    createDoughnutChart() {
+      // 카테고리 데이터를 amount 값에 따라 내림차순으로 정렬
+      const sortedCategoryData = [...this.categoryData].sort((a, b) => b.amount - a.amount);
+
       const ctx = document.getElementById('categoryPieChart').getContext('2d');
-      const categoryLabels = this.categoryData.map((item) => item.name);
-      const categoryAmounts = this.categoryData.map((item) => item.amount);
-      const categoryColors = this.getCategoryColors(this.categoryData.length);
+      const categoryLabels = sortedCategoryData.map((item) => item.name);
+      const categoryAmounts = sortedCategoryData.map((item) => item.amount);
+      const categoryColors = this.getCategoryColors(sortedCategoryData.length);
 
       this.chart = new Chart(ctx, {
         type: 'pie',
@@ -77,18 +82,33 @@ export default {
           labels: categoryLabels,
           datasets: [
             {
+              type: 'doughnut',
+              cutout: '80%',
               data: categoryAmounts,
               backgroundColor: categoryColors,
+              borderWidth: 0,
+              borderRadius: 10,
+              spacing: 3,
               hoverOffset: 4,
-            },
+            }
           ],
         },
         options: {
           plugins: {
+            legend: {
+              display: true,
+              position: 'left',  // 범례를 차트 왼쪽에 배치
+              labels: {
+                usePointStyle: true,  // 둥근 원 스타일
+                padding: 23,  // 범례 항목 간의 간격
+                color: '#cccaca',  // 범례 텍스트 색상
+                boxWidth: 20,
+              },
+            },
             tooltip: {
               callbacks: {
                 label: (tooltipItem) => {
-                  const category = this.categoryData[tooltipItem.dataIndex];
+                  const category = sortedCategoryData[tooltipItem.dataIndex];
                   return `${category.name}: ${category.amount.toLocaleString()} 원`;
                 },
               },
@@ -99,9 +119,11 @@ export default {
         },
       });
     },
+
     getCategoryColors(count) {
       const colors = [
-        '#ff6384', '#36a2eb', '#ffcd56', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384', '#36a2eb',
+        '#8977f5', '#bfb8f5', '#e4e3f6', '#4d4d55',
+        '#888891', '#c1c1c3',
       ];
       return colors.slice(0, count);
     },
@@ -119,7 +141,7 @@ export default {
       if (this.chart) {
         this.chart.destroy();
       }
-      this.createPieChart();
+      this.createDoughnutChart();
       this.updateTopCategories();
     },
   },
@@ -153,10 +175,17 @@ export default {
 .total-expense-label {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 65%;
   transform: translate(-50%, -50%);
   font-size: 16px;
   font-weight: bold;
   color: #333;
+  text-align: center;
+}
+
+.total-budget {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #ffffff;
 }
 </style>

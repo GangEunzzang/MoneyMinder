@@ -209,8 +209,8 @@ export default {
   border-radius: 50px;
   padding: 20px;
   border: 2px solid #4f4f4f;
-  width: 25rem;
-  height: 22rem;
+  width: 22rem;
+  height: 20rem;
   margin: 0 1.5rem 0 3rem;
 }
 
@@ -228,20 +228,23 @@ export default {
 }
 
 .income-expense-container h3 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #ccc;
   text-align: left;
-  margin-bottom: 2.3rem;
+  margin-bottom: 2.1rem;
+}
+
+.statistics-box-income {
+  margin-bottom: 0.5rem;
 }
 
 .statistics-box-income, .statistics-box-expense {
   background-color: #111114;
   border-radius: 30px;
-  height: 11rem;
-  padding: 0 0 10px 2.1rem;
-  margin-bottom: 20px;
+  width: 17rem;
+  height: 9.3rem;
+  padding: 0 0 26px 2.2rem;
   border: 2px solid #4f4f4f;
-  overflow: auto;
 }
 
 .statistics-box-income p, .statistics-box-expense p {
@@ -251,9 +254,9 @@ export default {
 
 .percentage-box {
   display: inline-block;
-  padding: 5px;
+  padding: 5px 7px;
   border-radius: 20px;
-  width: 4.0rem;
+  width: 3.8rem;
 }
 
 .percentage-box span {
@@ -270,9 +273,9 @@ export default {
   border-radius: 50px;
   padding: 20px;
   border: 2px solid #4f4f4f;
-  width: 25rem;
-  height: 22rem;
-  margin: 0 1.5rem 0 3rem;
+  width: 20rem;
+  height: 20rem;
+  margin: 0 1.5rem 0 1rem;
 }
 
 .statistics-box-budget h3 {
@@ -296,7 +299,6 @@ export default {
 
 .arrow-icon {
   font-size: 0.85rem !important;
-  margin-right: 5px;
 }
 
 .vs-last-month {

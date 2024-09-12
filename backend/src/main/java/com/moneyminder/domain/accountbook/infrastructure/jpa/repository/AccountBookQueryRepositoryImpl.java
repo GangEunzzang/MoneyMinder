@@ -1,7 +1,7 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceDefaultRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,7 +20,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public AccountBookServiceDefaultRes findWithCategoryById(Long id) {
+    public AccountBookDefaultRes findWithCategoryById(Long id) {
         return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
@@ -37,7 +37,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public List<AccountBookServiceDefaultRes> findWithCategoryByEmail(String email) {
+    public List<AccountBookDefaultRes> findWithCategoryByEmail(String email) {
         return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
@@ -54,7 +54,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public List<AccountBookServiceDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+    public List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
 
         return queryFactory.select(new QAccountBookServiceDefaultRes(
                         accountBookEntity.id,

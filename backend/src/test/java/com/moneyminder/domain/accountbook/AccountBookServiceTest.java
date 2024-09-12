@@ -4,7 +4,7 @@ import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.category.domain.Category;
@@ -129,7 +129,7 @@ public class AccountBookServiceTest {
         @Test
         void whenGetAccountBookById_thenSuccess() {
             // when
-            AccountBookServiceDefaultRes accountBook = accountBookService.getById(1L);
+            AccountBookDefaultRes accountBook = accountBookService.getById(1L);
 
             // then
             assertThat(accountBook.accountId()).isEqualTo(1L);
@@ -149,10 +149,10 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmail("테스트이메일");
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmail("테스트이메일");
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(1);
+            assertThat(accountBookDefaultResList).hasSize(1);
         }
 
         @DisplayName("조회 - 가계부 조회시 카테고리가 없는 경우 기본 카테고리로 대체한다.")
@@ -168,21 +168,21 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmail("테스트이메일");
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmail("테스트이메일");
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
-            assertThat(accountBookServiceDefaultResList.get(1).categoryCode()).isEqualTo(Category.DEFAULT_CATEGORY_CODE);
+            assertThat(accountBookDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList.get(1).categoryCode()).isEqualTo(Category.DEFAULT_CATEGORY_CODE);
         }
 
         @DisplayName("조회 - 이메일로 가계부 조회시 결과가 없으면 빈 리스트를 반환한다.")
         @Test
         void whenGetAccountBookByEmail_thenEmptyList() {
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmail("다른이메일");
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmail("다른이메일");
 
             // then
-            assertThat(accountBookServiceDefaultResList).isEmpty();
+            assertThat(accountBookDefaultResList).isEmpty();
         }
 
         @DisplayName("조회 - 검색조건에 카테고리 코드가 없는 경우 전체 카테고리로 조회한다.")
@@ -198,13 +198,13 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
                     AccountBookServiceSearchReq.builder().build()
             );
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList).hasSize(2);
         }
 
         @DisplayName("조회 - 검색조건에 카테고리 코드가 있는 경우 해당 카테고리로 조회한다.")
@@ -220,11 +220,11 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일", AccountBookServiceSearchReq.builder().categoryCode("카테고리코드2").build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(1);
+            assertThat(accountBookDefaultResList).hasSize(1);
         }
 
         @DisplayName("조회 - 검색조건에 메모가 있는 경우 해당 메모로 조회한다.")
@@ -240,11 +240,11 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일", AccountBookServiceSearchReq.builder().memo("메모2").build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(1);
+            assertThat(accountBookDefaultResList).hasSize(1);
         }
 
         @DisplayName("조회 - 검색조건에 시작일과 종료일이 있는 경우 해당 기간으로 조회한다.")
@@ -260,13 +260,13 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now().minusDays(1))
                             .endDate(LocalDate.now().plusDays(1)).build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList).hasSize(2);
         }
 
         @DisplayName("조회 - 검색조건에 시작일과 종료일이 없는 경우 전체 기간으로 조회한다.")
@@ -282,12 +282,12 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(null).endDate(null).build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList).hasSize(2);
         }
 
         @DisplayName("조회 - 검색조건에 시작일이 종료일보다 큰 경우 빈 리스트를 반환한다.")
@@ -303,13 +303,13 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now().plusDays(1))
                             .endDate(LocalDate.now()).build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).isEmpty();
+            assertThat(accountBookDefaultResList).isEmpty();
         }
 
         @DisplayName("조회 - 검색조건에 시작일이 없는 경우 종료일까지 조회한다.")
@@ -325,11 +325,11 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일", AccountBookServiceSearchReq.builder().endDate(LocalDate.now()).build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList).hasSize(2);
         }
 
         @DisplayName("조회 - 검색조건에 종료일이 없는 경우 시작일부터 조회한다.")
@@ -345,12 +345,12 @@ public class AccountBookServiceTest {
                     .build());
 
             // when
-            List<AccountBookServiceDefaultRes> accountBookServiceDefaultResList = accountBookService.getByUserEmailAndSearch(
+            List<AccountBookDefaultRes> accountBookDefaultResList = accountBookService.getByUserEmailAndSearch(
                     "테스트이메일",
                     AccountBookServiceSearchReq.builder().startDate(LocalDate.now()).build());
 
             // then
-            assertThat(accountBookServiceDefaultResList).hasSize(2);
+            assertThat(accountBookDefaultResList).hasSize(2);
         }
 
     }

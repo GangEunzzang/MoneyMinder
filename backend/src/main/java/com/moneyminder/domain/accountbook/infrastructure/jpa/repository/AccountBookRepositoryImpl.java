@@ -1,7 +1,7 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookServiceDefaultRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookEntity;
@@ -46,17 +46,17 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     }
 
     @Override
-    public Optional<AccountBookServiceDefaultRes> findWithCategoryById(Long id) {
+    public Optional<AccountBookDefaultRes> findWithCategoryById(Long id) {
         return Optional.ofNullable(jpaRepository.findWithCategoryById(id));
     }
 
     @Override
-    public List<AccountBookServiceDefaultRes> findWithCategoryByEmail(String email) {
+    public List<AccountBookDefaultRes> findWithCategoryByEmail(String email) {
         return jpaRepository.findWithCategoryByEmail(email);
     }
 
     @Override
-    public List<AccountBookServiceDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
+    public List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
         return jpaRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 

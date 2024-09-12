@@ -1,48 +1,61 @@
-
 <template>
-  <div class="monthly-view">
-    <h2>월별 지출</h2>
+  <div class="dashboard-basic">
+    <h2>대시보드</h2>
 
-    <div class="month-navigation">
-      <button @click="prevMonth">◀</button>
-      <span>{{ formattedMonth }}</span>
-      <button @click="nextMonth">▶</button>
+    <div class="date-picker-icon" @click="toggleDatePicker">
+      <font-awesome-icon icon="calendar-alt" class="icon-style"/>
     </div>
 
-    <!-- 로딩이 완료되면 캘린더 및 데이터 표시 -->
-    <div v-if="!isLoading">
-      <table class="calendar-table">
-        <thead>
-        <tr>
-          <th v-for="header in headers" :key="header">{{ header }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="row in rows" :key="row.id">
-          <td v-for="column in row.columns" :key="column.key">
-            <div>{{ column.render }}</div>
-            <div v-if="column.render && transactionsMap[column.render]" class="small-text">
-              <span v-if="transactionsMap[column.render].income > 0" class="income-text">
-                + {{ transactionsMap[column.render].income.toLocaleString() }}
-              </span>
-              <br v-if="transactionsMap[column.render].income > 0 && transactionsMap[column.render].expense > 0">
-              <span v-if="transactionsMap[column.render].expense > 0" class="expense-text">
-                - {{ transactionsMap[column.render].expense.toLocaleString() }}
-              </span>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+    <div v-if="showDatePicker" class="date-picker-container">
+      <v-date-picker
+          v-model="selectedDate"
+          is-inline
+          type="month"
+          @update:modelValue="handleMonthChange"
+      />
+    </div>
 
-      <div class="summary-box">
-        <div class="summary-item">
-          <span>총 지출</span>
-          <span class="expense-amount">{{ totalExpense.toLocaleString() }}원</span>
+    <div v-if="selectedDate" class="selected-date-display">
+      {{ formattedMonth }}
+    </div>
+
+    <div class="statistics-container">
+      <div class="statistics-box-daily">
+        <h3>일별 지출</h3>
+        <MonthlyView :currentYear="selectedYear" :currentMonth="selectedMonth"/>
+      </div>
+
+      <div class="income-expense-container">
+        <div class="statistics-box-income">
+          <h3> 총 수입</h3>
+          <p class="total-money" v-if="totalIncome !== null">  ₩{{ totalIncome.toLocaleString() }}</p>
+          <p v-else>수입 데이터를 불러오는 중...</p>
+          <div class="percentage-box" :class="incomePercentage >= 0 ? 'positive-bg' : 'negative-bg'" v-if="incomePercentage !== null">
+            <font-awesome-icon
+                class ="arrow-icon"
+                :icon="incomePercentage >= 0 ? 'arrow-up' : 'arrow-down'"
+            />
+            <span>
+              {{ incomePercentage > 0 ? '+' : '' }}  {{ incomePercentage.toFixed(1) }}%
+            </span>
+          </div>
+          <span class="vs-last-month">vs 지난 달</span>
         </div>
-        <div class="summary-item">
-          <span>총 수입</span>
-          <span class="income-amount">{{ totalIncome.toLocaleString() }}원</span>
+
+        <div class="statistics-box-expense">
+          <h3>총 지출</h3>
+          <p class="total-money" v-if="totalExpense !== null">  ₩{{ totalExpense.toLocaleString() }}</p>
+          <p v-else>지출 데이터를 불러오는 중...</p>
+          <div class="percentage-box" :class="expensePercentage >= 0 ? 'negative-bg' : 'positive-bg'" v-if="expensePercentage !== null">
+            <font-awesome-icon
+                class ="arrow-icon"
+                :icon="expensePercentage >= 0 ? 'arrow-up' : 'arrow-down'"
+            />
+            <span>
+              {{ expensePercentage > 0 ? '+' : '' }}{{ expensePercentage.toFixed(1) }}%
+            </span>
+          </div>
+          <span class="vs-last-month">vs 지난 달</span>
         </div>
       </div>
     </div>
@@ -50,257 +63,215 @@
 </template>
 
 <script>
-import AccountBookAPI from "@/api/accountBook"; // 가계부 API 호출 함수 임포트
+import MonthlyView from "@/components/dashboard/MonthlyView.vue";
+import AccountAPI from "@/api/accountBook";
 
 export default {
+  components: {
+    MonthlyView,
+  },
   data() {
-    const today = new Date();
     return {
-      currentYear: today.getFullYear(),
-      currentMonth: today.getMonth() + 1, // 월은 0부터 시작하므로 1을 더해줌
-      headers: ['일', '월', '화', '수', '목', '금', '토'], // 요일 헤더
-      transactions: [], // 날짜별 수입/지출 기록
-      transactionsMap: {}, // 날짜별 수입/지출 맵
-      totalIncome: 0,  // 총 수입
-      totalExpense: 0,  // 총 지출
-      isLoading: false, // 로딩 상태 추가
+      selectedDate: new Date(),
+      showDatePicker: false,
+      totalIncome: null,
+      totalExpense: null,
+      previousMonthIncome: null,
+      previousMonthExpense: null,
+      incomePercentage: null,
+      expensePercentage: null
     };
   },
   computed: {
     formattedMonth() {
-      return `${this.currentYear}. ${this.currentMonth}`;
+      return `${this.selectedDate.getFullYear()}-${(this.selectedDate.getMonth() + 1).toString().padStart(2, '0')}`;
     },
-
-    rows() {
-      return this.generateCalendarRows(this.currentYear, this.currentMonth);
+    selectedYear() {
+      return this.selectedDate.getFullYear();
+    },
+    selectedMonth() {
+      return this.selectedDate.getMonth() + 1;
+    },
+    previousYear() {
+      return this.selectedMonth === 1 ? this.selectedYear - 1 : this.selectedYear;
+    },
+    previousMonth() {
+      return this.selectedMonth === 1 ? 12 : this.selectedMonth - 1;
     },
   },
   methods: {
-    prevMonth() {
-      if (this.currentMonth === 1) {
-        this.currentMonth = 12;
-        this.currentYear--;
-      } else {
-        this.currentMonth--;
-      }
-      this.fetchTransactions();
+    toggleDatePicker() {
+      this.showDatePicker = !this.showDatePicker;
     },
-    nextMonth() {
-      if (this.currentMonth === 12) {
-        this.currentMonth = 1;
-        this.currentYear++;
-      } else {
-        this.currentMonth++;
-      }
-      this.fetchTransactions();
+    handleMonthChange(date) {
+      this.selectedDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      this.showDatePicker = false;
+      this.fetchMonthSummary();
     },
-    getMonthInfo(year, month) {
-      const startDay = new Date(year, month - 1, 1).getDay();
-      const endDate = new Date(year, month, 0).getDate();
-      return {startDay, endDate};
-    },
-    calendarGenerator(year, month) {
-      const {endDate, startDay} = this.getMonthInfo(year, month);
-      const calendar = [];
-      let nowDate = 1; // 날짜는 1일부터 시작
-
-      for (let i = 0; i < 6; i++) { // 6주까지 루프 돌도록 설정 (최대 6주)
-        const nowWeek = [];
-        for (let j = 0; j < 7; j++) {
-          if (i === 0 && j < startDay) {
-            nowWeek.push(0);
-          } else if (nowDate > endDate) {
-            nowWeek.push(0);
-          } else {
-            nowWeek.push(nowDate); // 현재 날짜 추가
-            nowDate++;
-          }
-        }
-        calendar.push(nowWeek);
-      }
-
-      return calendar;
-    },
-    generateCalendarRows(year, month) {
-      const datas = this.calendarGenerator(year, month);
-      const components = [];
-
-      datas.forEach((week, idx) => {
-        const weeks = [];
-
-        week.forEach((date, idx) => {
-          weeks.push({
-            key: date ? date : `empty_${idx}`,
-            render: date ? date : '',
+    fetchMonthSummary() {
+      AccountAPI.getMonthSummary(this.selectedYear, this.selectedMonth)
+          .then(response => {
+            this.totalIncome = response.monthTotalIncome;
+            this.totalExpense = response.monthTotalExpense;
+            this.fetchPreviousMonthSummary();
+          })
+          .catch(error => {
+            console.error('Error fetching month summary:', error);
           });
-        });
-
-        const weekData = {
-          id: `week_${idx}`,
-          columns: weeks,
-        };
-
-        components.push(weekData);
-      });
-
-      return components;
     },
-    fetchTransactions() {
-      this.isLoading = true;
-      const startDate = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-01`;
-      const endDate = new Date(this.currentYear, this.currentMonth, 0).toISOString().split('T')[0];
-
-      AccountBookAPI.getList(null, "", startDate, endDate)
-      .then((response) => {
-        this.transactions = response;
-        this.createTransactionMap();
-      })
-      .finally(() => {
-        this.isLoading = false;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchPreviousMonthSummary() {
+      AccountAPI.getMonthSummary(this.previousYear, this.previousMonth)
+          .then(response => {
+            this.previousMonthIncome = response.monthTotalIncome;
+            this.previousMonthExpense = response.monthTotalExpense;
+            this.calculatePercentageChanges();
+          })
+          .catch(error => {
+            console.error('Error fetching previous month summary:', error);
+          });
     },
+    calculatePercentageChanges() {
+      if (this.previousMonthIncome > 0) {
+        this.incomePercentage = ((this.totalIncome - this.previousMonthIncome) / this.previousMonthIncome) * 100;
+      } else {
+        this.incomePercentage = 0;
+      }
 
-    createTransactionMap() {
-      let incomeSum = 0;
-      let expenseSum = 0;
-      const map = {};
-
-      this.transactions.forEach((transaction) => {
-        const date = new Date(transaction.transactionDate).getDate();
-        if (!map[date]) {
-          map[date] = {income: 0, expense: 0};
-        }
-        if (transaction.categoryType === "EXPENSE") {
-          map[date].expense += transaction.amount;
-          expenseSum += transaction.amount;  // 총 지출 계산
-        } else {
-          map[date].income += transaction.amount;
-          incomeSum += transaction.amount;  // 총 수입 계산
-        }
-      });
-
-      this.transactionsMap = map;
-      this.totalIncome = incomeSum;  // 계산한 총 수입 저장
-      this.totalExpense = expenseSum;  // 계산한 총 지출 저장
+      if (this.previousMonthExpense > 0) {
+        this.expensePercentage = ((this.totalExpense - this.previousMonthExpense) / this.previousMonthExpense) * 100;
+      } else {
+        this.expensePercentage = 0;
+      }
     }
   },
   mounted() {
-    this.fetchTransactions();
-  },
-}
+    this.fetchMonthSummary();
+  }
+};
 </script>
 
 <style scoped>
-.monthly-view {
-  padding: 20px;
-  background-color: #000000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 100%
-}
-
-.monthly-view h2 {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
-  font-weight: 600;
-  text-align: center;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-}
-
-.month-navigation {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.month-navigation button {
-  background: none;
-  border: none;
-  font-size: 1.0rem;
-  cursor: pointer;
-}
-
-.month-navigation span {
-  font-size: 1.1rem;
-  margin: 0 5px;
-}
-
-.calendar-table {
-  width: 95%;
-  border-collapse: collapse;
-  margin: auto;
-  background-color: white;
-  border-radius: 25px;
-  height: 75%;
-}
-
-.calendar-table th {
-  padding: 40px 5px 25px 0;
-  text-align: center;
-  font-size: 1.0rem;
-  font-weight: 200;
-  color: rgb(151, 151, 152);
-}
-
-.calendar-table td {
-  font-size: 1.0rem;
-  font-weight: 300;
-  padding: 25px 5px 0 0;
-  text-align: center;
-  vertical-align: middle;
-  height: 50px;
-  position: relative;
-}
-
-.small-text {
-  font-size: 0.65rem;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 6px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.income-text {
-  color: #0368af;
-}
-
-.expense-text {
-  color: red;
-}
-
-.summary-box {
-  display: flex;
-  justify-content: space-evenly;
-  padding: 10px;
-  background-color: #529cf6;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
-  width: 50%;
-}
-
-.summary-item {
+.dashboard-basic {
   display: flex;
   flex-direction: column;
+  background-color: #141418;
+  color: #fff;
+  padding: 20px;
+  height: 100vh;
+}
+
+.date-picker-icon {
+  display: flex;
+  justify-content: center;
   align-items: center;
+  width: 40px;
+  height: 40px;
+  background-color: #25252b;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
-.summary-item span {
-  font-size: 0.85rem;
-  color: #ffffff;
+.icon-style {
+  color: white;
+  font-size: 1.5rem;
 }
 
-.expense-amount, .income-amount {
-  color: #ff4d4d;
-  font-weight: bold;
-  font-size: 1.0rem;
-  margin-top: 8px;
+.date-picker-container {
+  position: absolute;
+  z-index: 100;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
 }
 
+.selected-date-display {
+  margin-top: 10px;
+  color: #ccc;
+}
+
+.statistics-container {
+  display: flex;
+}
+
+.statistics-box-daily {
+  background-color: #111114;
+  border-radius: 50px;
+  padding: 20px;
+  border: 2px solid #4f4f4f;
+  width: 25rem;
+  height: 22rem;
+  margin: 0 1.5rem 0 3rem;
+}
+
+.statistics-box-daily h3 {
+  color: #ccc;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.income-expense-container {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+}
+
+.income-expense-container h3 {
+  font-size: 1.3rem;
+  color: #ccc;
+  text-align: left;
+  margin-bottom: 2.3rem;
+}
+
+.statistics-box-income, .statistics-box-expense {
+  background-color: #111114;
+  border-radius: 30px;
+  height: 11rem;
+  padding: 0 0 10px 2.1rem;
+  margin-bottom: 20px;
+  border: 2px solid #4f4f4f;
+  overflow: auto;
+}
+
+.statistics-box-income p, .statistics-box-expense p {
+  color: #dcdbdb;
+  font-size: 1.1rem;
+}
+
+.percentage-box {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 20px;
+  width: 4.0rem;
+}
+
+.percentage-box span {
+  font-size: 0.75rem;
+}
+
+.total-money {
+  font-size: 1.5rem !important;
+}
+
+.positive-bg {
+  background-color: #151a16;
+  color: #27b737;
+}
+
+.negative-bg {
+  background-color: #1f1312;
+  color: #e1212e;
+}
+
+.arrow-icon {
+  font-size: 0.85rem !important;
+  margin-right: 5px;
+}
+
+.vs-last-month {
+  margin-left: 5px;
+  color: #858383;
+  font-size: 0.75rem;
+}
 </style>

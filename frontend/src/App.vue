@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view /> <!-- 라우팅된 페이지를 여기서 렌더링 -->
+    <router-view />
   </div>
 </template>
 

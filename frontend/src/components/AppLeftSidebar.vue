@@ -134,7 +134,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 180px;
+  width: 12rem;
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -174,7 +174,7 @@ a {
 
 .sidebar li {
   padding: 10px 15px;
-  width: 120%;
+  width: 140%;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, border-radius 0.3s ease;
   margin: 20px 0;

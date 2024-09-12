@@ -1,13 +1,15 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
-import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookServiceDefaultRes;
+import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookDefaultRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
 
     @Override
     public AccountBookDefaultRes findWithCategoryById(Long id) {
-        return queryFactory.select(new QAccountBookServiceDefaultRes(
+        return queryFactory.select(new QAccountBookDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,
@@ -38,7 +40,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
 
     @Override
     public List<AccountBookDefaultRes> findWithCategoryByEmail(String email) {
-        return queryFactory.select(new QAccountBookServiceDefaultRes(
+        return queryFactory.select(new QAccountBookDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,
@@ -56,7 +58,7 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     @Override
     public List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
 
-        return queryFactory.select(new QAccountBookServiceDefaultRes(
+        return queryFactory.select(new QAccountBookDefaultRes(
                         accountBookEntity.id,
                         accountBookEntity.amount,
                         accountBookEntity.transactionDate,
@@ -76,6 +78,20 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
                 .orderBy(accountBookEntity.id.desc())
                 .limit(20)
                 .fetch();
+    }
+
+    @Override
+    public BigInteger findMonthlyTotalByCategory(String email, AccountBookMonthSummaryReq summaryReq) {
+        return queryFactory.select(accountBookEntity.amount.sum())
+                .from(accountBookEntity)
+                .leftJoin(categoryEntity)
+                .on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+                .where(
+                        accountBookEntity.userEmail.eq(email),
+                        accountBookEntity.transactionDate.year().eq(summaryReq.year()),
+                        accountBookEntity.transactionDate.month().eq(summaryReq.month()),
+                        categoryEntity.categoryType.eq(summaryReq.categoryType()))
+                .fetchOne();
     }
 
     public BooleanExpression eqCategoryCode(String categoryCode) {

@@ -1,5 +1,6 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
@@ -10,6 +11,7 @@ import com.moneyminder.global.exception.ResultCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +62,10 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
         return jpaRepository.findWithCategoryByEmailAndSearch(email, searchReq);
     }
 
+    @Override
+    public BigInteger findMonthlyTotalByCategory(String email, AccountBookMonthSummaryReq request) {
+        return jpaRepository.findMonthlyTotalByCategory(email, request);
+    }
 
 
 }

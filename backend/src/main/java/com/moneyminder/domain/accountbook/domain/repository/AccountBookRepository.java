@@ -1,9 +1,11 @@
 package com.moneyminder.domain.accountbook.domain.repository;
 
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +26,6 @@ public interface AccountBookRepository {
     List<AccountBookDefaultRes> findWithCategoryByEmail(String email);
 
     List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq);
+
+    BigInteger findMonthlyTotalByCategory(String email, AccountBookMonthSummaryReq request);
 }

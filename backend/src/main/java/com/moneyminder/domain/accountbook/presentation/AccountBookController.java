@@ -5,6 +5,8 @@ import com.moneyminder.domain.accountbook.application.dto.request.AccountBookSer
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMonthSummaryRes;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYearSummaryRes;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookUpdateReq;
 import com.moneyminder.global.annotaion.CurrentUserEmail;
@@ -76,12 +78,21 @@ public class AccountBookController {
         return DataResponse.of(response);
     }
 
-//    @GetMapping("/yearly-summary")
-//    public DataResponse<T> getYearlySummary(
-//            @CurrentUserEmail String email,
-//            @RequestParam Long year
-//    ) {
-//        return null;
-//    }
+    @GetMapping("/year-summary")
+    public DataResponse<AccountBookYearSummaryRes> getYearlySummary(
+            @CurrentUserEmail String email,
+            @RequestParam Integer year
+    ) {
+        return DataResponse.of(accountBookService.getYearSummary(email, year));
+    }
+
+    @GetMapping("/month-summary")
+    public DataResponse<AccountBookMonthSummaryRes> getMonthlySummary(
+            @CurrentUserEmail String email,
+            @RequestParam Integer year,
+            @RequestParam Integer month
+    ) {
+        return DataResponse.of(accountBookService.getMonthSummary(email, year, month));
+    }
 
 }

@@ -3,9 +3,9 @@
 
       <div class="category-chart">
         <canvas id="categoryPieChart"></canvas>
-        <div class="total-expense-label">
+        <div class="total-budget-label">
           <p>총 예산 </p>
-          <p class="total-budget">₩{{ totalExpense.toLocaleString() }} </p>
+          <p class="total-budget">₩{{ totalBudget.toLocaleString() }} </p>
         </div>
       </div>
     </div>
@@ -30,8 +30,7 @@ export default {
     return {
       chart: null,
       topCategories: [],
-      totalIncome: 0,  // 총 수입을 저장할 변수
-      totalExpense: 0,  // 총 지출을 저장할 변수
+      totalBudget: 0,  // 총 지출을 저장할 변수
       categoryData: [],  // 카테고리별 데이터를 저장할 변수
     };
   },
@@ -50,13 +49,7 @@ export default {
               type: item.categoryType
             }));
 
-            this.totalIncome = budgetData
-                .filter(item => item.categoryType === 'INCOME')
-                .reduce((acc, item) => acc + item.amount, 0);
-
-            this.totalExpense = budgetData
-                .filter(item => item.categoryType === 'EXPENSE')
-                .reduce((acc, item) => acc + item.amount, 0);
+            this.totalBudget = budgetData.reduce((acc, item) => acc + item.amount, 0);
 
             // 차트와 카테고리 업데이트
             this.updateTopCategories();
@@ -69,7 +62,7 @@ export default {
 
     createDoughnutChart() {
       // 카테고리 데이터를 amount 값에 따라 내림차순으로 정렬
-      const sortedCategoryData = [...this.categoryData].sort((a, b) => b.amount - a.amount);
+      const sortedCategoryData = [...this.categoryData].sort((a, b) => b.amount - a.amount).slice(0, 6);
 
       const ctx = document.getElementById('categoryPieChart').getContext('2d');
       const categoryLabels = sortedCategoryData.map((item) => item.name);
@@ -172,7 +165,7 @@ export default {
   height: 300px;
 }
 
-.total-expense-label {
+.total-budget-label {
   position: absolute;
   top: 50%;
   left: 65%;

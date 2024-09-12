@@ -58,17 +58,25 @@
           <span class="vs-last-month">vs 지난 달</span>
         </div>
       </div>
+
+      <div class="statistics-box-budget">
+        <h3>예산</h3>
+        <MonthlyBudget :currentYear="selectedYear" :currentMonth="selectedMonth"/>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
 import MonthlyView from "@/components/dashboard/MonthlyView.vue";
+import MonthlyBudget from "@/components/dashboard/MonthlyBudget.vue";
 import AccountAPI from "@/api/accountBook";
 
 export default {
   components: {
     MonthlyView,
+    MonthlyBudget
   },
   data() {
     return {
@@ -79,7 +87,7 @@ export default {
       previousMonthIncome: null,
       previousMonthExpense: null,
       incomePercentage: null,
-      expensePercentage: null
+      expensePercentage: null,
     };
   },
   computed: {
@@ -143,6 +151,8 @@ export default {
         this.expensePercentage = 0;
       }
     }
+
+
   },
   mounted() {
     this.fetchMonthSummary();
@@ -253,6 +263,26 @@ export default {
 .total-money {
   font-size: 1.5rem !important;
 }
+
+/** 예산 */
+.statistics-box-budget {
+  background-color: #111114;
+  border-radius: 50px;
+  padding: 20px;
+  border: 2px solid #4f4f4f;
+  width: 25rem;
+  height: 22rem;
+  margin: 0 1.5rem 0 3rem;
+}
+
+.statistics-box-budget h3 {
+  color: #ccc;
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+/** 예산 끝*/
 
 .positive-bg {
   background-color: #151a16;

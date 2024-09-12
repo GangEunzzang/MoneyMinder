@@ -1,7 +1,7 @@
 export const categoryRoutes = [
     {
-        path: '/category-management',
-        name: 'categoryManagement',
-        component: () => import('@/components/category/CategoryManagement.vue'),
+        path: '/category',
+        name: 'category',
+        component: () => import('@/components/category/CategoryBasic.vue'),
     },
 ];

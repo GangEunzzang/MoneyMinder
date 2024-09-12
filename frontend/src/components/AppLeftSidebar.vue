@@ -63,25 +63,25 @@ export default {
           name: 'Dashboard',
           label: '대시보드',
           icon: 'home',
-          route: '/monthly-view', // 바로 이동할 경로 설정
+          route: '/dashboard',
         },
         {
           name: 'transactions',
           label: '거래내역',
           icon: 'wallet',
-          route: '/transaction-list', // 바로 이동할 경로 설정
+          route: '/transaction'
         },
         {
           name: 'categories',
           label: '카테고리',
           icon: 'folder-open',
-          route: '/category-management', // 바로 이동할 경로 설정
+          route: '/category',
         },
         {
           name: 'budget',
           label: '예산',
           icon: 'money-bill-wave',
-          route: '/budget-management', // 바로 이동할 경로 설정
+          route: '/budget',
         },
       ],
     };

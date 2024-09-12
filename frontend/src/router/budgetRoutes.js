@@ -1,8 +1,8 @@
 export const budgetRoutes = [
     {
-        path: '/budget-management',
-        name: 'budgetManagement',
-        component: () => import('@/components/budget/BudgetManagement.vue'),
+        path: '/budget',
+        name: 'budget',
+        component: () => import('@/components/budget/BudgetBasic.vue'),
     },
     {
         path: '/budget-detail/:year/:month',

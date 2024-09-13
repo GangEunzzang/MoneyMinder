@@ -1,19 +1,24 @@
 <template>
   <div class="dashboard-budget">
 
-      <div class="category-chart">
-        <canvas id="categoryPieChart"></canvas>
-        <div class="total-budget-label">
-          <p>총 예산 </p>
-          <p class="total-budget">₩{{ totalBudget.toLocaleString() }} </p>
-        </div>
+    <div v-if="totalBudget === 0" class="no-data-message">
+      <p>데이터가 없습니다.</p>
+    </div>
+
+    <div v-else class="category-chart">
+      <canvas id="categoryPieChart"></canvas>
+      <div class="total-budget-label">
+        <p>총 예산 </p>
+        <p class="total-budget">₩{{ totalBudget.toLocaleString() }} </p>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { Chart, registerables } from 'chart.js';
 import BudgetAPI from '@/api/budget';
+
 Chart.register(...registerables);
 
 export default {
@@ -26,7 +31,8 @@ export default {
       type: Number,
       required: true
     }
-  },  data() {
+  },
+  data() {
     return {
       chart: null,
       topCategories: [],
@@ -35,39 +41,47 @@ export default {
     };
   },
   methods: {
-    // budgetAPI를 사용하여 데이터 가져오기
     fetchBudgetData() {
-      BudgetAPI.getList('', this.year, this.month)
-          .then(response => {
-            console.log(response);
-            const budgetData = response;
+      BudgetAPI.getList('', this.currentYear, this.currentMonth)
+      .then(response => {
+        const budgetData = response;
 
-            // 카테고리 데이터 필터링 및 수입/지출 계산
-            this.categoryData = budgetData.map(item => ({
-              name: item.categoryName,
-              amount: item.amount,
-              type: item.categoryType
-            }));
+        this.categoryData = budgetData.map(item => ({
+          name: item.categoryName,
+          amount: item.amount,
+          type: item.categoryType
+        }));
 
-            this.totalBudget = budgetData.reduce((acc, item) => acc + item.amount, 0);
+        this.totalBudget = budgetData.reduce((acc, item) => acc + item.amount, 0);
 
-            // 차트와 카테고리 업데이트
-            this.updateTopCategories();
-            this.createDoughnutChart();
-          })
-          .catch(error => {
-            console.error('Error fetching budget data:', error);
-          });
+        // Vue의 nextTick을 사용하여 DOM이 완전히 렌더링된 후에 차트 생성
+        this.$nextTick(() => {
+          if(this.totalBudget === 0) {
+            return;
+          }
+          this.updateTopCategories();
+          this.createDoughnutChart();
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching budget data:', error);
+      });
     },
 
     createDoughnutChart() {
-      // 카테고리 데이터를 amount 값에 따라 내림차순으로 정렬
-      const sortedCategoryData = [...this.categoryData].sort((a, b) => b.amount - a.amount).slice(0, 6);
+      const sortedCategoryData = [...this.categoryData]
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 6);
 
       const ctx = document.getElementById('categoryPieChart').getContext('2d');
       const categoryLabels = sortedCategoryData.map((item) => item.name);
       const categoryAmounts = sortedCategoryData.map((item) => item.amount);
       const categoryColors = this.getCategoryColors(sortedCategoryData.length);
+
+      // 차트가 이미 존재할 경우 안전하게 파괴
+      if (this.chart) {
+        this.chart.destroy();
+      }
 
       this.chart = new Chart(ctx, {
         type: 'pie',
@@ -90,11 +104,11 @@ export default {
           plugins: {
             legend: {
               display: true,
-              position: 'left',  // 범례를 차트 왼쪽에 배치
+              position: 'left',
               labels: {
-                usePointStyle: true,  // 둥근 원 스타일
-                padding: 23,  // 범례 항목 간의 간격
-                color: '#cccaca',  // 범례 텍스트 색상
+                usePointStyle: true,
+                padding: 23,
+                color: '#cccaca',
                 boxWidth: 20,
               },
             },
@@ -122,41 +136,26 @@ export default {
     },
     updateTopCategories() {
       this.topCategories = [...this.categoryData]
-          .sort((a, b) => b.amount - a.amount)
-          .slice(0, 6);
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 6);
     },
   },
   mounted() {
-    this.fetchBudgetData();  // 컴포넌트가 마운트될 때 데이터 가져오기
+    this.fetchBudgetData();
   },
   watch: {
-    categoryData() {
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      this.createDoughnutChart();
-      this.updateTopCategories();
+    currentYear() {
+      this.fetchBudgetData();
     },
+    currentMonth() {
+      this.fetchBudgetData();
+    }
   },
 };
 </script>
 
 <style scoped>
 .dashboard-budget {
-
-}
-
-.top-categories h3 {
-  margin-bottom: 15px;
-}
-
-.top-categories ul {
-  list-style: none;
-  padding: 0;
-}
-
-.top-categories li {
-  margin-bottom: 10px;
 }
 
 .category-chart {
@@ -180,5 +179,14 @@ export default {
   font-size: 1.2rem;
   margin-top: 10px;
   color: #ffffff;
+}
+
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  color: #726f6f;
 }
 </style>

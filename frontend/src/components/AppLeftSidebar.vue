@@ -134,7 +134,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 12rem;
+  width: 15rem;
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -169,7 +169,7 @@ a {
 
 .sidebar ul {
   list-style: none;
-  padding: 0;
+  padding: 0 15px;
 }
 
 .sidebar li {

@@ -37,7 +37,8 @@ const AccountAPI = {
     getMonthSummary(year, month) {
         return handleResponse(api(true).get(`/api/v1/accountBook/month-summary`, {
             params: {
-                year: year, month: month
+                year: year, 
+                month: month
             }
         }));
     },

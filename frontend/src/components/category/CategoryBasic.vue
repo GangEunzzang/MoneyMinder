@@ -100,7 +100,6 @@ export default {
       this.showCreateModal = false;
     },
     openEditModal(category) {
-      console.log(category);
       this.selectedCategory = category;
       this.showEditModal = true;
     },

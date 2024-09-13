@@ -4,6 +4,7 @@ import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMon
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMonthSummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYearSummaryRes;
@@ -14,15 +15,16 @@ import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
+import com.moneyminder.global.util.TimeUtils;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -79,44 +81,60 @@ public class AccountBookService {
 
     @Transactional(readOnly = true)
     public AccountBookMonthSummaryRes getMonthSummary(String email, Integer year, Integer month) {
-        AccountBookMonthSummaryReq incomeRequest = AccountBookMonthSummaryReq.from(year, month, CategoryType.INCOME);
-        BigInteger totalIncome = accountBookRepository.findMonthlyTotalByCategory(email, incomeRequest);
+        Map<Integer, AccountBookMonthSummaryRes.WeekSummary> map = new HashMap<>();
+        BigInteger monthTotalIncome = BigInteger.ZERO;
+        BigInteger monthTotalExpense = BigInteger.ZERO;
 
-        AccountBookMonthSummaryReq expenseRequest = AccountBookMonthSummaryReq.from(year, month, CategoryType.EXPENSE);
-        BigInteger totalExpense = accountBookRepository.findMonthlyTotalByCategory(email, expenseRequest);
+        int totalWeek = TimeUtils.getWeekOfMonth(year, month);
+
+        for (int i = 1; i <= totalWeek; i++) {
+            LocalDate[] firstAndLastDayOfWeek = TimeUtils.getFirstAndLastDayOfWeek(year, month, i);
+
+            AccountBookWeekSummaryReq incomeRequest = AccountBookWeekSummaryReq.from(firstAndLastDayOfWeek[0],
+                    firstAndLastDayOfWeek[1], CategoryType.INCOME);
+            AccountBookWeekSummaryReq expenseRequest = AccountBookWeekSummaryReq.from(firstAndLastDayOfWeek[0],
+                    firstAndLastDayOfWeek[1], CategoryType.EXPENSE);
+
+            BigInteger weekTotalIncome = accountBookRepository.findWeekTotalByCategoryType(email, incomeRequest);
+            BigInteger weekTotalExpense = accountBookRepository.findWeekTotalByCategoryType(email, expenseRequest);
+
+            map.put(i, AccountBookMonthSummaryRes.WeekSummary.from(weekTotalIncome, weekTotalExpense));
+            monthTotalIncome = monthTotalIncome.add(weekTotalIncome);
+            monthTotalExpense = monthTotalExpense.add(weekTotalExpense);
+        }
 
         return AccountBookMonthSummaryRes.builder()
                 .year(year)
                 .month(month)
-                .monthTotalIncome(totalIncome)
-                .monthTotalExpense(totalExpense)
+                .monthTotalIncome(monthTotalIncome)
+                .monthTotalExpense(monthTotalExpense)
+                .weeklySummary(map)
                 .build();
     }
 
     @Transactional(readOnly = true)
     public AccountBookYearSummaryRes getYearSummary(String email, Integer year) {
-        Map<Integer, AccountBookYearSummaryRes.MonthSummary> monthlyTotal = new HashMap<>();
-
+        Map<Integer, AccountBookYearSummaryRes.MonthSummary> map = new HashMap<>();
         BigInteger yearTotalIncome = BigInteger.ZERO;
         BigInteger yearTotalExpense = BigInteger.ZERO;
 
-        for (int month = 1; month <= 12; month++) {
-            AccountBookMonthSummaryRes monthTotal = getMonthSummary(email, year, month);
+        for (int i = 1; i <= 12; i++) {
+            AccountBookMonthSummaryReq incomeRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.INCOME);
+            AccountBookMonthSummaryReq expenseRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.EXPENSE);
 
-            monthlyTotal.put(month, AccountBookYearSummaryRes.MonthSummary.from(
-                    monthTotal.monthTotalIncome(),
-                    monthTotal.monthTotalExpense())
-            );
+            BigInteger monthTotalIncome = accountBookRepository.findMonthTotalByCategory(email, incomeRequest);
+            BigInteger monthTotalExpense = accountBookRepository.findMonthTotalByCategory(email, expenseRequest);
 
-            yearTotalIncome = yearTotalIncome.add(monthTotal.monthTotalIncome());
-            yearTotalExpense = yearTotalExpense.add(monthTotal.monthTotalExpense());
+            map.put(i, AccountBookYearSummaryRes.MonthSummary.from(monthTotalIncome, monthTotalExpense));
+            yearTotalIncome = yearTotalIncome.add(monthTotalIncome);
+            yearTotalExpense = yearTotalExpense.add(monthTotalExpense);
         }
 
         return AccountBookYearSummaryRes.builder()
                 .year(year)
                 .yearTotalIncome(yearTotalIncome)
                 .yearTotalExpense(yearTotalExpense)
-                .monthlyTotal(monthlyTotal)
+                .monthlySummary(map)
                 .build();
     }
 

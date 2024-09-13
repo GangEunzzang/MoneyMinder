@@ -2,18 +2,18 @@ package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookEntity;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
@@ -63,8 +63,13 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     }
 
     @Override
-    public BigInteger findMonthlyTotalByCategory(String email, AccountBookMonthSummaryReq request) {
-        return jpaRepository.findMonthlyTotalByCategory(email, request);
+    public BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq request) {
+        return jpaRepository.findWeekTotalByCategoryType(email, request);
+    }
+
+    @Override
+    public BigInteger findMonthTotalByCategory(String email, AccountBookMonthSummaryReq request) {
+        return jpaRepository.findMonthTotalByCategoryType(email, request);
     }
 
 

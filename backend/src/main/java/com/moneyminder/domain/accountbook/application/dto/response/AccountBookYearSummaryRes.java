@@ -1,16 +1,15 @@
 package com.moneyminder.domain.accountbook.application.dto.response;
 
-import lombok.Builder;
-
 import java.math.BigInteger;
 import java.util.Map;
+import lombok.Builder;
 
 @Builder
 public record AccountBookYearSummaryRes(
         Integer year,
         BigInteger yearTotalIncome,
         BigInteger yearTotalExpense,
-        Map<Integer, MonthSummary> monthlyTotal
+        Map<Integer, MonthSummary> monthlySummary
 
 ) {
 

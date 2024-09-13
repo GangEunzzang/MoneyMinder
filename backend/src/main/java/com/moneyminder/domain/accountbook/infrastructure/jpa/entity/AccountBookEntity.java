@@ -77,7 +77,4 @@ public class AccountBookEntity extends BaseTimeEntity {
                 .memo(memo)
                 .build();
     }
-
-
-
 }

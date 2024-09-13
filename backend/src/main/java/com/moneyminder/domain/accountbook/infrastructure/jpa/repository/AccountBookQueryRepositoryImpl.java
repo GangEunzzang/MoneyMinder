@@ -1,20 +1,20 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
+import static com.moneyminder.domain.accountbook.infrastructure.jpa.entity.QAccountBookEntity.accountBookEntity;
+import static com.moneyminder.domain.category.Infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
+
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
+import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookDefaultRes;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.moneyminder.domain.accountbook.infrastructure.jpa.entity.QAccountBookEntity.accountBookEntity;
-import static com.moneyminder.domain.category.Infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @RequiredArgsConstructor
 public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepository {
@@ -81,8 +81,23 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     }
 
     @Override
-    public BigInteger findMonthlyTotalByCategory(String email, AccountBookMonthSummaryReq summaryReq) {
-        return queryFactory.select(accountBookEntity.amount.sum())
+    public BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq summaryReq) {
+        BigInteger totalAmount = queryFactory.select(accountBookEntity.amount.sum())
+                .from(accountBookEntity)
+                .leftJoin(categoryEntity)
+                .on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+                .where(
+                        accountBookEntity.userEmail.eq(email),
+                        accountBookEntity.transactionDate.between(summaryReq.startDate(), summaryReq.endDate()),
+                        categoryEntity.categoryType.eq(summaryReq.categoryType()))
+                .fetchOne();
+
+        return totalAmount == null ? BigInteger.ZERO : totalAmount;
+    }
+
+    @Override
+    public BigInteger findMonthTotalByCategoryType(String email, AccountBookMonthSummaryReq summaryReq) {
+        BigInteger totalAmount = queryFactory.select(accountBookEntity.amount.sum())
                 .from(accountBookEntity)
                 .leftJoin(categoryEntity)
                 .on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
@@ -92,6 +107,8 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
                         accountBookEntity.transactionDate.month().eq(summaryReq.month()),
                         categoryEntity.categoryType.eq(summaryReq.categoryType()))
                 .fetchOne();
+
+        return totalAmount == null ? BigInteger.ZERO : totalAmount;
     }
 
     public BooleanExpression eqCategoryCode(String categoryCode) {

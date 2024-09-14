@@ -363,7 +363,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .transaction-card.selected {
-  background-color: #dcdfe0;
+  background-color: rgba(40, 40, 40, 0.76);
 }
 
 .transaction-date {

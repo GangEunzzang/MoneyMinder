@@ -20,8 +20,7 @@ body {
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif !important;
   margin: 0;
   padding: 0;
-  height: 100%;
-  background-color: #111115;
+  background-color: #141418;
 }
 
 html {
@@ -29,11 +28,5 @@ html {
   margin: 0;
   padding: 0;
 }
-
-#app {
-  display: flex;
-  flex-direction: column;
-}
-
 
 </style>

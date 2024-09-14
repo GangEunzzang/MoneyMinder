@@ -138,9 +138,10 @@ export default {
 }
 
 .modal-content {
-  background: white;
+  background: #ffffff;
+  color: black;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 25px;
   max-width: 400px;
   width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

@@ -134,7 +134,8 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 15rem;
+  width: 12rem;
+  min-height: 100vh;
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -142,10 +143,9 @@ export default {
   transition: width 0.3s ease, padding 0.3s ease;
   position: sticky;
   left: 0;
-  border-radius: 20px 0 0 20px;
-  overflow: hidden;
+  overflow: clip;
   background-color: #25252b;
-  z-index: 1000;
+  z-index: 10001;
 }
 
 a {
@@ -169,12 +169,12 @@ a {
 
 .sidebar ul {
   list-style: none;
-  padding: 0 15px;
+  padding: 0;
 }
 
 .sidebar li {
   padding: 10px 15px;
-  width: 140%;
+  width: 110%;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, border-radius 0.3s ease;
   margin: 20px 0;

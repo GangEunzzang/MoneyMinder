@@ -120,6 +120,9 @@
       </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script>
@@ -289,7 +292,6 @@ export default {
   background-color: #141418;
   color: #fff;
   padding: 1rem 5rem;
-  height: 100vh;
 }
 
 .date-container {
@@ -300,13 +302,13 @@ export default {
 }
 
 .selected-date-display {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #ccc;
   border: 1px solid #4f4f4f;
   padding: 10px;
   border-radius: 20px;
-  width: 10rem;
-  height: 2.2rem;
+  width: 8rem;
+  height: 1.5rem;
   justify-content: center;
   align-content: center;
   text-align: center;
@@ -329,8 +331,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 3rem;
-  height: 2.2rem;
+  width: 2rem;
+  height: 1.5rem;
   border-radius: 100%;
   cursor: pointer;
   border: 1px solid #4f4f4f;
@@ -340,7 +342,7 @@ export default {
 
 .icon-style {
   color: #d5d4d4;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -554,4 +556,6 @@ export default {
   color: #858383;
   font-size: 0.75rem;
 }
+
+
 </style>

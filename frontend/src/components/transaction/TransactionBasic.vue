@@ -2,21 +2,39 @@
   <div class="account-book-list">
     <h2>거래 내역</h2>
 
+<!--    <div class="date-container">-->
+<!--      <div class="date-icon" @click="toggleMonthSelect">-->
+<!--        <font-awesome-icon icon="calendar-alt" class="icon-style"/>-->
+<!--      </div>-->
+
+<!--      <div v-if="selectedDate" class="selected-date-display">-->
+<!--        {{ selectedYear }}년 {{ selectedMonth }}월-->
+<!--      </div>-->
+
+<!--      <div class="arrow-container">-->
+<!--        <div class="arrow-up" @click="incrementMonth">-->
+<!--          <font-awesome-icon icon="arrow-up"/>-->
+<!--        </div>-->
+<!--        <div class="arrow-down" @click="decrementMonth">-->
+<!--          <font-awesome-icon icon="arrow-down"/>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
     <!-- 시작일 및 종료일 입력 필드 -->
     <div class="date-selector">
-      <label for="startDate">시작일:</label>
       <input type="date" id="startDate" v-model="startDate"/>
-      <label for="endDate">종료일:</label>
+      ~
       <input type="date" id="endDate" v-model="endDate"/>
     </div>
 
     <!-- 검색 및 정렬 옵션 섹션 -->
     <div class="filter-sort">
-      <input type="text" v-model="searchQuery" placeholder="검색어 입력..."/>
-      <select v-model="categoryTypeFilter">
+      <input class="filter-search" type="text" v-model="searchQuery" placeholder="검색어 입력..."/>
+      <select class="filter-type" v-model="categoryTypeFilter">
         <option value="">전체</option>
-        <option value="INCOME">수입만 보기</option>
-        <option value="EXPENSE">지출만 보기</option>
+        <option value="INCOME">수입</option>
+        <option value="EXPENSE">지출</option>
         <option value="ETC">기타</option>
       </select>
       <button @click="fetchAccountBooks(true)">검색</button>
@@ -27,39 +45,50 @@
       <!-- 데이터가 없을 때 표시 -->
       <div v-if="filteredAndSortedBooks.length === 0" class="no-data">데이터가 없어요!</div>
 
-      <!-- 데이터가 있을 때 목록 표시 -->
-      <div
-          v-else
-          v-for="(book, index) in filteredAndSortedBooks"
-          :key="index"
-          @click="toggleSelection(book)"
-          :class="{ selected: isSelected(book) }"
-          class="transaction-card"
-      >
-        <div class="transaction-date">{{ formatDateWithDay(book.transactionDate) }}</div>
-        <div class="transaction-category">{{ book.categoryName }}</div>
-        <div class="transaction-amount">{{ book.amount.toLocaleString() }}원</div>
-        <div class="transaction-memo">{{ book.memo }}</div>
-        <div class="transaction-type" :class="book.categoryType.toLowerCase()">
-          <span v-if="book.categoryType === 'INCOME'">수입</span>
-          <span v-else-if="book.categoryType === 'EXPENSE'">지출</span>
-          <span v-else>기타</span>
+
+      <div v-else>
+        <div class="transaction-header">
+<!--          <input type="checkbox" class="transaction-checkbox-header">-->
+          <div class="transaction-date-header">날짜</div>
+          <div class="transaction-category-header">카테고리</div>
+          <div class="transaction-amount-header">금액</div>
+          <div class="transaction-memo-header">상세내역</div>
+          <div class="transaction-type-header">종류</div>
+          <div class="transaction-actions-header">변경</div>
         </div>
-        <!-- 수정 및 삭제 이모티콘 추가 -->
-        <div class="actions">
-          <div class="action-icon" @click.stop="openEditModal(book)">
-            ✏️
-            <span class="tooltip">수정하기</span>
+
+        <div v-for="(book, index) in filteredAndSortedBooks" :key="index"
+             @click="toggleSelection(book)"
+             :class="{ selected: isSelected(book) }"
+             class="transaction-card"
+        >
+<!--          <input type="checkbox" class="transaction-checkbox">-->
+          <div class="transaction-date">{{ formatDateWithDay(book.transactionDate) }}</div>
+          <div class="transaction-category">{{ book.categoryName }}</div>
+          <div class="transaction-amount">{{ book.amount.toLocaleString() }}원</div>
+          <div class="transaction-memo">{{ book.memo }}</div>
+          <div class="transaction-type" :class="book.categoryType.toLowerCase()">
+            <span v-if="book.categoryType === 'INCOME'">수입</span>
+            <span v-else-if="book.categoryType === 'EXPENSE'">지출</span>
+            <span v-else>기타</span>
           </div>
-          <div class="action-icon" @click.stop="deleteEntry(book.accountId)">
-            🗑️
-            <span class="tooltip">삭제하기</span>
+          <!-- 수정 및 삭제 이모티콘 추가 -->
+          <div class="actions">
+            <div class="action-icon" @click.stop="openEditModal(book)">
+              ✏️
+              <span class="tooltip">수정하기</span>
+            </div>
+            <div class="action-icon" @click.stop="deleteEntry(book.accountId)">
+              🗑️
+              <span class="tooltip">삭제하기</span>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
 
-    <TransactionEditModal
+      <TransactionEditModal
         v-if="showEditModal"
         :isOpen="showEditModal"
         :bookToEdit="currentBookToEdit"
@@ -225,23 +254,17 @@ export default {
 
 <style scoped>
 .account-book-list {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 60%;
-  overflow-y: auto;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #141418;
+  color: white;
+  padding: 1rem 5rem;
 }
 
-.account-book-list h2 {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
-  font-weight: 600;
-  text-align: center;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
+input[type='date'] {
+  color: #ccc;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(100%); /* 아이콘을 흰색으로 변경 */
 }
 
 .date-selector, .filter-sort {
@@ -250,23 +273,42 @@ export default {
   margin-bottom: 20px;
   align-items: center;
   justify-content: center;
+  color: #ccc;
 }
 
-.date-selector label, .filter-sort input, .filter-sort select {
-  margin-right: 1rem;
-  font-size: 14px;
-}
-
-.date-selector input, .filter-sort input, .filter-sort select {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  width: 100%;
-  max-width: 150px;
-  box-sizing: border-box;
+.date-selector input {
+  padding: 0.8rem 1rem;
+  border: 1px solid #4f4f4f;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  width: 8.5rem;
   transition: border-color 0.2s ease;
+  background-color: #141418;
+  color: #ccc;
 }
+
+.filter-search {
+  padding: 0.8rem 1rem;
+  border: 1px solid #4f4f4f;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  width: 8.5rem;
+  transition: border-color 0.2s ease;
+  background-color: #141418;
+  color: #ccc;
+}
+
+.filter-type {
+  padding: 0.8rem 1rem;
+  border: 1px solid #4f4f4f;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  width: 7rem;
+  transition: border-color 0.2s ease;
+  background-color: #141418;
+  color: #ccc;
+}
+
 
 .date-selector input:focus, .filter-sort input:focus, .filter-sort select:focus {
   border-color: #98aec2;
@@ -280,20 +322,11 @@ export default {
   justify-content: center;
 }
 
-.filter-sort input {
-  flex: 1;
-  max-width: 200px;
-}
-
-.filter-sort select {
-  flex: 0.5;
-}
-
 .filter-sort button {
   padding: 10px 20px;
   border: none;
   background-color: #007bff;
-  color: #ffffff;
+  color: #ccc;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -305,26 +338,28 @@ export default {
 }
 
 .transaction-list {
+  width: 65rem;
+}
+
+.transaction-header {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  align-items: center;
+  padding: 1rem 2rem;
+  color: white;
+  border-bottom: 1px solid #2a2a2a;
+  border-top: 1px solid #2a2a2a;
 }
 
 .transaction-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  padding: 15px 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 1rem 2rem;
   position: relative; /* Position relative 추가 */
 }
 
 .transaction-card:hover {
-  background-color: #f3efef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgba(59, 59, 59, 0.22);
 }
 
 .transaction-card.selected {
@@ -332,56 +367,94 @@ export default {
 }
 
 .transaction-date {
-  flex: 0.8;
-  font-size: 14px;
-  font-weight: 450;
-  color: #333;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #f5f5f5;
+  flex: 1;
+}
+
+.transaction-date-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  flex: 1;
 }
 
 .transaction-category {
-  flex: 0.9;
-  font-size: 16px;
-  text-align: left;
+  font-size: 0.8rem;
   font-weight: 300;
-  color: #333;
+  color: #f5f5f5;
+  flex: 1;
+}
+
+.transaction-category-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  flex: 1;
 }
 
 .transaction-amount {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #dadada;
   flex: 1;
-  font-size: 16px;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
+}
+
+.transaction-amount-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  flex: 1;
 }
 
 .transaction-memo {
-  font-size: 15px;
-  flex: 2;
-  text-align: left;
+  font-size: 0.8rem;
   font-weight: 300;
-  color: #333;
+  color: #dadada;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  word-break: break-all;
   overflow: hidden;
-  max-width: 150px; /* 요소의 최대 너비를 지정 */
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.transaction-memo-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  flex: 1;
 }
 
 .transaction-type {
-  font-size: 15px;
-  flex: 0.3;
-  text-align: center;
-  padding: 5px;
-  border-radius: 12px;
+  font-size: 0.8rem;
   font-weight: 300;
-  margin-right: 5rem; /* actions 요소와의 공간 확보 */
+  border-radius: 12px;
+  flex: 1.13;
+}
+
+.transaction-type-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  flex: 1;
+}
+
+.transaction-actions-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 12px;
+  color: white;
 }
 
 .transaction-type.income {
-  background-color: #a0f3a4;
+  color: #3481f0;
+  font-weight: 500;
 }
 
 .transaction-type.expense {
-  background-color: #ff968d;
+  font-weight: 500;
+  color: #ff0000;
 }
 
 .actions {
@@ -401,7 +474,7 @@ export default {
 
 .action-icon {
   position: relative;
-  font-size: 20px;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 
@@ -455,10 +528,6 @@ export default {
   padding: 20px 0;
 }
 
-.transaction-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  min-height: 100px; /* 최소 높이 설정 */
-}
+
+
 </style>

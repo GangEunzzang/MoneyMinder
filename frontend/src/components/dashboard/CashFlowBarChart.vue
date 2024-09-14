@@ -171,7 +171,6 @@ export default {
 
 .bar-chart {
   position: relative;
-  height: 1000px;
 }
 
 .no-data-message {

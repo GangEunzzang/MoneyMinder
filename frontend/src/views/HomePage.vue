@@ -20,15 +20,14 @@ export default {
 <style scoped>
 .home-page {
   display: flex;
-  height: 100%;
 }
 
 .content {
-  flex: 1;
-  background-color: #111115;
-  min-height: 100vh; /* 화면 높이 100%로 설정 */
-  overflow-y: auto; /* 내용이 많으면 세로 스크롤 */
-  overflow-x: hidden; /* 좌우 스크롤 방지 */
+  background-color: #141418;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 html, body {

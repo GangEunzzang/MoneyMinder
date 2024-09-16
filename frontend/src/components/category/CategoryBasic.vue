@@ -5,8 +5,10 @@
     <div class="management-container">
 
       <div class="tabs">
-        <button :class="{ active: activeTab === 'INCOME' }" @click="activeTab = 'INCOME'">수입</button>
-        <button :class="{ active: activeTab === 'EXPENSE' }" @click="activeTab = 'EXPENSE'">지출</button>
+        <button :class="{ active: activeTab === 'INCOME' }" @click="activeTab = 'INCOME'">수입
+        </button>
+        <button :class="{ active: activeTab === 'EXPENSE' }" @click="activeTab = 'EXPENSE'">지출
+        </button>
         <!-- 기본 카테고리만 보기 체크박스 -->
         <div class="basic-btn">
           <label class="custom-checkbox">
@@ -21,12 +23,10 @@
       <div class="category-list">
 
         <ul>
-          <li class="category-list-header">
-            <span>카테고리 이름</span>
-          </li>
 
-          <li v-for="category in filteredCategories" :key="category.categoryId" class="category-list-body">
-            <span>{{ category.categoryName }}</span>
+          <li v-for="category in filteredCategories" :key="category.categoryId"
+              class="category-list-body" >
+            <span @click="openDetailsCategory(category)">{{ category.categoryName }}</span>
             <div class="actions" v-if="category.isCustom">
               <div class="action-icon" @click="openEditModal(category)">
                 ✏️
@@ -57,6 +57,13 @@
           @close="closeEditModal"
           @save="updateCategory"
       />
+
+      <CategoryDetailsModal
+          v-if="showDetailsCategoryModal"
+          :category="selectedCategory"
+          @close="closeDetailsCategory"
+      />
+
     </div>
   </div>
 </template>
@@ -65,12 +72,14 @@
 import CategoryAPI from "@/api/category";
 import CategoryCreateModal from './CategoryCreateModal.vue';
 import CategoryEditModal from './CategoryEditModal.vue';
+import CategoryDetailsModal from './CategoryDetailsModal.vue';
 
 export default {
   name: 'CategoryManagement',
   components: {
     CategoryCreateModal,
     CategoryEditModal,
+    CategoryDetailsModal
   },
   data() {
     return {
@@ -80,6 +89,7 @@ export default {
       selectedCategory: null,  // 선택된 카테고리
       showCreateModal: false,  // 카테고리 생성 모달 표시 여부
       showEditModal: false,  // 카테고리 수정 모달 표시 여부
+      showDetailsCategoryModal: false // 카테고리 상세보기 모달 표시 여부
     };
   },
   computed: {
@@ -99,6 +109,16 @@ export default {
     closeCreateModal() {
       this.showCreateModal = false;
     },
+
+    openDetailsCategory(category) {
+      this.selectedCategory = category;
+      this.showDetailsCategoryModal = true;
+    },
+
+    closeDetailsCategory() {
+      this.showDetailsCategoryModal = false;
+    },
+
     openEditModal(category) {
       this.selectedCategory = category;
       this.showEditModal = true;
@@ -111,7 +131,8 @@ export default {
       this.showCreateModal = false;
     },
     updateCategory(updatedCategory) {
-      const index = this.categories.findIndex(category => category.categoryId === updatedCategory.categoryId);
+      const index = this.categories.findIndex(
+          category => category.categoryId === updatedCategory.categoryId);
       if (index !== -1) {
         this.categories.splice(index, 1, updatedCategory);
       }
@@ -124,17 +145,21 @@ export default {
     },
     deleteCategory(categoryId) {
       CategoryAPI.deleteCategory(categoryId)
-          .then(() => {this.categories = this.categories.filter(category => category.categoryId !== categoryId);})
-          .catch(error => {console.error('Error deleting category:', error);});
+      .then(() => {
+        this.categories = this.categories.filter(category => category.categoryId !== categoryId);
+      })
+      .catch(error => {
+        console.error('Error deleting category:', error);
+      });
     },
     getCategoryList() {
       CategoryAPI.getCategoryList()
-          .then(categories => {
-            this.categories = categories;
-          })
-          .catch(error => {
-            console.error('Error loading categories:', error);
-          });
+      .then(categories => {
+        this.categories = categories;
+      })
+      .catch(error => {
+        console.error('Error loading categories:', error);
+      });
     },
   },
   mounted() {
@@ -145,21 +170,9 @@ export default {
 
 <style scoped>
 .category-management {
-  padding: 40px 20px;
-  background-color: #f9fafc;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  width: 35%;
-}
-
-.category-management h2 {
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
-  font-weight: 600;
-  text-align: center;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
+  background-color: #141418;
+  color: white;
+  padding: 1rem 5rem;
 }
 
 .tabs {
@@ -175,9 +188,9 @@ export default {
   font-size: 14px;
   font-weight: 600;
   background-color: transparent;
-  color: #555;
+  color: white;
   border: none;
-  border-bottom: 2px solid transparent; /* 기본 테두리 제거 */
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: all 0.3s ease; /* 부드러운 전환 효과 */
   white-space: nowrap;
@@ -224,7 +237,7 @@ export default {
   display: inline-flex;
   align-items: center;
   font-size: 14px;
-  color: #555;
+  color: white;
   cursor: pointer;
   user-select: none;
   position: relative;
@@ -273,12 +286,11 @@ export default {
 }
 
 .management-container {
+  width: 33rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  background-color: white;
-  border: 2px solid white;
+  gap: 1rem;
   padding: 10px 30px;
 }
 
@@ -286,47 +298,45 @@ export default {
   width: 100%;
 }
 
-.category-list-header {
-  background-color: rgba(52, 185, 80, 0.77);
-  font-weight: 600;
-  color: white;
-  width: 70%;
-  margin: 0 auto;
-  margin-bottom: 20px;
-}
-
-.category-list-header span {
-  font-size: 1.05rem;
-  flex: 1;
-  text-align: center;
-}
-
 .category-list ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 한 줄에 두 개의 카테고리 */
+  gap: 1rem;
 }
 
-.category-list li {
+.category-list-header {
+  background-color: rgba(52, 185, 80, 0.77);
+  font-weight: 600;
+  color: white;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 10px;
+}
+
+.category-list-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:10px 0;
-  border-bottom: 1px solid #ebebeb;
+  padding: 1.0rem 1rem;
   transition: background-color 0.3s ease;
   position: relative;
-  border-radius: 20px;
+  border-bottom: 1px solid #2a2a2a;
+  border-top: 1px solid #2a2a2a;
+  font-weight: 500;
 }
 
 .category-list-body:hover {
-  background-color: #e0dfdf;
+  background-color: #3a3d42;
 }
 
 .category-list-body span {
   flex: 1;
   font-size: 1rem;
-  text-align: center;
-  color: #333;
+  color: #ccc;
 }
 
 .actions {

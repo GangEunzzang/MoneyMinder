@@ -73,20 +73,19 @@ export default {
 
 .modal-content {
   background-color: #fff;
+  color: black;
   padding: 25px;
-  border-radius: 12px;
+  border-radius: 25px;
   max-width: 350px;
   width: 100%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .modal-content h3 {
-  margin: 10px 0 30px 0;
-  font-size: 1.4rem;
-  color: #333;
-  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
 }
+
 
 .form-group {
   margin-bottom: 20px;
@@ -114,11 +113,6 @@ export default {
   outline: none;
 }
 
-.button-group {
-  display: flex;
-  justify-content: space-between;
-}
-
 button {
   padding: 10px 18px;
   font-size: 0.7rem;
@@ -128,6 +122,11 @@ button {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+  margin-left: 10px;
 }
 
 button:hover {

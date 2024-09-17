@@ -6,6 +6,7 @@ import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWee
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,6 @@ public interface AccountBookRepository {
     BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq request);
 
     BigInteger findMonthTotalByCategory(String email, AccountBookMonthSummaryReq request);
+
+    List<AccountBook> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate);
 }

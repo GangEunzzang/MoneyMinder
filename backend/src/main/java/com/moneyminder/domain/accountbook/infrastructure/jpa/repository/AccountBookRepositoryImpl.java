@@ -10,6 +10,7 @@ import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookE
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,14 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     @Override
     public BigInteger findMonthTotalByCategory(String email, AccountBookMonthSummaryReq request) {
         return jpaRepository.findMonthTotalByCategoryType(email, request);
+    }
+
+    @Override
+    public List<AccountBook> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate) {
+        return jpaRepository.findByUserEmailAndTransactionDateGreaterThanEqualAndTransactionDateLessThanEqual(email,
+                        startDate, endDate).stream()
+                .map(AccountBookEntity::toDomain)
+                .toList();
     }
 
 

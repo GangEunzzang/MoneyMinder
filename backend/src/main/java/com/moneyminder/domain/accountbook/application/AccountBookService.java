@@ -5,6 +5,7 @@ import com.moneyminder.domain.accountbook.application.dto.request.AccountBookSer
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
+import com.moneyminder.domain.accountbook.application.dto.response.AccountBookCategorySummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMonthSummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYearSummaryRes;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -118,7 +120,8 @@ public class AccountBookService {
         BigInteger yearTotalIncome = BigInteger.ZERO;
         BigInteger yearTotalExpense = BigInteger.ZERO;
 
-        for (int i = 1; i <= 12; i++) {
+        int month = 12;
+        for (int i = 1; i <= month; i++) {
             AccountBookMonthSummaryReq incomeRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.INCOME);
             AccountBookMonthSummaryReq expenseRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.EXPENSE);
 
@@ -136,6 +139,34 @@ public class AccountBookService {
                 .yearTotalExpense(yearTotalExpense)
                 .monthlySummary(map)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AccountBookCategorySummaryRes> getTotalAmountByCategory(String email, LocalDate startDate,
+            LocalDate endDate) {
+        List<AccountBookDefaultRes> accountBookList = accountBookRepository.findWithCategoryByDate(email, startDate,
+                        endDate).stream()
+                .map(this::mapToServiceResponse)
+                .toList();
+
+        Map<String, BigInteger> totalAmountByCategory = accountBookList.stream()
+                .collect(Collectors.groupingBy(
+                        AccountBookDefaultRes::categoryCode,
+                        Collectors.mapping(AccountBookDefaultRes::amount,
+                                Collectors.reducing(BigInteger.ZERO, BigInteger::add))
+                ));
+
+        return totalAmountByCategory.entrySet().stream()
+                .map(entry -> {
+                    String categoryCode = entry.getKey();
+                    BigInteger totalAmount = entry.getValue();
+
+                    String categoryName = categoryRepository.findByCategoryCode(categoryCode)
+                            .orElseGet(Category::defaultCategory).categoryName();
+
+                    return AccountBookCategorySummaryRes.from(categoryName, categoryCode, totalAmount);
+                })
+                .toList();
     }
 
 

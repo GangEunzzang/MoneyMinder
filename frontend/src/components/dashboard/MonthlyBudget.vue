@@ -9,14 +9,14 @@
       <canvas id="categoryPieChart"></canvas>
       <div class="total-budget-label">
         <p>총 예산 </p>
-        <p class="total-budget">₩{{ totalBudget.toLocaleString() }} </p>
+        <p class="total-budget">₩{{ formatNumber(totalBudget) }} </p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Chart, registerables } from 'chart.js';
+import {Chart, registerables} from 'chart.js';
 import BudgetAPI from '@/api/budget';
 
 Chart.register(...registerables);
@@ -56,7 +56,7 @@ export default {
 
         // Vue의 nextTick을 사용하여 DOM이 완전히 렌더링된 후에 차트 생성
         this.$nextTick(() => {
-          if(this.totalBudget === 0) {
+          if (this.totalBudget === 0) {
             return;
           }
           this.updateTopCategories();
@@ -139,6 +139,12 @@ export default {
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 6);
     },
+
+    formatNumber(number) {
+      if (!number) return '0';
+      if (number >= 1e8) return (number / 1e8).toFixed(0) + '억';
+      return number.toLocaleString();
+    }
   },
   mounted() {
     this.fetchBudgetData();

@@ -2,25 +2,6 @@
   <div class="account-book-list">
     <h2>거래 내역</h2>
 
-<!--    <div class="date-container">-->
-<!--      <div class="date-icon" @click="toggleMonthSelect">-->
-<!--        <font-awesome-icon icon="calendar-alt" class="icon-style"/>-->
-<!--      </div>-->
-
-<!--      <div v-if="selectedDate" class="selected-date-display">-->
-<!--        {{ selectedYear }}년 {{ selectedMonth }}월-->
-<!--      </div>-->
-
-<!--      <div class="arrow-container">-->
-<!--        <div class="arrow-up" @click="incrementMonth">-->
-<!--          <font-awesome-icon icon="arrow-up"/>-->
-<!--        </div>-->
-<!--        <div class="arrow-down" @click="decrementMonth">-->
-<!--          <font-awesome-icon icon="arrow-down"/>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
     <!-- 시작일 및 종료일 입력 필드 -->
     <div class="date-selector">
       <input type="date" id="startDate" v-model="startDate"/>
@@ -48,7 +29,6 @@
 
       <div v-else>
         <div class="transaction-header">
-<!--          <input type="checkbox" class="transaction-checkbox-header">-->
           <div class="transaction-date-header">날짜</div>
           <div class="transaction-category-header">카테고리</div>
           <div class="transaction-amount-header">금액</div>
@@ -62,7 +42,6 @@
              :class="{ selected: isSelected(book) }"
              class="transaction-card"
         >
-<!--          <input type="checkbox" class="transaction-checkbox">-->
           <div class="transaction-date">{{ formatDateWithDay(book.transactionDate) }}</div>
           <div class="transaction-category">{{ book.categoryName }}</div>
           <div class="transaction-amount">{{ book.amount.toLocaleString() }}원</div>
@@ -106,7 +85,7 @@
 
 
 <script>
-import AccountBookAPI from "@/api/accountBook"; // 가계부 API 호출 함수 임포트
+import AccountBookAPI from "@/api/accountBook";
 import TransactionEditModal from '@/components/transaction/TransactionEditModal.vue';
 import TransactionRightSidebar from '@/components/transaction/TransactionRightSidebar.vue';
 
@@ -133,7 +112,6 @@ export default {
       hasMoreData: true, // 더 가져올 데이터가 있는지 여부
       selectedBooks: [], // 선택된 항목들
       categoryTypeFilter: "", // 수입/지출 필터
-
       showEditModal: false, // 수정 모달 표시 여부
       currentBookToEdit: null // 수정할 항목 데이터
     };
@@ -508,8 +486,8 @@ input[type='date']::-webkit-calendar-picker-indicator {
 
 .load-more button {
   padding: 10px 20px;
-  background-color: #5e7286;
-  color: white;
+  background-color: #007bff;
+  color: #ccc;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -518,7 +496,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .load-more button:hover {
-  background-color: #b8cee3;
+  background-color: #0056b3;
 }
 
 .no-data {

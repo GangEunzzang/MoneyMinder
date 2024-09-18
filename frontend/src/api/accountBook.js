@@ -49,6 +49,15 @@ const AccountAPI = {
                 year: year
             }
         }));
+    },
+
+    getAmountTotalByCategory(startDate, endDate) {
+        return handleResponse(api(true).get(`/api/v1/accountBook/category-total`, {
+            params: {
+                startDate: startDate,
+                endDate: endDate
+            }
+        }))
     }
 }
 

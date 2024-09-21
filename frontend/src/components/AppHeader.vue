@@ -78,7 +78,6 @@ header {
   font-size: 24px;
   font-weight: 700;
   color: #000000;
-  font-family: "Nirmala UI";
 }
 
 .logo-container {

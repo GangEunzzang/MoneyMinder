@@ -1,6 +1,6 @@
 <template>
   <div class="category-management">
-    <h2>카테고리 관리</h2>
+    <h2>카테고리</h2>
 
     <div class="management-container">
 

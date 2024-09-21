@@ -9,6 +9,19 @@
       </div>
     </div>
 
+    <!-- 로그인/로그아웃 섹션을 메뉴 위로 이동 -->
+    <div class="auth-section">
+      <a v-if="!isLoggedIn" href="#" @click.prevent="showLoginModal" class="auth-link">
+        <font-awesome-icon icon="sign-in-alt" class="icon" />
+        <span v-if="showLabels" class="label">로그인</span>
+      </a>
+      <a v-else href="#" @click.prevent="logout" class="auth-link">
+        <font-awesome-icon icon="sign-out-alt" class="icon" />
+        <span v-if="showLabels" class="label">로그아웃</span>
+      </a>
+    </div>
+    <login-modal v-if="LoginModal" @close="closeLoginModal"></login-modal>
+
     <!-- 사이드바 메뉴 -->
     <ul class="main-menu">
       <!-- 대메뉴 항목 -->
@@ -26,19 +39,6 @@
         </router-link>
       </li>
     </ul>
-
-    <div class="auth-section">
-      <a v-if="!isLoggedIn" href="#" @click.prevent="showLoginModal" class="auth-link">
-        <font-awesome-icon icon="sign-in-alt" class="icon" />
-        <span v-if="showLabels" class="label">로그인</span>
-      </a>
-      <a v-else href="#" @click.prevent="logout" class="auth-link">
-        <font-awesome-icon icon="sign-out-alt" class="icon" />
-        <span v-if="showLabels" class="label">로그아웃</span>
-      </a>
-    </div>
-    <login-modal v-if="LoginModal" @close="closeLoginModal"></login-modal>
-
   </div>
 </template>
 
@@ -136,13 +136,14 @@ export default {
 .sidebar {
   width: 12rem;
   min-height: 100vh;
-  padding: 15px;
+  padding: 15px 0 0 15px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   transition: width 0.3s ease, padding 0.3s ease;
-  position: sticky;
+  position: fixed; /* 사이드바를 고정 */
   left: 0;
+  top: 0; /* 사이드바가 화면 상단에 고정 */
   overflow: clip;
   background-color: #25252b;
   z-index: 10001;
@@ -241,14 +242,33 @@ a {
   color: white;
 }
 
-.main-menu-li:not(.collapsed):hover {
-  transform: translateX(5px); /* 접혀있지 않을 때만 적용 */
+/* 로그인/로그아웃 섹션 */
+.auth-section {
+  position: fixed; /* 스크롤을 내리더라도 상단에 고정 */
+  top: 450px;
+  padding: 10px 15px;
+  display: flex;
 }
 
-.main-menu-li.collapsed {
-  transform: none; /* 접혀있을 때는 앞으로 밀리지 않음 */
+.auth-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
 
+.auth-link .icon {
+  font-size: 1.1em;
+  margin-right: 10px;
+  color: white;
+}
+
+.auth-link .label {
+  white-space: nowrap;
+  font-size: 0.9rem;
+  color: #989898;
+  font-weight: 500;
+}
 
 /* 토글 버튼 디자인 */
 .toggle-container {
@@ -267,13 +287,13 @@ a {
   width: 100%;
   height: 100%;
   border-radius: 50px;
-  background-color: #1d1e2a;
+  background-color: #e8e5e5;
   position: relative;
   transition: background-color 0.3s ease;
 }
 
 .toggle-button.on {
-  background-color: #e8e5e5;
+  background-color: rgba(108, 110, 117, 0.93);
 }
 
 .toggle-button.on .toggle-circle {
@@ -287,7 +307,7 @@ a {
 .toggle-circle {
   width: 18px;
   height: 18px;
-  background-color: white;
+  background-color: black;
   border-radius: 50%;
   position: absolute;
   top: 4px;
@@ -305,15 +325,8 @@ a {
 .small-circle {
   width: 8px;
   height: 8px;
-  background-color: black;
+  background-color: white;
   border-radius: 50%;
-}
-
-.auth-section {
-  position: absolute;
-  bottom: 20rem;
-  margin: 20px 0;
-  padding: 10px 15px;
 }
 
 </style>

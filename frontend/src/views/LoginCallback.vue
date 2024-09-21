@@ -22,7 +22,7 @@ export default {
 
       if (accessToken && refreshToken) {
         await this.saveTokens({ accessToken, refreshToken });
-        this.$router.push('/');
+        this.$router.push('/account');
       } else {
         this.logout();
         this.$router.push('/login'); // 에러 발생 시 로그인 페이지로 리다이렉트

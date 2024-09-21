@@ -1,6 +1,6 @@
 <template>
   <div class="budget-basic">
-    <h2>{{ selectedYear }}년 {{ selectedMonth }}월 예산</h2>
+    <h2>예산</h2>
 
     <div class="date-container">
       <div class="date-icon" @click="toggleMonthSelect">
@@ -314,7 +314,7 @@ export default {
 .budget-basic {
   background-color: #141418;
   color: white;
-  padding: 1rem 8rem;
+  padding: 1rem 5rem;
 }
 
 .date-container {
@@ -332,6 +332,8 @@ export default {
   width: 8rem;
   height: 1.5rem;
   text-align: center;
+  justify-content: center;
+  align-content: center;
 }
 
 .arrow-container {
@@ -520,7 +522,7 @@ export default {
 .total-circle {
   fill: none;
   stroke: #8977f5;
-  stroke-width: 3;
+  stroke-width: 2;
   stroke-linecap: round;
   transition: stroke-dasharray 0.3s ease;
 }

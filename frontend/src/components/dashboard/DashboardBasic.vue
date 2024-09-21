@@ -2,6 +2,12 @@
   <div class="dashboard-basic">
     <h2>대시보드</h2>
 
+    <CommonHeader
+        :userName='이강은'
+        :userProfilePicture='1'
+        :notificationCount="1"
+    />
+
     <div class="date-container">
       <div class="date-icon" @click="toggleMonthSelect">
         <font-awesome-icon icon="calendar-alt" class="icon-style"/>
@@ -123,6 +129,7 @@
 
 
 
+
 </template>
 
 <script>
@@ -130,12 +137,14 @@ import MonthlyView from "@/components/dashboard/MonthlyView.vue";
 import MonthlyBudget from "@/components/dashboard/MonthlyBudget.vue";
 import CashFlowBarChart from "@/components/dashboard/CashFlowBarChart.vue";
 import AccountAPI from "@/api/accountBook";
+import CommonHeader from "@/components/CommonHeader.vue";
 
 export default {
   components: {
     MonthlyView,
     MonthlyBudget,
-    CashFlowBarChart
+    CashFlowBarChart,
+    CommonHeader
   },
   data() {
     const currentDate = new Date(); // 현재 날짜 객체 생성

@@ -1,11 +1,12 @@
 <template>
   <div class="account-page">
     <!-- 헤더 -->
-    <CommonHeader :userName="'이강은'" :notificationCount="1" />
 
     <!-- 메인 컨텐츠 -->
     <div class="main-container">
       <AppLeftSidebar />
+      <CommonHeader/>
+
       <div class="content">
         <router-view />
       </div>

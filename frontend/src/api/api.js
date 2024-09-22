@@ -33,7 +33,6 @@ instance.interceptors.response.use(
         config.sent = true;
         let accessToken = await getRefreshToken();
 
-
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
             return axios(config);

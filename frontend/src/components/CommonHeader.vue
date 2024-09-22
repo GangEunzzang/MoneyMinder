@@ -1,5 +1,5 @@
 <template>
-  <div class="header-container">
+  <div class="header-container" :class="{ hidden: isHeaderHidden }">
     <!-- 오른쪽 상단: 알림과 프로필 아이콘 -->
     <div class="right-icons">
       <!-- 알림 아이콘 -->
@@ -20,18 +20,45 @@
 </template>
 
 <script>
+import { getNameFromToken } from "@/utils/jwt";
+
 export default {
   props: {
-    userName: {
-      type: String,
-      required: true
-    },
     notificationCount: {
       type: Number,
       default: 0
     }
-  }
-}
+  },
+  data() {
+    return {
+      isHeaderHidden: false,
+      lastScrollPosition: 0,
+      userName: ''
+    };
+  },
+  methods: {
+    handleScroll() {
+      const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScrollPosition > this.lastScrollPosition) {
+        // 스크롤을 아래로 할 때 헤더 숨기기
+        this.isHeaderHidden = true;
+      } else {
+        // 스크롤을 위로 할 때 헤더 보이기
+        this.isHeaderHidden = false;
+      }
+      this.lastScrollPosition = currentScrollPosition;
+    },
+    getUserName() {
+      const token = localStorage.getItem('accessToken');
+      this.userName = getNameFromToken(token);
+    }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll);
+    this.getUserName();
+  },
+
+};
 </script>
 
 <style scoped>
@@ -42,8 +69,12 @@ export default {
   display: flex;
   padding: 1rem;
   background-color: #141418;
-  border-radius: 10px; /* 둥근 모서리 */
   z-index: 1000;
+  transition: transform 0.15s ease-in-out; /* 스크롤 시 부드러운 트랜지션 */
+}
+
+.header-container.hidden {
+  transform: translateY(-100%); /* 헤더 숨기기 */
 }
 
 .right-icons {
@@ -85,7 +116,7 @@ export default {
 .profile-icon-wrapper {
   display: flex;
   align-items: center;
-  padding: 0.4rem 1rem 0.4rem 0.4rem  ;
+  padding: 0.4rem 1rem 0.4rem 0.4rem;
   border-radius: 20px;
   border: 1px solid #4f4f4f;
 }

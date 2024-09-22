@@ -1,7 +1,8 @@
 package com.moneyminder;
 
 import com.moneyminder.domain.auth.application.JwtProvider;
-import com.moneyminder.domain.user.domain.type.UserRole;
+import com.moneyminder.domain.user.domain.User;
+import com.moneyminder.domain.user.domain.type.SocialType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ public class AuthHelper {
     }
 
     public static String getAccessToken() {
-        return jwtProvider.generateToken("TestUser", UserRole.USER).accessToken();
+        User user = User.create("TestUser", "이름", SocialType.GOOGLE);
+        return jwtProvider.generateToken(user).accessToken();
     }
 }

@@ -1,6 +1,7 @@
 package com.moneyminder.domain.auth.infrastructure.oauth2.service;
 
 import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
+import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.type.SocialType;
 import com.moneyminder.domain.user.domain.type.UserRole;
 import java.util.Collection;
@@ -30,5 +31,16 @@ public class OAuth2UserInfoService {
                 .map(UserRole::fromKey)
                 .findFirst()
                 .orElse(UserRole.USER);
+    }
+
+    public User extractUser(Authentication authentication) {
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+        Map<String, Object> attributes = authToken.getPrincipal().getAttributes();
+
+        return User.create(
+                (String) attributes.get("email"),
+                (String) attributes.get("name"),
+                SocialType.fromName(authToken.getAuthorizedClientRegistrationId())
+        );
     }
 }

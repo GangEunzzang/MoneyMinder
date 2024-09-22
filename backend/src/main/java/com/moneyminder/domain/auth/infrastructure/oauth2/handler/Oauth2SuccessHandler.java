@@ -4,10 +4,9 @@ package com.moneyminder.domain.auth.infrastructure.oauth2.handler;
 import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
-import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.auth.infrastructure.oauth2.service.OAuth2UserInfoService;
 import com.moneyminder.domain.auth.properties.OAuth2Properties;
-import com.moneyminder.domain.user.domain.type.UserRole;
+import com.moneyminder.domain.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -51,13 +50,8 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throw new IllegalArgumentException("Unauthorized Redirect URI");
         }
 
-        OAuth2UserInfo userInfo = oAuth2UserInfoService.extractUserInfo(authentication);
-        UserRole userRole = oAuth2UserInfoService.extractUserRole(authentication);
-
-        TokenInfo tokenInfo = jwtProvider.generateToken(
-                userInfo.email(),
-                userRole
-        );
+        User user = oAuth2UserInfoService.extractUser(authentication);
+        TokenInfo tokenInfo = jwtProvider.generateToken(user);
 
         return UriComponentsBuilder
                 .fromUriString(frontendRedirectUri)

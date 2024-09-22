@@ -4,16 +4,27 @@ import com.moneyminder.domain.auth.domain.RefreshToken;
 import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.auth.domain.repository.RefreshTokenRepository;
 import com.moneyminder.domain.auth.properties.TokenProperties;
+import com.moneyminder.domain.user.domain.User;
+import com.moneyminder.domain.user.domain.repository.UserRepository;
 import com.moneyminder.domain.user.domain.type.UserRole;
-import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
-import com.moneyminder.domain.user.repository.UserJpaRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,18 +33,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.security.Key;
-import java.time.Instant;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Optional;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
 
-    private final UserJpaRepository userRepository;
+    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProperties tokenProperties;
 
@@ -51,11 +56,11 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(String email, UserRole userRole) {
-        String newAccessToken = generateAccessToken(email, userRole);
+    public TokenInfo generateToken(User user) {
+        String newAccessToken = generateAccessToken(user);
         String newRefreshToken = generateRefreshToken();
 
-        RefreshToken refreshToken = RefreshToken.create(email, newRefreshToken);
+        RefreshToken refreshToken = RefreshToken.create(user.email(), newRefreshToken);
 
         refreshTokenRepository.save(refreshToken);
 
@@ -69,14 +74,14 @@ public class JwtProvider {
         RefreshToken currentRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_INVALID));
 
-        UserEntity user = userRepository.findByEmail(currentRefreshToken.email())
+        User user = userRepository.findByEmail(currentRefreshToken.email())
                 .orElseThrow(() -> new BaseException(ResultCode.USER_NOT_FOUND));
 
-        String newAccessToken = generateAccessToken(user.getEmail(), user.getUserRole());
+        String newAccessToken = generateAccessToken(user);
         String newRefreshToken = generateRefreshToken();
 
         refreshTokenRepository.delete(currentRefreshToken);
-        refreshTokenRepository.save(RefreshToken.create(user.getEmail(), newRefreshToken));
+        refreshTokenRepository.save(RefreshToken.create(user.email(), newRefreshToken));
 
         return TokenInfo.create(newAccessToken, newRefreshToken);
     }
@@ -129,7 +134,7 @@ public class JwtProvider {
                 Optional.empty();
     }
 
-    public UserEntity getUserByRequest(HttpServletRequest request) {
+    public User getUserByRequest(HttpServletRequest request) {
         String bearerToken = extractAccessToken(request)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_NOT_FOUND));
 
@@ -162,10 +167,11 @@ public class JwtProvider {
         }
     }
 
-    private String generateAccessToken(String userId, UserRole userRole) {
+    private String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(userId)
-                .claim(AUTHORITIES_KEY, userRole.getKey())
+                .setSubject(user.email())
+                .claim(AUTHORITIES_KEY, user.userRole().getKey())
+                .claim("name", user.name())
                 .setExpiration(Date.from(Instant.now().plusMillis(tokenProperties.getAccessTokenExpiry())))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

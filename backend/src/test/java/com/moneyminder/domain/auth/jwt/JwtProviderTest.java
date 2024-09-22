@@ -1,5 +1,13 @@
 package com.moneyminder.domain.auth.jwt;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.auth.domain.repository.RefreshTokenRepository;
@@ -15,6 +23,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,17 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.core.Authentication;
-
-import java.security.Key;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class JwtProviderTest {
@@ -76,7 +77,7 @@ class JwtProviderTest {
         @Test
         void given_userIdAndUserRole_when_generateToken_then_returnValidTokens() {
             // given && when
-            TokenInfo tokenInfo = jwtProvider.generateToken(setUpUser.email(), UserRole.USER);
+            TokenInfo tokenInfo = jwtProvider.generateToken(setUpUser);
 
             // then
             assertDoesNotThrow(() -> jwtProvider.validateToken(tokenInfo.accessToken()));
@@ -87,7 +88,7 @@ class JwtProviderTest {
         @Test
         void given_refreshToken_when_validateRefreshToken_then_reissueAccessToken() throws Exception {
             // given
-            TokenInfo currentTokenInfo = jwtProvider.generateToken(setUpUser.email(), UserRole.USER);
+            TokenInfo currentTokenInfo = jwtProvider.generateToken(setUpUser);
 
             // when
             TokenInfo reissuedTokenInfo = jwtProvider.reissueToken(currentTokenInfo.refreshToken());
@@ -101,7 +102,7 @@ class JwtProviderTest {
         @Test
         void given_refreshToken_when_reissueAccessToken_then_regenerateRefreshToken() throws Exception {
             // given
-            TokenInfo currentTokenInfo = jwtProvider.generateToken(setUpUser.email(), UserRole.USER);
+            TokenInfo currentTokenInfo = jwtProvider.generateToken(setUpUser);
 
             // when
             Thread.sleep(1000);
@@ -117,7 +118,7 @@ class JwtProviderTest {
         @Test
         void given_validAccessToken_when_getAuthentication_then_returnAuthentication() {
             // given
-            TokenInfo tokenInfo = jwtProvider.generateToken(setUpUser.email(), UserRole.USER);
+            TokenInfo tokenInfo = jwtProvider.generateToken(setUpUser);
 
             // when
             Authentication authentication = jwtProvider.getAuthentication(tokenInfo.accessToken());

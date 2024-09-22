@@ -36,11 +36,14 @@ export default {
 
 <style scoped>
 .header-container {
+  position: fixed; /* 화면 상단에 고정 */
+  top: 0;
+  right: 0; /* 오른쪽 상단에 고정 */
   display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-  background-color: #1e1e1e;
-  border-bottom: 1px solid #333;
+  padding: 1rem;
+  background-color: #141418;
+  border-radius: 10px; /* 둥근 모서리 */
+  z-index: 1000;
 }
 
 .right-icons {
@@ -50,11 +53,20 @@ export default {
 
 .notification-wrapper {
   position: relative;
-  margin-right: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  height: 1.5rem;
+  border-radius: 100%;
+  cursor: pointer;
+  border: 1px solid #4f4f4f;
+  padding: 11px;
+  margin-right: 1rem;
 }
 
 .bell-icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #ccc;
   cursor: pointer;
 }
@@ -65,7 +77,7 @@ export default {
   right: -10px;
   background-color: #e74c3c;
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.79rem;
   padding: 0.2rem 0.5rem;
   border-radius: 50%;
 }
@@ -73,15 +85,14 @@ export default {
 .profile-icon-wrapper {
   display: flex;
   align-items: center;
-  background-color: #2f2f2f;
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 1rem 0.4rem 0.4rem  ;
   border-radius: 20px;
   border: 1px solid #4f4f4f;
 }
 
 .profile-icon {
-  font-size: 1.6rem;
-  color: #ccc;
+  font-size: 1.8rem;
+  color: white;
   margin-right: 0.5rem;
 }
 

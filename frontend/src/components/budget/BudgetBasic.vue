@@ -24,7 +24,7 @@
     <!-- 메인 콘텐츠 영역 -->
     <div class="main-content">
       <!-- 왼쪽: 카테고리별 예산 리스트 -->
-      <div class="circle-progress-list" :class="{'full-width': rightContainersFinished}">
+      <div v-if="budgetsByCategory.length > 0" class="circle-progress-list" :class="{'full-width': rightContainersFinished}">
         <div v-for="(budget, index) in budgetsByCategory" :key="index" class="circle-progress-item">
           <!-- 카테고리 이름 -->
           <div class="category-name">
@@ -70,8 +70,13 @@
         </div>
       </div>
 
+      <div v-else class="no-data-message">
+        예산이 없어요!
+      </div>
+
+
       <!-- 오른쪽 컨테이너 영역 -->
-      <div class="right-containers" v-if="!rightContainersFinished">
+      <div v-if="budgetsByCategory.length > 0 && !rightContainersFinished" class="right-containers">
         <!-- 총 예산 및 사용 금액 컨테이너 -->
         <div class="total-budget-container">
           <h3>총 예산 </h3>
@@ -118,14 +123,20 @@
       </div>
     </div>
 
+
+
     <!-- 예산 추가 버튼 -->
     <button class="add-budget" @click="openCreateModal">예산 추가</button>
     <BudgetCreateModal
         v-if="showCreateModal"
         :isOpen="showCreateModal"
+        :selectedYear="selectedYear"
+        :selectedMonth="selectedMonth"
         @close="closeCreateModal"
     />
+
   </div>
+
 </template>
 
 
@@ -259,7 +270,7 @@ export default {
       const progress = this.calculateProgress(budget);
       if (progress <= 40) return "Good";
       if (progress <= 60) return "Warning";
-      return "Dangerous";
+      return "Bad";
     },
 
     statusClass(budget) {
@@ -553,6 +564,15 @@ export default {
 
 .consumption-ranking-container .ranking-item:last-child {
   border-bottom: none;
+}
+
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  color: #726f6f;
 }
 </style>
 

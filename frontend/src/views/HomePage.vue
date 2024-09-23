@@ -40,7 +40,7 @@
           <p>카테고리별로 예산을 설정하고, 실시간 지출 현황을 확인하세요.</p>
         </div>
         <div class="intro-image">
-          <img src="@/assets/transaction.png" alt="예산 관리 이미지" class="responsive-image" />
+          <img src="@/assets/budget.png" alt="예산 관리 이미지" class="responsive-image" />
         </div>
       </div>
     </div>
@@ -130,6 +130,7 @@ export default {
 .introduction-section {
   width: 90%;
   max-width: 1200px;
+  padding: 4rem 0;
 }
 
 /* Each Section Layout */
@@ -139,23 +140,22 @@ export default {
   align-items: center;
   padding: 3rem 2rem;
   background-color: #1e1e1e;
-  border-radius: 15px;
-  border: 1px solid #333333;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-  margin-bottom: 3rem;
+  border-radius: 20px;
+  margin-bottom: 4rem;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
   opacity: 0;
   transform: translateY(30px);
   visibility: hidden;
   transition: opacity 1.5s ease, transform 1.5s ease, visibility 1.5s;
 }
 
-.section:nth-child(even) {
-  flex-direction: row-reverse;
-}
-
 .section:hover {
   transform: translateY(-10px);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.section:nth-child(even) {
+  flex-direction: row-reverse;
 }
 
 .intro-text {
@@ -165,7 +165,7 @@ export default {
 }
 
 .intro-text h2 {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   color: #ffffff;
   margin-bottom: 1rem;
   font-weight: 800;
@@ -173,10 +173,9 @@ export default {
 }
 
 .intro-text p {
-  font-size: 1.1rem;
-  color: #bcbcbc;
+  font-size: 1.3rem;
+  color: #cccccc;
   line-height: 1.6;
-  margin-bottom: 0.5rem;
 }
 
 .intro-image {
@@ -188,7 +187,7 @@ export default {
 
 .responsive-image {
   width: 100%;
-  max-width: 550px;
+  max-width: 500px;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease;

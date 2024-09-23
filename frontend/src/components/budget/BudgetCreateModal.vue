@@ -37,6 +37,8 @@ import CategoryAPI from "@/api/category"; // 카테고리 API 호출 함수 임�
 export default {
   props: {
     isOpen: Boolean,
+    selectedYear: Number,
+    selectedMonth: Number
   },
   data() {
     return {
@@ -57,10 +59,13 @@ export default {
     },
 
     getInitialFormData() {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+
       return {
         amount: '',
-        budgetDate: today, // 'yyyy-mm' 형식
+        budgetDate: `${year}-${month}`,
         categoryCode: ''
       };
     },
@@ -91,17 +96,28 @@ export default {
     },
 
     resetData() {
-      this.formData = this.getInitialFormData();
+      console.log(this.selectedYear);
+      console.log(this.selectedMonth);
+      if (this.selectedYear && this.selectedMonth) {
+        this.formData.budgetDate = `${this.selectedYear}-${String(this.selectedMonth).padStart(2, '0')}`;
+      } else {
+        this.formData = this.getInitialFormData();
+      }
     }
   },
 
   watch: {
-    isOpen(newVal) {
-      if (newVal) {
-        this.resetData();
-      }
-    }
+    isOpen: {
+      handler(newVal) {
+        if (newVal) {
+          this.resetData();
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
+
 
   created() {
     this.getCategoryData(); // 컴포넌트가 생성될 때 카테고리 데이터를 불러옵니다.
@@ -124,34 +140,41 @@ export default {
 }
 
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .modal-content h3 {
-  margin-top: 0;
+  margin: 10px 0 30px 0 ;
+  font-size: 1.4rem;
+  color: #333;
+  text-align: center;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
 }
 
 .form-group input, .form-group select {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
 button {

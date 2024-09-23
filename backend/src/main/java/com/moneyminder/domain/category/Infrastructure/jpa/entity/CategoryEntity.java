@@ -3,23 +3,24 @@ package com.moneyminder.domain.category.Infrastructure.jpa.entity;
 import com.moneyminder.domain.category.Infrastructure.jpa.converter.CategoryTypeConverter;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.type.CategoryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
+@SQLDelete(sql = "UPDATE category SET is_deleted = TRUE WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "category")
+@Table(name = "category", indexes = {
+        @Index(name = "idx_category_user_email", columnList = "user_email")
+})
 public class CategoryEntity {
 
     @Id
@@ -46,6 +47,10 @@ public class CategoryEntity {
 
     @Comment("카테고리 설명")
     private String description;
+
+    @Comment("삭제 여부")
+    @ColumnDefault("false")
+    private final Boolean isDeleted = Boolean.FALSE;
 
     @Builder
     private CategoryEntity(Long id, String categoryName, String categoryCode, CategoryType categoryType,

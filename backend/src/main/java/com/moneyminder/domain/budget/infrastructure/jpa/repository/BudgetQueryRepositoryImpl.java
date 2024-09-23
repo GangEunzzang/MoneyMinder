@@ -30,7 +30,7 @@ public class BudgetQueryRepositoryImpl implements BudgetQueryRepository {
                         categoryEntity.categoryType)
                 )
                 .from(budgetEntity)
-                .leftJoin(categoryEntity).on(budgetEntity.categoryCode.eq(categoryEntity.categoryCode))
+                .innerJoin(categoryEntity).on(budgetEntity.categoryCode.eq(categoryEntity.categoryCode))
                 .where(budgetEntity.userEmail.eq(email),
                         eqCategoryCode(searchReq.categoryCode()),
                         eqYear(searchReq.year()),

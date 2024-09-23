@@ -1,3 +1,4 @@
+## [MoneyMinder 웹 사이트](http://moneyminder.co.kr)
 
 ## 기술 스택
 ### 백엔드
@@ -39,12 +40,31 @@
 ## 서버 아키텍처 및 배포
 
 ### 서버 아키텍처
-![system_architecture.png](docs%2Fsystem_architecture.png)
+![system_architecture.png](docs%2Fsystem_architecture.png)  
 
+<br><br>
 
 ### 배포 과정
+![CICD.drawio.png](docs%2FCICD.drawio.png)
+
 
 - - -
+## 기능
+1. OAuth2 로그인
+![img.png](img.png)
 
+<br>
 
+2. 대시보드 페이지
+![dashboard.png](docs%2Fdashboard.png)
+
+<br>
+
+3. 거래내역 페이지
+![transaction.png](docs%2Ftransaction.png)
+
+<br>
+
+4. 예산 페이지
+![budget.png](frontend%2Fsrc%2Fassets%2Fbudget.png)
 

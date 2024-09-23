@@ -51,7 +51,7 @@
 - - -
 ## 기능
 1. OAuth2 로그인
-![img.png](img.png)
+![login.png](docs%2Flogin.png)
 
 <br>
 

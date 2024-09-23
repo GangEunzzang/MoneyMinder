@@ -37,7 +37,7 @@ class CategoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        categoryRepository.deleteAllInBatch();
+        jdbcTemplate.update("TRUNCATE TABLE category");
         jdbcTemplate.update("ALTER TABLE category ALTER COLUMN id RESTART WITH 1");
         setupCategory = categoryRepository.save(Category.builder()
                 .categoryName("테스트이름")

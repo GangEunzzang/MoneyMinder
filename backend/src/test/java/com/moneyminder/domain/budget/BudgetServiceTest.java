@@ -7,7 +7,9 @@ import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdate
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
+import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
+import com.moneyminder.domain.category.domain.type.CategoryType;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,6 +56,22 @@ public class BudgetServiceTest {
         jdbcTemplate.execute("TRUNCATE TABLE budget");
         jdbcTemplate.execute("ALTER TABLE budget ALTER COLUMN id RESTART WITH 1");
         budgetRepository.save(setupBudget);
+
+        // 카테고리도 초기화 (필요 시)
+        jdbcTemplate.execute("TRUNCATE TABLE category");
+        jdbcTemplate.execute("ALTER TABLE category ALTER COLUMN id RESTART WITH 1");
+
+        // 카테고리를 isDeleted = false로 저장
+        Category category = Category.builder()
+                .categoryCode("카테고리코드")
+                .categoryName("테스트카테고리")
+                .categoryType(CategoryType.EXPENSE)
+                .isCustom(true)
+                .userEmail("테스트")
+                .description("설명")
+                .build();
+
+        categoryRepository.save(category);
 
         given(categoryRepository.existsByCategoryCode("카테고리코드")).willReturn(true);
     }
@@ -155,7 +173,7 @@ public class BudgetServiceTest {
             assertThat(yearBudgetList.get(0).year()).isEqualTo(year);
         }
 
-        @DisplayName("조회 - 성공적으로 사용자의 연도와 월별 예산을 조회한다.")
+        @DisplayName("조회 - 성공적으로 사용자의 연도와 월별 예산을 조회한다. (카테고리와 inner join)")
         @Test
         void whenGetBudgetByUserEmailAndYearAndMonth_thenSuccess() {
             // given

@@ -32,6 +32,7 @@ public class BudgetQueryRepositoryImpl implements BudgetQueryRepository {
                 .from(budgetEntity)
                 .innerJoin(categoryEntity).on(budgetEntity.categoryCode.eq(categoryEntity.categoryCode))
                 .where(budgetEntity.userEmail.eq(email),
+                        categoryEntity.isDeleted.eq(false), // 삭제되지 않은 카테고리만 조인
                         eqCategoryCode(searchReq.categoryCode()),
                         eqYear(searchReq.year()),
                         eqMonth(searchReq.month()))

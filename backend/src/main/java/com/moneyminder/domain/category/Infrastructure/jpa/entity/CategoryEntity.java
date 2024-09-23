@@ -50,11 +50,11 @@ public class CategoryEntity {
 
     @Comment("삭제 여부")
     @ColumnDefault("false")
-    private final Boolean isDeleted = Boolean.FALSE;
+    private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
     private CategoryEntity(Long id, String categoryName, String categoryCode, CategoryType categoryType,
-            boolean isCustom, String userEmail, String description) {
+                           boolean isCustom, String userEmail, String description, boolean isDeleted) {
         this.id = id;
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;
@@ -62,6 +62,7 @@ public class CategoryEntity {
         this.isCustom = isCustom;
         this.userEmail = userEmail;
         this.description = description;
+        this.isDeleted = isDeleted;
     }
 
     public Category toDomain() {

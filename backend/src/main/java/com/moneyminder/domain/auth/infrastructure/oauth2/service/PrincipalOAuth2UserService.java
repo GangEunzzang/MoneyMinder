@@ -1,20 +1,20 @@
 package com.moneyminder.domain.auth.infrastructure.oauth2.service;
 
 import com.moneyminder.domain.auth.event.domain.UserRegisterEvent;
+import com.moneyminder.domain.auth.infrastructure.oauth2.domain.PrincipalDetails;
 import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.repository.UserRepository;
 import com.moneyminder.domain.user.domain.type.SocialType;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,25 +39,29 @@ public class PrincipalOAuth2UserService implements OAuth2UserService<OAuth2UserR
 
         log.info("registrationId : {}", registrationId);
         log.info("userNameAttributeName : {}", userNameAttributeName);
+        log.info("OAuth2User attributes: {}", oAuth2User.getAttributes());
 
         SocialType socialType = SocialType.fromName(registrationId);
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(socialType, oAuth2User.getAttributes());
+        Map<String, Object> attributes = new HashMap<>();
+
+        switch (socialType) {
+            case GOOGLE -> attributes = oAuth2User.getAttributes();
+            case NAVER -> attributes = (Map<String, Object>) oAuth2User.getAttributes().get("response");
+        }
+
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(socialType, attributes);
 
         User user = userRepository.findByEmail(oAuth2UserInfo.email())
                 .orElseGet(() -> createUser(oAuth2UserInfo));
 
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.userRole().getKey())),
-                oAuth2User.getAttributes(),
-                userNameAttributeName
-        );
+        return new PrincipalDetails(user, attributes);
     }
 
     private User createUser(OAuth2UserInfo oAuth2UserInfo) {
         User newUser = User.create(
                 oAuth2UserInfo.email(),
                 oAuth2UserInfo.name(),
-                SocialType.GOOGLE
+                oAuth2UserInfo.socialType()
         );
 
         User user = userRepository.save(newUser);

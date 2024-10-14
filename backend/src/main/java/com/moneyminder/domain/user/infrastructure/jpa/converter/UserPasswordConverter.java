@@ -11,6 +11,10 @@ public class UserPasswordConverter implements jakarta.persistence.AttributeConve
     private final PasswordEncoder passwordEncoder;
 
     public String convertToDatabaseColumn(String attribute) {
+        if (attribute == null) {
+            return null;
+        }
+
         return passwordEncoder.encode(attribute);
     }
 

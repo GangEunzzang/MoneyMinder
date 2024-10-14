@@ -17,7 +17,7 @@ public class AuthHelper {
     }
 
     public static String getAccessToken() {
-        User user = User.create("TestUser", "이름", SocialType.GOOGLE);
+        User user = User.create("TestUser", "이름", "password", SocialType.GOOGLE);
         return jwtProvider.generateToken(user).accessToken();
     }
 }

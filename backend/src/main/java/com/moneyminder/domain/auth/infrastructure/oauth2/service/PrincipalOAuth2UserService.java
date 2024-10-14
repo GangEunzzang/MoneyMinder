@@ -6,8 +6,6 @@ import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.repository.UserRepository;
 import com.moneyminder.domain.user.domain.type.SocialType;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,6 +16,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class PrincipalOAuth2UserService implements OAuth2UserService<OAuth2UserR
     }
 
     private User createUser(OAuth2UserInfo oAuth2UserInfo) {
-        User newUser = User.create(
+        User newUser = User.socialCreate(
                 oAuth2UserInfo.email(),
                 oAuth2UserInfo.name(),
                 oAuth2UserInfo.socialType()

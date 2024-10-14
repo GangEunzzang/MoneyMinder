@@ -44,6 +44,7 @@ public enum ResultCode {
     BUDGET_ALREADY_EXISTS(409, HttpStatus.CONFLICT, "이미 존재하는 예산입니다."),
 
 
+    INVALID_PASSWORD(500, HttpStatus.NOT_ACCEPTABLE, "비밀번호가 일치하지 않습니다."),
     ;
     private final Integer code;
     private final HttpStatus httpStatus;

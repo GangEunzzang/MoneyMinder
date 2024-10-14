@@ -3,6 +3,7 @@ import store from '@/store'; // Vuex store 불러오기
 import HomePage from '@/views/HomePage.vue'; // 웹 소개 페이지
 import LoginCallback from '@/views/LoginCallback.vue';
 import LoginPage from '@/views/LoginPage.vue'; // 로그인 페이지
+import SignupPage from '@/views/SignUpPage.vue'; // 회원가입 페이지
 import AccountPage from '@/views/AccountPage.vue'; // 로그인 후 페이지
 import NotFoundPage from '@/views/NotFoundPage.vue'; // 404 페이지
 
@@ -27,6 +28,7 @@ const routes = [
   },
 
   { path: '/login', component: LoginPage }, // 로그인 페이지
+  {path: '/signup', component: SignupPage}, // 회원가입 페이지
   { path: '/oauth2/callback', component: LoginCallback, props: true }, // OAuth 콜백 페이지
 
   { path: '/:pathMatch(.*)*', component: NotFoundPage }, // 모든 지원하지 않는 경로 처리

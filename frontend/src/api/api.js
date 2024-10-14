@@ -20,13 +20,20 @@ const getRefreshToken = mem(async () => {
     }
 }, {maxAge: 1000});
 
+const EXCLUDED_URLS = ["/api/v1/user/login", "/api/v1/user/signup"];
 
 instance.interceptors.response.use(
     response => response,
     async error => {
-        const {config, response: {data: {code}}} = error;
+        const { config, response: { data: { code } } } = error;
 
-        if (code !== 2002 || !config.url.includes(REFRESH_URL), config.sent) {
+        // 토큰 재발급이 필요하지 않은 URL인 경우 그냥 에러 반환
+        if (EXCLUDED_URLS.some(url => config.url.includes(url))) {
+            return Promise.reject(error);
+        }
+
+        // 기존 조건에 따라 토큰 재발급 요청 진행
+        if (code !== 2002 || !config.url.includes(REFRESH_URL) || config.sent) {
             return Promise.reject(error);
         }
 
@@ -42,14 +49,13 @@ instance.interceptors.response.use(
     }
 );
 
-
 export function api(isAuthenticated = false) {
     if (isAuthenticated) {
         const token = localStorage.getItem('accessToken');
         if (token) {
             instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         } else {
-            console.warm("토큰이 없습니다.");
+            console.warn("토큰이 없습니다.");
         }
     }
     return instance;

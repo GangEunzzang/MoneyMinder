@@ -11,7 +11,7 @@ services:
     ports:
       - "8080:8080"  # Blue 인스턴스
     volumes:
-      - /home/ec2-user/backend/log:/app/log
+      - /home/ec2-user/moneyminder/log:/app/log
     networks:
       - moneyMinder-network
     environment:
@@ -27,7 +27,7 @@ services:
     ports:
       - "8081:8080"  # Green 인스턴스
     volumes:
-      - /home/ec2-user/backend/log:/app/log
+      - /home/ec2-user/moneyminder/log:/app/log
     networks:
       - moneyMinder-network
     environment:

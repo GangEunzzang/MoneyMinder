@@ -23,7 +23,7 @@ spring:
 
 auth:
   token:
-    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadf
+    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadfa
     accessTokenExpiry: 9900000
     refreshTokenExpiry: 604800000
   oauth2:

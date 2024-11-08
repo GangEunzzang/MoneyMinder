@@ -17,6 +17,7 @@ const getRefreshToken = mem(async () => {
         return accessToken;
     } catch (e) {
         store.dispatch('logout');
+        throw e; // 에러를 다시 던짐
     }
 }, {maxAge: 1000});
 
@@ -25,27 +26,36 @@ const EXCLUDED_URLS = ["/api/v1/user/login", "/api/v1/user/signup"];
 instance.interceptors.response.use(
     response => response,
     async error => {
-        const { config, response: { data: { code } } } = error;
+        // 에러 객체의 구조 분해
+        const { config } = error;
+        const code = error.response?.data?.code;
 
-        // 토큰 재발급이 필요하지 않은 URL인 경우 그냥 에러 반환
+        // 예외 URL 처리
         if (EXCLUDED_URLS.some(url => config.url.includes(url))) {
             return Promise.reject(error);
         }
 
-        // 기존 조건에 따라 토큰 재발급 요청 진행
-        if (code !== 2002 || !config.url.includes(REFRESH_URL) || config.sent) {
+        // 토큰 재발급 시도 여부 결정
+        if (code !== 2002 || config.url.includes(REFRESH_URL) || config.sent) {
             return Promise.reject(error);
         }
 
         config.sent = true;
-        let accessToken = await getRefreshToken();
 
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-            return axios(config);
+        try {
+            let accessToken = await getRefreshToken();
+
+            if (accessToken) {
+                config.headers.Authorization = `Bearer ${accessToken}`;
+                return instance(config); // instance 사용
+            } else {
+                // 로그아웃 처리됨
+                return Promise.reject(error);
+            }
+        } catch (e) {
+            // 로그아웃 처리 후 에러 반환
+            return Promise.reject(e);
         }
-
-        return Promise.reject(error);
     }
 );
 

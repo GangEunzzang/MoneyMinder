@@ -6,6 +6,7 @@
         <input type="email" v-model="email" placeholder="이메일" class="input-field" />
         <input type="text" v-model="name" placeholder="이름" class="input-field" />
         <input type="password" v-model="password" placeholder="비밀번호" class="input-field" />
+        <input type="password" v-model="passwordConfirm" placeholder="비밀번호 확인" class="input-field" />
         <button @click="signup" class="btn btn-signup">회원가입</button>
       </div>
       <div class="login-container">
@@ -23,10 +24,17 @@ export default {
       email: '',
       name: '',
       password: '',
+      passwordConfirm: '', // 비밀번호 확인 필드 추가
     };
   },
   methods: {
     signup() {
+      // 비밀번호와 비밀번호 확인이 일치하는지 확인
+      if (this.password !== this.passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+        return;
+      }
+
       const signupData = {
         email: this.email,
         name: this.name,

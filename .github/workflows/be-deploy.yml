@@ -72,10 +72,12 @@ jobs:
             echo "SPRING_REDIS_PORT=${{ secrets.SPRING_REDIS_PORT }}" >> .env
             echo "GOOGLE_OAUTH2_CLIENT_ID=${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}" >> .env
             echo "GOOGLE_OAUTH2_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}" >> .env
+            echo "NAVER_OAUTH2_CLIENT_ID=${{ secrets.NAVER_OAUTH2_CLIENT_ID }}" >> .env
+            echo "NAVER_OAUTH2_CLIENT_SECRET=${{ secrets.NAVER_OAUTH2_CLIENT_SECRET }}" >> .env
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
             echo "MAIL_USER_NAME=${{ secrets.MAIL_USER_NAME }}" >> .env
             echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
-            
+                  
             # deploy.sh 실행
             chmod +x deploy.sh
             ./deploy.sh

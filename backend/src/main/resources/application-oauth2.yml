@@ -23,7 +23,7 @@ spring:
 
 auth:
   token:
-    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadfa
+    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadf
     accessTokenExpiry: 9900000
     refreshTokenExpiry: 604800000
   oauth2:
@@ -44,5 +44,6 @@ auth:
       - OPTIONS
     allowed-headers: '*'
     max-age: 3600
+
 
 

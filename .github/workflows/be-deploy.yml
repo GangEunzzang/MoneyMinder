@@ -42,8 +42,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew clean test jacocoTestReport \
-         ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          ./gradlew clean test jacocoTestReport 
+          ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Docker Hub 로그인
         uses: docker/login-action@v2

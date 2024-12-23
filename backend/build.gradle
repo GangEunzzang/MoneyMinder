@@ -1,8 +1,11 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.0'
+    id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'jacoco'
+    id "org.sonarqube" version "6.0.1.5171"
 }
+
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -68,8 +71,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly "io.micrometer:micrometer-registry-prometheus"
 
-    // commons-lang3 (유틸함수 지원)
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    // commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     // 메일 전송 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -77,13 +80,13 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //embedded-redis
-    compileOnly group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
-    testImplementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    // embedded-redis
+    compileOnly 'it.ozimov:embedded-redis:0.7.2'
+    testImplementation 'it.ozimov:embedded-redis:0.7.2'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2:2.2.224'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -97,8 +100,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-
-// -- QueryDsl 설정 -------------------------------------------------------
+// QueryDSL 설정
 def querydslSrcDir = 'src/main/generated'
 clean {
     delete file(querydslSrcDir)
@@ -106,12 +108,50 @@ clean {
 tasks.withType(JavaCompile) {
     options.generatedSourceOutputDirectory = file(querydslSrcDir)
 }
-
-// 자동 생성된 Q클래스 gradle clean으로 제거
 clean {
     delete file('src/main/generated')
 }
 
+// 테스트 환경변수
 test {
     environment 'AUTH_TOKEN_SECRET_KEY', 'defaultSecretKeyForTestsdefaultSecretKeyForTests'
+}
+
+// 공통 변수 추출
+def jacocoReportsDir = "${project.buildDir}/reports/jacoco/test"
+def jacocoTestReportXml = "${jacocoReportsDir}/jacocoTestReport.xml"
+
+jacocoTestReport {
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+
+        html.outputLocation.set(file("${jacocoReportsDir}/html"))
+        xml.outputLocation.set(file(jacocoTestReportXml))
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0
+            }
+            excludes = [
+                    'generated.*',
+            ]
+        }
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "GangEunzzang_MoneyMinder"
+        property "sonar.organization", "gangeunzzang"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }

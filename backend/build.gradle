@@ -116,11 +116,40 @@ test {
     environment 'AUTH_TOKEN_SECRET_KEY', 'defaultSecretKeyForTestsdefaultSecretKeyForTests'
 }
 
+def QDomains = []
+for (qPattern in '*.QA'..'*.QZ') {
+    QDomains.add(qPattern + '*')
+}
+
+def jacocoExcludePatterns = [
+        "**/*Config*",
+        "**/*Exception*",
+        "**/*Req*",
+        "**/*Res*",
+        "**/*Request*",
+        "**/*Response*",
+        "**/*Dto*",
+        "**/*Interceptor*",
+        "**/*Filter*",
+        "**/*Resolver*",
+        "**/*Entity*",
+        "**/test/**",
+        "**/resources/**"
+]
+
+def coverageExcludes = []
+coverageExcludes.addAll(["generated.*"])
+coverageExcludes.addAll(QDomains)
+coverageExcludes.addAll(jacocoExcludePatterns)
+
+
 // 공통 변수 추출
 def jacocoReportsDir = "${project.buildDir}/reports/jacoco/test"
 def jacocoTestReportXml = "${jacocoReportsDir}/jacocoTestReport.xml"
 
 jacocoTestReport {
+    dependsOn test
+
     reports {
         html.required = true
         xml.required = true
@@ -129,20 +158,27 @@ jacocoTestReport {
         html.outputLocation.set(file("${jacocoReportsDir}/html"))
         xml.outputLocation.set(file(jacocoTestReportXml))
     }
+
+    classDirectories.setFrom(
+            files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: coverageExcludes)
+            })
+    )
+
 }
 
 jacocoTestCoverageVerification {
     violationRules {
         rule {
+            enabled = true
             element = 'CLASS'
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
                 minimum = 0
             }
-            excludes = [
-                    'generated.*',
-            ]
+
+            excludes = coverageExcludes
         }
     }
 }

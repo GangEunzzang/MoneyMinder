@@ -28,15 +28,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Gradle 빌드
-        working-directory: backend
-        run: ./gradlew build
-
-      - name: SonarQube 분석
+      - name: SonarQube & Jacoco 분석
         working-directory: backend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew test jacocoTestReport
+          ./gradlew clean test jacocoTestReport
           ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}

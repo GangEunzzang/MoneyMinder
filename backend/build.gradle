@@ -159,13 +159,12 @@ jacocoTestReport {
         xml.outputLocation.set(file(jacocoTestReportXml))
     }
 
-    doFirst {
-        classDirectories.setFrom(
-                files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude: coverageExcludes)
-                })
-        )
-    }
+    classDirectories.setFrom(
+            files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: coverageExcludes)
+            })
+    )
+
 }
 
 jacocoTestCoverageVerification {

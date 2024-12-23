@@ -152,5 +152,7 @@ sonar {
         property "sonar.projectKey", "GangEunzzang_MoneyMinder"
         property "sonar.organization", "gangeunzzang"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReportXml
     }
 }

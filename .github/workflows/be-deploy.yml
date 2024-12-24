@@ -12,7 +12,14 @@ jobs:
 
     steps:
       ########################################################
-      # 1) 체크아웃 & 환경 준비
+      # 1) 시작 시간 기록 (작업 소요 시간 계산용)
+      ########################################################
+      - name: Set start time
+        id: start-time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      ########################################################
+      # 2) 체크아웃 & 환경 준비
       ########################################################
       - name: 코드 체크아웃
         uses: actions/checkout@v4
@@ -33,7 +40,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       ########################################################
-      # 2) 배포 진행 중 알림 (배포 시작 시)
+      # 3) 배포 진행 중 알림 (배포 시작 시)
       ########################################################
       - name: Deploy in progress (Slack)
         uses: slackapi/slack-github-action@v1.24.0
@@ -95,7 +102,7 @@ jobs:
             }
 
       ########################################################
-      # 3) 실제 빌드 및 Docker 작업
+      # 4) 실제 빌드 및 Docker 작업
       ########################################################
       - name: Gradle 빌드
         working-directory: backend
@@ -113,7 +120,7 @@ jobs:
           docker push gangeunlee/moneyminder-backend:latest
 
       ########################################################
-      # 4) SSH를 통해 서버에 배포 파일 전송 및 deploy.sh 실행
+      # 5) SSH를 통해 서버에 배포 파일 전송 및 deploy.sh 실행
       ########################################################
       - name: 파일 전송
         uses: appleboy/scp-action@master
@@ -151,9 +158,20 @@ jobs:
             ./deploy.sh
 
       ########################################################
-      # 5) 배포 성공 알림
+      # 6) 배포 완료 시간 측정 (작업 소요 시간 계산)
       ########################################################
-      - name: 배포 성공 알림 (Slack)
+      - name: Calculate elapsed time
+        id: calculate-time
+        run: |
+          END_TIME=$(date +%s)
+          ELAPSED_TIME=$(($END_TIME - $START_TIME))
+          echo "Elapsed Time: $ELAPSED_TIME seconds"
+          echo "::set-output name=time::$ELAPSED_TIME"
+
+      ########################################################
+      # 7) 배포 성공 알림 (Slack)
+      ########################################################
+      - name: 배포 성공 알림
         if: success()
         uses: slackapi/slack-github-action@v1.24.0
         env:
@@ -210,7 +228,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*작업 소요 시간:* `${{ steps.took.outputs.time || '??' }}`"
+                      "text": "*작업 소요 시간:* `${{ steps.calculate-time.outputs.time }} 초`"
                     }
                   ]
                 }
@@ -218,9 +236,9 @@ jobs:
             }
 
       ########################################################
-      # 6) 배포 실패 알림
+      # 8) 배포 실패 알림 (Slack)
       ########################################################
-      - name: 배포 실패 알림 (Slack)
+      - name: 배포 실패 알림
         if: failure()
         uses: slackapi/slack-github-action@v1.24.0
         env:
@@ -277,7 +295,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*작업 소요 시간:* `${{ steps.took.outputs.time || '??' }}`"
+                      "text": "*작업 소요 시간:* `${{ steps.calculate-time.outputs.time }} 초`"
                     },
                     {
                       "type": "mrkdwn",
@@ -287,4 +305,3 @@ jobs:
                 }
               ]
             }
-

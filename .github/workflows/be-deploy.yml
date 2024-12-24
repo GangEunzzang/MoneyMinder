@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      ########################################################
+      # 1) 체크아웃 & 환경 준비
+      ########################################################
       - name: 코드 체크아웃
         uses: actions/checkout@v4
         with:
@@ -29,63 +32,71 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: 배포 진행 중 알림
+      ########################################################
+      # 2) 배포 진행 중 알림 (배포 시작 시)
+      ########################################################
+      - name: Deploy in progress (Slack)
+        uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": ":hourglass_flowing_sand: *MoneyMinder 서버 배포를 진행 중입니다...*"
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":hourglass_flowing_sand: *MoneyMinder 서버 배포를 진행 중입니다...*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n`${{ github.actor }} 🧑‍💻`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n`${{ github.event.head_commit.id }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Message:*\n${{ github.event.head_commit.message }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Ref:*\n`${{ github.ref }} 🏷️`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Pull Request:*\n`${{ github.event.pull_request.number || 'N/A' }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "배포 작업 진행 중입니다. 잠시만 기다려주세요. 🚀"
+                    }
+                  ]
                 }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Author:*\n`{{ author }} 🧑‍💻`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit:*\n`{{ commit }}`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Message:*\n{{ message }}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Ref:*\n`{{ ref }} 🏷️`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Pull Request:*\n`{{ pullRequest }}`"
-                  }
-                ]
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "context",
-                "elements": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "배포 작업 진행 중입니다. 잠시만 기다려주세요. 🚀"
-                  }
-                ]
-              }
-            ]
-          }' $SLACK_WEBHOOK_URL
+              ]
+            }
 
+      ########################################################
+      # 3) 실제 빌드 및 Docker 작업
+      ########################################################
       - name: Gradle 빌드
         working-directory: backend
         run: ./gradlew build
@@ -101,6 +112,9 @@ jobs:
           docker build --platform linux/amd64 -t gangeunlee/moneyminder-backend:latest -f config/deploy/be-Dockerfile .
           docker push gangeunlee/moneyminder-backend:latest
 
+      ########################################################
+      # 4) SSH를 통해 서버에 배포 파일 전송 및 deploy.sh 실행
+      ########################################################
       - name: 파일 전송
         uses: appleboy/scp-action@master
         with:
@@ -119,8 +133,6 @@ jobs:
           port: 22
           script: |
             cd /home/${{ secrets.EC2_USER }}/moneyminder/config/deploy
-            
-            # 환경 변수 설정 파일 생성
             echo "SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}" > .env
             echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> .env
             echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
@@ -135,118 +147,144 @@ jobs:
             echo "MAIL_USER_NAME=${{ secrets.MAIL_USER_NAME }}" >> .env
             echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
 
-            # deploy.sh 실행
             chmod +x deploy.sh
             ./deploy.sh
 
-      - name: 배포 성공 알림
+      ########################################################
+      # 5) 배포 성공 알림
+      ########################################################
+      - name: 배포 성공 알림 (Slack)
         if: success()
+        uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "> :green_heart: *MoneyMinder 서버 배포 성공!*"
-                }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
                     "type": "mrkdwn",
-                    "text": "*Author:*\n`{{ author }} 🧑‍💻`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit:*\n`{{ commit }}`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Message:*\n{{ message }}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Ref:*\n`{{ ref }} 🏷️`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Pull Request:*\n`{{ pullRequest }}`"
+                    "text": "> :green_heart: *MoneyMinder 서버 배포 성공!*"
                   }
-                ]
-              }
-            ]
-          }' $SLACK_WEBHOOK_URL
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n`${{ github.actor }} 🧑‍💻`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n`${{ github.event.head_commit.id }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Message:*\n${{ github.event.head_commit.message }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Ref:*\n`${{ github.ref }} 🏷️`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Pull Request:*\n`${{ github.event.pull_request.number || 'N/A' }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*배포 작업 완료* :white_check_mark:"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*작업 소요 시간:* `${{ steps.took.outputs.time || '??' }}`"
+                    }
+                  ]
+                }
+              ]
+            }
 
-      - name: 배포 실패 알림
+      ########################################################
+      # 6) 배포 실패 알림
+      ########################################################
+      - name: 배포 실패 알림 (Slack)
         if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "> :x: *MoneyMinder 서버 배포 실패!*"
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "> :x: *MoneyMinder 서버 배포 실패!*"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n`${{ github.actor }} 🧑‍💻`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n`${{ github.event.head_commit.id }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Message:*\n${{ github.event.head_commit.message }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Ref:*\n`${{ github.ref }} 🏷️`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Pull Request:*\n`${{ github.event.pull_request.number || 'N/A' }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*배포 작업 완료* :warning:"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*작업 소요 시간:* `${{ steps.took.outputs.time || '??' }}`"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "문제 원인 분석이 필요합니다. 🔍"
+                    }
+                  ]
                 }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Author:*\n`{{ author }} 🧑‍💻`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Commit:*\n`{{ commit }}`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Message:*\n{{ message }}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Ref:*\n`{{ ref }} 🏷️`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Pull Request:*\n`{{ pullRequest }}`"
-                  }
-                ]
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "context",
-                "elements": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "배포 실패: :warning: `{{ workflow }}`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "소요 시간: `{{ took }}`"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "문제 원인 분석이 필요합니다. 🔍"
-                  }
-                ]
-              }
-            ]
-          }' $SLACK_WEBHOOK_URL
+              ]
+            }
+

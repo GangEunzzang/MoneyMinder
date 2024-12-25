@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:tcp://localhost/~/test
+    url: jdbc:h2:tcp://localhost/~/testDB
     username: sa
 
   jpa:
@@ -22,4 +22,5 @@ spring:
       host: localhost
       port: 6379
 
-
+slack:
+  webhook-url: testtesttest

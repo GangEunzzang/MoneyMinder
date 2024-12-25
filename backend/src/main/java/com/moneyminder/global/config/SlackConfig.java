@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SlackConfig {
 
-    @Value("${slack.webhook.url}")
+    @Value("${slack.webhook-url}")
     private String slackWebhookUrl;
 
     @Bean

@@ -153,6 +153,7 @@ jobs:
             echo "AUTH_TOKEN_SECRET_KEY=${{ secrets.AUTH_TOKEN_SECRET_KEY }}" >> .env
             echo "MAIL_USER_NAME=${{ secrets.MAIL_USER_NAME }}" >> .env
             echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
+            echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" >> .env
 
             chmod +x deploy.sh
             ./deploy.sh

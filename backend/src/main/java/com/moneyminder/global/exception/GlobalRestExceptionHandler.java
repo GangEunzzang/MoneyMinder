@@ -1,7 +1,9 @@
 package com.moneyminder.global.exception;
 
+import com.moneyminder.global.annotaion.SlackNotification;
 import com.moneyminder.global.response.ErrorResponse;
 import io.micrometer.core.instrument.config.validate.ValidationException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +44,9 @@ public class GlobalRestExceptionHandler {
     }
 
 
-
+    @SlackNotification
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleException(Exception e) {
+    protected ResponseEntity<ErrorResponse> handleException(HttpServletRequest request, Exception e) {
         return ResponseEntity
                 .internalServerError()
                 .body(ErrorResponse.of(ResultCode.INTERNAL_ERROR, e.getMessage()));

@@ -2,6 +2,8 @@ package com.moneyminder.global.util;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
@@ -47,6 +49,18 @@ public class TimeUtils {
         }
 
         return new LocalDate[]{startOfWeek, endOfWeek};
+    }
+
+    /**
+     * LocalDateTime을 format에 맞게 변환합니다.
+     *
+     * @param dateTime LocalDateTime
+     * @param format   변환할 포맷
+     */
+
+    public static String format(LocalDateTime dateTime, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        return dateTime.format(formatter);
     }
 
 }

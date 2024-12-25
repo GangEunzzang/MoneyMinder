@@ -35,6 +35,9 @@
 * Github Actions
 * Nginx
 * Let`s Encrypt
+* Slack
+* Jacoco
+* SonarCloud
 
 - - -
 ## 서버 아키텍처 및 배포

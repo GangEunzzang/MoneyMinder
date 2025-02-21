@@ -1,1 +1,5 @@
 rootProject.name = 'MoneyMinder'
+
+include 'account-book-service'
+include 'user-service'
+include 'moneyminder-common'

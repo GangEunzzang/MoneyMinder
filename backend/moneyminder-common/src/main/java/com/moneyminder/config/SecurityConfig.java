@@ -1,11 +1,11 @@
 package com.moneyminder.config;
 
-import com.moneyminder.domain.auth.application.JwtProvider;
-import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
-import com.moneyminder.domain.auth.infrastructure.filter.JwtAuthenticationFilter;
-import com.moneyminder.domain.auth.infrastructure.oauth2.handler.OAuth2FailureHandler;
-import com.moneyminder.domain.auth.infrastructure.oauth2.handler.Oauth2SuccessHandler;
-import com.moneyminder.domain.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
+import com.moneyminder.auth.application.JwtProvider;
+import com.moneyminder.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
+import com.moneyminder.auth.infrastructure.filter.JwtAuthenticationFilter;
+import com.moneyminder.auth.infrastructure.oauth2.handler.OAuth2FailureHandler;
+import com.moneyminder.auth.infrastructure.oauth2.handler.Oauth2SuccessHandler;
+import com.moneyminder.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
 import com.moneyminder.filter.GlobalExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-    @Around("execution(* com.moneyminder.domain.*.presentation..*(..))")
+    @Around("execution(* com.moneyminder.*.presentation..*(..))")
     public Object logException(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result;
         try {

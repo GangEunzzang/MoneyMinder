@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'application'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+}
+
+
+application {
+    mainClass = 'com.moneyminder.EurekaApplication'
+}
+
+bootJar {
+    mainClass = 'com.moneyminder.EurekaApplication'
+}

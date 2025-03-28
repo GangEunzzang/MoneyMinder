@@ -1,0 +1,33 @@
+server:
+  port: 3334
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: account-book-service
+          uri: lb://account-book-service
+          predicates:
+            - Path=/account-book/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:3333/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

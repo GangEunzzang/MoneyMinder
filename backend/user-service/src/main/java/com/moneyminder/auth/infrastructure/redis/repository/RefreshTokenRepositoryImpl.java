@@ -1,8 +1,8 @@
 package com.moneyminder.auth.infrastructure.redis.repository;
 
-import com.moneyminder.domain.auth.domain.RefreshToken;
-import com.moneyminder.domain.auth.domain.repository.RefreshTokenRepository;
-import com.moneyminder.domain.auth.infrastructure.redis.entity.RefreshTokenRedis;
+import com.moneyminder.auth.domain.RefreshToken;
+import com.moneyminder.auth.domain.repository.RefreshTokenRepository;
+import com.moneyminder.auth.infrastructure.redis.entity.RefreshTokenRedis;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

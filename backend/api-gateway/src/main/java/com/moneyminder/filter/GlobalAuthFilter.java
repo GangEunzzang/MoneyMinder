@@ -36,16 +36,17 @@ public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFil
             }
 
             String jwt = token.substring(7);
-            if (!jwtProvider. (jwt)){
+            if (jwtProvider.validateToken(jwt)) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
             org.springframework.security.core.Authentication authentication = jwtProvider.getAuthentication(jwt);
 
-
             exchange.getRequest().mutate()
-                    .header("X-USER-EMAIL", jwtProvider. (ex)
+                    .header("X-USER-EMAIL", authentication.getName())
+                    .header("X-USER-ROLE", authentication.getAuthorities().toString())
+                    .build();
 
             return chain.filter(exchange);
         };

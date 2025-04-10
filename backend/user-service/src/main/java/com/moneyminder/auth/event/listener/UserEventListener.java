@@ -1,6 +1,6 @@
 package com.moneyminder.auth.event.listener;
 
-import com.moneyminder.domain.auth.event.domain.UserRegisterEvent;
+import com.moneyminder.auth.event.domain.UserRegisterEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

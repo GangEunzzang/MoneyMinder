@@ -1,9 +1,9 @@
 package com.moneyminder.user.repository;
 
-import com.moneyminder.domain.user.domain.User;
-import com.moneyminder.domain.user.domain.repository.UserRepository;
-import com.moneyminder.global.exception.BaseException;
-import com.moneyminder.global.exception.ResultCode;
+import com.moneyminder.exception.BaseException;
+import com.moneyminder.exception.ResultCode;
+import com.moneyminder.user.domain.User;
+import com.moneyminder.user.domain.repository.UserRepository;
 import com.moneyminder.user.infrastructure.jpa.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

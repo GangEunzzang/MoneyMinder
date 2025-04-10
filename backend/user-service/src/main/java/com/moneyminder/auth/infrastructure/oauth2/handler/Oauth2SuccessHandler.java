@@ -1,12 +1,12 @@
 package com.moneyminder.auth.infrastructure.oauth2.handler;
 
 
+import com.moneyminder.auth.JwtProvider;
+import com.moneyminder.auth.domain.TokenInfo;
+import com.moneyminder.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
 import com.moneyminder.auth.infrastructure.oauth2.service.OAuth2UserInfoService;
-import com.moneyminder.domain.auth.application.JwtProvider;
-import com.moneyminder.domain.auth.domain.TokenInfo;
-import com.moneyminder.domain.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
-import com.moneyminder.domain.auth.properties.OAuth2Properties;
-import com.moneyminder.domain.user.domain.User;
+import com.moneyminder.auth.properties.OAuth2Properties;
+import com.moneyminder.user.domain.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         User user = oAuth2UserInfoService.extractUser(authentication);
-        TokenInfo tokenInfo = jwtProvider.generateToken(user);
+        TokenInfo tokenInfo = jwtProvider.getAuthentication(user);
 
         return UriComponentsBuilder
                 .fromUriString(frontendRedirectUri)

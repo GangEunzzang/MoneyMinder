@@ -1,13 +1,14 @@
 package com.moneyminder.user.application;
 
-import com.moneyminder.domain.auth.application.JwtProvider;
-import com.moneyminder.domain.auth.domain.TokenInfo;
-import com.moneyminder.domain.user.application.dto.request.UserLoginReq;
-import com.moneyminder.domain.user.application.dto.request.UserSignupReq;
-import com.moneyminder.domain.user.domain.User;
-import com.moneyminder.domain.user.domain.repository.UserRepository;
-import com.moneyminder.global.exception.BaseException;
-import com.moneyminder.global.exception.ResultCode;
+import com.moneyminder.auth.application.AuthService;
+import com.moneyminder.auth.domain.TokenInfo;
+import com.moneyminder.dto.JwtClaims;
+import com.moneyminder.exception.BaseException;
+import com.moneyminder.exception.ResultCode;
+import com.moneyminder.user.application.dto.request.UserLoginReq;
+import com.moneyminder.user.application.dto.request.UserSignupReq;
+import com.moneyminder.user.domain.User;
+import com.moneyminder.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final JwtProvider jwtProvider;
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,7 +31,9 @@ public class UserService {
             throw new BaseException(ResultCode.INVALID_PASSWORD);
         }
 
-        return jwtProvider.generateToken(user);
+        JwtClaims claims = JwtClaims.create(user.email(), user.userRole().getKey(), user.name());
+
+        return authService.generateToken(claims);
     }
 
     public void signup(UserSignupReq signupReq) {

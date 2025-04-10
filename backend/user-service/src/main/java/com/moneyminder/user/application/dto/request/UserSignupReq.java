@@ -1,6 +1,6 @@
 package com.moneyminder.user.application.dto.request;
 
-import com.moneyminder.domain.user.domain.User;
+import com.moneyminder.user.domain.User;
 import lombok.Builder;
 
 @Builder

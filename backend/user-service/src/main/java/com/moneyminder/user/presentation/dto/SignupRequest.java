@@ -1,8 +1,7 @@
 package com.moneyminder.user.presentation.dto;
 
-import com.moneyminder.domain.user.application.dto.request.UserSignupReq;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+
+import com.moneyminder.user.application.dto.request.UserSignupReq;
 
 public record SignupRequest(
 

@@ -1,7 +1,7 @@
 package com.moneyminder.user.domain;
 
-import com.moneyminder.domain.user.domain.type.SocialType;
-import com.moneyminder.domain.user.domain.type.UserRole;
+import com.moneyminder.user.domain.type.SocialType;
+import com.moneyminder.user.domain.type.UserRole;
 import com.moneyminder.user.infrastructure.jpa.entity.UserEntity;
 import io.jsonwebtoken.lang.Assert;
 import lombok.Builder;

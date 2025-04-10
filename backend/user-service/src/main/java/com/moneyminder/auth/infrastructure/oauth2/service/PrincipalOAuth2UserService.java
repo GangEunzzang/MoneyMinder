@@ -1,11 +1,11 @@
 package com.moneyminder.auth.infrastructure.oauth2.service;
 
-import com.moneyminder.domain.auth.event.domain.UserRegisterEvent;
-import com.moneyminder.domain.auth.infrastructure.oauth2.domain.PrincipalDetails;
-import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
-import com.moneyminder.domain.user.domain.User;
-import com.moneyminder.domain.user.domain.repository.UserRepository;
-import com.moneyminder.domain.user.domain.type.SocialType;
+import com.moneyminder.auth.event.domain.UserRegisterEvent;
+import com.moneyminder.auth.infrastructure.oauth2.domain.PrincipalDetails;
+import com.moneyminder.auth.infrastructure.oauth2.info.OAuth2UserInfo;
+import com.moneyminder.user.domain.User;
+import com.moneyminder.user.domain.repository.UserRepository;
+import com.moneyminder.user.domain.type.SocialType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

@@ -1,7 +1,7 @@
 package com.moneyminder.user.domain.type;
 
-import com.moneyminder.global.exception.BaseException;
-import com.moneyminder.global.exception.ResultCode;
+import com.moneyminder.exception.BaseException;
+import com.moneyminder.exception.ResultCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

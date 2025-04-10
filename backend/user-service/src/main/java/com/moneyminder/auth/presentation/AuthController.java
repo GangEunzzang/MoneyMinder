@@ -1,8 +1,8 @@
 package com.moneyminder.auth.presentation;
 
-import com.moneyminder.domain.auth.application.AuthService;
-import com.moneyminder.domain.auth.domain.TokenInfo;
-import com.moneyminder.global.response.DataResponse;
+import com.moneyminder.auth.application.AuthService;
+import com.moneyminder.auth.domain.TokenInfo;
+import com.moneyminder.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

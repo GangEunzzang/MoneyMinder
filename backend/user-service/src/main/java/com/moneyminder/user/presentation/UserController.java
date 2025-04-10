@@ -1,11 +1,11 @@
 package com.moneyminder.user.presentation;
 
-import com.moneyminder.domain.auth.domain.TokenInfo;
-import com.moneyminder.domain.user.application.UserService;
-import com.moneyminder.domain.user.presentation.dto.LoginRequest;
-import com.moneyminder.domain.user.presentation.dto.SignupRequest;
-import com.moneyminder.global.response.APIResponse;
-import com.moneyminder.global.response.DataResponse;
+import com.moneyminder.auth.domain.TokenInfo;
+import com.moneyminder.response.APIResponse;
+import com.moneyminder.response.DataResponse;
+import com.moneyminder.user.application.UserService;
+import com.moneyminder.user.presentation.dto.LoginRequest;
+import com.moneyminder.user.presentation.dto.SignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

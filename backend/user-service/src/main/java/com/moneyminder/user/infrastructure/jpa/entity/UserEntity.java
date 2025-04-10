@@ -1,9 +1,9 @@
 package com.moneyminder.user.infrastructure.jpa.entity;
 
-import com.moneyminder.domain.user.domain.User;
-import com.moneyminder.domain.user.domain.type.SocialType;
-import com.moneyminder.domain.user.domain.type.UserRole;
-import com.moneyminder.global.base.BaseTimeEntity;
+import com.moneyminder.base.BaseTimeEntity;
+import com.moneyminder.user.domain.User;
+import com.moneyminder.user.domain.type.SocialType;
+import com.moneyminder.user.domain.type.UserRole;
 import com.moneyminder.user.infrastructure.jpa.converter.UserPasswordConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

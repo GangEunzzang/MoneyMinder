@@ -1,6 +1,6 @@
 package com.moneyminder.auth.infrastructure.oauth2.domain;
 
-import com.moneyminder.domain.user.domain.User;
+import com.moneyminder.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;

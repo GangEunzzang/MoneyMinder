@@ -1,6 +1,7 @@
 package com.moneyminder.user.domain.repository;
 
-import com.moneyminder.domain.user.domain.User;
+
+import com.moneyminder.user.domain.User;
 
 import java.util.Optional;
 

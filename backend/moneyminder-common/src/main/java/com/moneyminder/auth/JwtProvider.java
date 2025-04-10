@@ -1,9 +1,44 @@
 package com.moneyminder.auth;
 
+import com.moneyminder.dto.JwtClaims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 
+import java.util.Optional;
+
 public interface JwtProvider {
+
+    /**
+     * JWT access 토큰을 생성합니다.
+     *
+     * @param claims JWT에 담을 Claims 정보
+     * @return 생성된 JWT 토큰
+     */
+    String generateAccessToken(JwtClaims claims);
+
+
+    /**
+     * JWT refresh 토큰을 생성합니다.
+     *
+     * @return 생성된 JWT 토큰
+     */
+    String generateRefreshToken();
+
+    /**
+     * HTTP 요청에서 Authorization 헤더에 담긴 JWT 토큰을 추출합니다.
+     *
+     * @param request HTTP 요청
+     * @return JWT 토큰
+     */
+    Optional<String> extractAccessToken(HttpServletRequest request);
+
+    /**
+     * JWT refresh 토큰을 추출합니다.
+     *
+     * @param request HTTP 요청
+     * @return JWT refresh 토큰
+     */
+    Optional<String> extractRefreshToken(HttpServletRequest request);
 
     /**
      * Token에서 Authentication 객체를 반환합니다.

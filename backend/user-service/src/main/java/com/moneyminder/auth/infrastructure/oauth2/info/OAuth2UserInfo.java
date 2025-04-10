@@ -1,6 +1,6 @@
 package com.moneyminder.auth.infrastructure.oauth2.info;
 
-import com.moneyminder.domain.user.domain.type.SocialType;
+import com.moneyminder.user.domain.type.SocialType;
 import lombok.Builder;
 
 import java.util.Map;

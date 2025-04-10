@@ -1,24 +1,18 @@
 package com.moneyminder.auth.config;
 
 import com.moneyminder.auth.JwtProvider;
-import com.moneyminder.auth.infrastructure.filter.CustomOAuth2RedirectFilter;
-import com.moneyminder.auth.infrastructure.filter.JwtAuthenticationFilter;
 import com.moneyminder.auth.infrastructure.oauth2.handler.OAuth2FailureHandler;
 import com.moneyminder.auth.infrastructure.oauth2.handler.Oauth2SuccessHandler;
 import com.moneyminder.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
-import com.moneyminder.filter.GlobalExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -43,8 +37,9 @@ public class SecurityConfig {
                                 .permitAll()
                                 .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .oauth2Login(oauth2 -> oauth2
@@ -53,11 +48,7 @@ public class SecurityConfig {
                         .failureHandler(oauth2FailureHandler)
                         .authorizationEndpoint(authorization -> authorization.baseUri("/oauth2/authorization"))
                         .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/{registrationId}"))
-                )
-
-                .addFilterBefore(new CustomOAuth2RedirectFilter(), OAuth2AuthorizationRequestRedirectFilter.class)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new GlobalExceptionFilter(), JwtAuthenticationFilter.class);
+                );
 
         return http.build();
     }

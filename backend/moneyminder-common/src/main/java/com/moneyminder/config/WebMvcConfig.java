@@ -1,6 +1,5 @@
 package com.moneyminder.config;
 
-import com.moneyminder.auth.JwtProvider;
 import com.moneyminder.resolver.CurrentUserEmailResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +12,9 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig  implements WebMvcConfigurer {
 
-    private final JwtProvider jwtProvider;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CurrentUserEmailResolver(jwtProvider));
+        resolvers.add(new CurrentUserEmailResolver());
     }
 }

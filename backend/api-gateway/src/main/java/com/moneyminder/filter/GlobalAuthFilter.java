@@ -1,6 +1,12 @@
 package com.moneyminder.filter;
 
-import com.moneyminder.auth.JwtProvider;
+import com.moneyminder.dto.JwtClaims;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -8,24 +14,43 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
+import java.security.Key;
 import java.util.List;
 
 @Component
 public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFilter.Config> {
 
-    private final JwtProvider jwtProvider;
+    private final PathMatcher pathMatcher = new AntPathMatcher();
+    private static final List<String> EXCLUDED_PATHS = List.of(
+            "/api/auth/**",
+            "/login/**",
+            "/oauth2/**",
+            "/swagger-ui/**",
+            "/health/**",
+            "/actuator/**"
+    );
 
-    public GlobalAuthFilter(JwtProvider jwtProvider) {
-        super(Config.class);
-        this.jwtProvider = jwtProvider;
+    @Value("${auth.token.secretKey}")
+    private String secretKey;
+
+    private Key key;
+
+    @PostConstruct
+    protected void init() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public GlobalAuthFilter() {
+        super(Config.class);
+    }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            String path = exchange.getRequest().getPath().value();
 
-            if (isExcludedPath(exchange.getRequest().getPath().value())) {
+            if (isExcludedPath(path)) {
                 return chain.filter(exchange);
             }
 
@@ -36,41 +61,43 @@ public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFil
             }
 
             String jwt = token.substring(7);
-            if (jwtProvider.validateToken(jwt)) {
+
+            JwtClaims claims;
+            try {
+                claims = parseClaims(jwt);
+            } catch (Exception e) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
-            org.springframework.security.core.Authentication authentication = jwtProvider.getAuthentication(jwt);
-
             exchange.getRequest().mutate()
-                    .header("X-USER-EMAIL", authentication.getName())
-                    .header("X-USER-ROLE", authentication.getAuthorities().toString())
+                    .header("X-USER-EMAIL", claims.email())
+                    .header("X-USER-NAME", claims.name())
+                    .header("X-USER-ROLE", claims.role())
                     .build();
 
             return chain.filter(exchange);
         };
     }
 
+    private boolean isExcludedPath(String path) {
+        return EXCLUDED_PATHS.stream().anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
+
+    private JwtClaims parseClaims(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        String email = claims.getSubject();
+        String role = (String) claims.get("authority");
+        String name = (String) claims.get("name");
+
+        return JwtClaims.create(email, role, name);
+    }
+
     public static class Config {
     }
-
-    private static final List<String> EXCLUDED_PATHS = List.of(
-            "/api/auth/**",
-            "/login/**",
-            "/oauth2/**",
-            "/swagger-ui/**",
-            "/health/**",
-            "/actuator/**"
-    );
-
-    private boolean isExcludedPath(String path) {
-        return EXCLUDED_PATHS.stream()
-                .anyMatch(pattern -> pathMatcher.match(pattern, path));
-    }
-
-    private final PathMatcher pathMatcher = new AntPathMatcher();
-
-
-
 }

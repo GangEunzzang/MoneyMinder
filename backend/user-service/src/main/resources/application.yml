@@ -1,0 +1,47 @@
+spring:
+  profiles:
+    include: oauth2
+    active: local
+    group:
+      local: local, common
+      dev: dev, common
+
+  application:
+    name: user-service
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: rkddms123456@gmail.com
+    password: tfsk xapo plcz umtw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:3333/eureka
+
+

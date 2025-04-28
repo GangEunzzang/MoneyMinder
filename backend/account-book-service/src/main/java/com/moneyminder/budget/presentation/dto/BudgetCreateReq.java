@@ -1,13 +1,12 @@
 package com.moneyminder.budget.presentation.dto;
 
-import com.moneyminder.domain.budget.application.dto.request.BudgetServiceCreateReq;
+import com.moneyminder.budget.application.dto.request.BudgetServiceCreateReq;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
-
 import java.math.BigInteger;
+import lombok.Builder;
 
 @Builder
 public record BudgetCreateReq(

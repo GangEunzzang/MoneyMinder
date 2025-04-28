@@ -1,10 +1,9 @@
 package com.moneyminder.category.Infrastructure.jpa.repository;
 
-import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import com.moneyminder.category.Infrastructure.jpa.entity.CategoryEntity;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, Long> {
 

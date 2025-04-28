@@ -1,6 +1,6 @@
 package com.moneyminder.category.Infrastructure.jpa.converter;
 
-import com.moneyminder.domain.category.domain.type.CategoryType;
+import com.moneyminder.category.domain.type.CategoryType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.springframework.stereotype.Component;

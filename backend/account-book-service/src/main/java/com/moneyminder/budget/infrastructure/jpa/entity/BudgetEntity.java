@@ -1,17 +1,23 @@
 package com.moneyminder.budget.infrastructure.jpa.entity;
 
-import com.moneyminder.domain.budget.domain.Budget;
-import com.moneyminder.global.base.BaseTimeEntity;
+import com.moneyminder.base.BaseTimeEntity;
+import com.moneyminder.budget.domain.Budget;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.math.BigInteger;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
-import java.math.BigInteger;
-
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @Entity
 @Table(name = "budget", indexes = {
         @Index(name = "idx_budget_user_email", columnList = "user_email")

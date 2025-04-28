@@ -1,19 +1,18 @@
 package com.moneyminder.category.application;
 
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
-import com.moneyminder.domain.category.application.dto.response.CategoryServiceRes;
-import com.moneyminder.domain.category.domain.Category;
-import com.moneyminder.domain.category.domain.repository.CategoryRepository;
-import com.moneyminder.global.exception.BaseException;
-import com.moneyminder.global.exception.ResultCode;
+import com.moneyminder.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.category.application.dto.request.CategoryServiceUpdateReq;
+import com.moneyminder.category.application.dto.response.CategoryServiceRes;
+import com.moneyminder.category.domain.Category;
+import com.moneyminder.category.domain.repository.CategoryRepository;
+import com.moneyminder.exception.BaseException;
+import com.moneyminder.exception.ResultCode;
+import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor

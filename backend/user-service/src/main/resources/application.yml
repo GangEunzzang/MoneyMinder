@@ -44,4 +44,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:3333/eureka
 
+auth:
+  token:
+    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadf
+    accessTokenExpiry: 9900000
+    refreshTokenExpiry: 604800000
 

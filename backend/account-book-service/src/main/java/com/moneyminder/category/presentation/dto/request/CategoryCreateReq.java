@@ -1,7 +1,7 @@
 package com.moneyminder.category.presentation.dto.request;
 
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.domain.type.CategoryType;
+import com.moneyminder.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.category.domain.type.CategoryType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;

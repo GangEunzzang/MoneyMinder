@@ -1,7 +1,7 @@
 package com.moneyminder.dto;
 
-import com.mysema.commons.lang.Assert;
 import lombok.Builder;
+import org.springframework.util.Assert;
 
 public record JwtClaims(
         String email,

@@ -1,19 +1,27 @@
 package com.moneyminder.accountbook.infrastructure.jpa.entity;
 
-import com.moneyminder.domain.accountbook.domain.AccountBook;
-import com.moneyminder.global.base.BaseTimeEntity;
-import jakarta.persistence.*;
+import com.moneyminder.accountbook.domain.AccountBook;
+import com.moneyminder.base.BaseTimeEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
-
-import java.math.BigInteger;
-import java.time.LocalDate;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @SQLDelete(sql = "UPDATE account_book SET is_deleted = TRUE WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 @DynamicInsert

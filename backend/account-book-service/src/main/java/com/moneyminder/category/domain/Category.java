@@ -4,7 +4,7 @@ import com.moneyminder.category.Infrastructure.jpa.entity.CategoryEntity;
 import com.moneyminder.category.application.dto.request.CategoryServiceCreateReq;
 import com.moneyminder.category.application.dto.request.CategoryServiceUpdateReq;
 import com.moneyminder.category.domain.type.CategoryType;
-import com.moneyminder.moneymindercommon.util.SnowflakeIdUtil;
+import com.moneyminder.util.SnowflakeIdUtil;
 import lombok.Builder;
 import org.springframework.util.Assert;
 

@@ -1,10 +1,9 @@
 package com.moneyminder.accountbook.application.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
-
 import java.math.BigInteger;
 import java.util.Map;
+import lombok.Builder;
 
 public record AccountBookMonthSummaryRes(
 

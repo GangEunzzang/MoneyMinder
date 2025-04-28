@@ -1,7 +1,7 @@
 package com.moneyminder.accountbook.application.dto.request;
 
-import com.moneyminder.domain.category.domain.type.CategoryType;
 
+import com.moneyminder.category.domain.type.CategoryType;
 import java.time.LocalDate;
 
 public record AccountBookWeekSummaryReq(

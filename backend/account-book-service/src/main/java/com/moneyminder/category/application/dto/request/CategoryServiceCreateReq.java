@@ -1,6 +1,6 @@
 package com.moneyminder.category.application.dto.request;
 
-import com.moneyminder.domain.category.domain.type.CategoryType;
+import com.moneyminder.category.domain.type.CategoryType;
 import lombok.Builder;
 
 @Builder

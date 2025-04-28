@@ -3,10 +3,10 @@ package com.moneyminder.accountbook.application.dto.response;
 import com.moneyminder.accountbook.domain.AccountBook;
 import com.moneyminder.category.domain.Category;
 import com.moneyminder.category.domain.type.CategoryType;
-import lombok.Builder;
-
+import com.querydsl.core.annotations.QueryProjection;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import lombok.Builder;
 
 
 public record AccountBookDefaultRes(

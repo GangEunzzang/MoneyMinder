@@ -1,8 +1,8 @@
 package com.moneyminder.budget.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
-import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 
+import com.moneyminder.budget.application.dto.request.BudgetServiceSearchReq;
+import com.moneyminder.budget.application.dto.response.BudgetServiceRes;
 import java.util.List;
 
 public interface BudgetQueryRepository {

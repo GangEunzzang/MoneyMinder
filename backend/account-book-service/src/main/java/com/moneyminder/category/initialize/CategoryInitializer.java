@@ -1,15 +1,14 @@
 package com.moneyminder.category.initialize;
 
-import com.moneyminder.domain.category.domain.Category;
-import com.moneyminder.domain.category.domain.repository.CategoryRepository;
-import com.moneyminder.domain.category.domain.type.DefaultCategory;
+import com.moneyminder.category.domain.Category;
+import com.moneyminder.category.domain.repository.CategoryRepository;
+import com.moneyminder.category.domain.type.DefaultCategory;
 import jakarta.annotation.PostConstruct;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 
 @Profile("!test")
 @RequiredArgsConstructor

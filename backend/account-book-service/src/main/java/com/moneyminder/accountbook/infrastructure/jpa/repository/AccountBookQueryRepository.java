@@ -1,11 +1,10 @@
 package com.moneyminder.accountbook.infrastructure.jpa.repository;
 
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
-
+import com.moneyminder.accountbook.application.dto.request.AccountBookMonthSummaryReq;
+import com.moneyminder.accountbook.application.dto.request.AccountBookServiceSearchReq;
+import com.moneyminder.accountbook.application.dto.request.AccountBookWeekSummaryReq;
+import com.moneyminder.accountbook.application.dto.response.AccountBookDefaultRes;
 import java.math.BigInteger;
 import java.util.List;
 

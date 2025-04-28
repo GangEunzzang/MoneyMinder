@@ -1,19 +1,25 @@
 package com.moneyminder.category.presentation;
 
-import com.moneyminder.domain.category.application.CategoryService;
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
-import com.moneyminder.domain.category.application.dto.response.CategoryServiceRes;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryUpdateReq;
-import com.moneyminder.global.annotaion.CurrentUserEmail;
-import com.moneyminder.global.response.APIResponse;
-import com.moneyminder.global.response.DataResponse;
+import com.moneyminder.annotaion.CurrentUserEmail;
+import com.moneyminder.category.application.CategoryService;
+import com.moneyminder.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.category.application.dto.request.CategoryServiceUpdateReq;
+import com.moneyminder.category.application.dto.response.CategoryServiceRes;
+import com.moneyminder.category.presentation.dto.request.CategoryCreateReq;
+import com.moneyminder.category.presentation.dto.request.CategoryUpdateReq;
+import com.moneyminder.response.APIResponse;
+import com.moneyminder.response.DataResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/categories")

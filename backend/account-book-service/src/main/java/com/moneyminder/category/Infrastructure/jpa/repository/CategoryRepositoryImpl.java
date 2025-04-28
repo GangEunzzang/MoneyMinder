@@ -1,15 +1,14 @@
 package com.moneyminder.category.Infrastructure.jpa.repository;
 
-import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
-import com.moneyminder.domain.category.domain.Category;
-import com.moneyminder.domain.category.domain.repository.CategoryRepository;
-import com.moneyminder.global.exception.BaseException;
-import com.moneyminder.global.exception.ResultCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
+import com.moneyminder.category.Infrastructure.jpa.entity.CategoryEntity;
+import com.moneyminder.category.domain.Category;
+import com.moneyminder.category.domain.repository.CategoryRepository;
+import com.moneyminder.exception.BaseException;
+import com.moneyminder.exception.ResultCode;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository

@@ -1,12 +1,11 @@
 package com.moneyminder.budget.application.dto.response;
 
-import com.moneyminder.domain.budget.domain.Budget;
-import com.moneyminder.domain.category.domain.Category;
-import com.moneyminder.domain.category.domain.type.CategoryType;
+import com.moneyminder.budget.domain.Budget;
+import com.moneyminder.category.domain.Category;
+import com.moneyminder.category.domain.type.CategoryType;
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
-
 import java.math.BigInteger;
+import lombok.Builder;
 
 public record BudgetServiceRes(
         Long budgetId,

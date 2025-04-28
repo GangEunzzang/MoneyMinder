@@ -1,10 +1,9 @@
 package com.moneyminder.accountbook.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import com.moneyminder.accountbook.infrastructure.jpa.entity.AccountBookEntity;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccountBookJpaRepository extends JpaRepository<AccountBookEntity, Long>, AccountBookQueryRepository {
 

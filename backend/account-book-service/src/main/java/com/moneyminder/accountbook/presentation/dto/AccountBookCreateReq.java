@@ -1,11 +1,10 @@
 package com.moneyminder.accountbook.presentation.dto;
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
+import com.moneyminder.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-
 import java.math.BigInteger;
 import java.time.LocalDate;
+import lombok.Builder;
 
 @Builder
 public record AccountBookCreateReq(

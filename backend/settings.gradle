@@ -5,4 +5,4 @@ include 'account-book-service'
 include 'user-service'
 include 'eureka'
 include 'api-gateway'
-
+include 'config-server'

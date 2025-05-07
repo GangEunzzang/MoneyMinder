@@ -1,0 +1,9 @@
+### User-service Local
+GET localhost:8888/user-service/local,common,oauth2
+
+
+### User-service Dev
+GET localhost:8888/user-service/dev,common,oauth2
+
+### Account-Book-Service Local
+GET localhost:8888/account-book-service/local

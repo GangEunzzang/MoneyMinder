@@ -1,43 +1,10 @@
 server:
-  port: 0
+  port: 9001
 
 spring:
   application:
     name: api-gateway
-  main:
-    web-application-type: reactive
-  cloud:
-    gateway:
-      routes:
-        - id: account-book-service
-          uri: lb://account-book-service
-          predicates:
-            - Path=/account-book/**
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/user/**
-
-eureka:
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: http://localhost:3333/eureka
-
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-
-auth:
-  token:
-    secretKey: sadfasdfsafdsadfsadfsafdsafdsafdsafdsafdsafdsafdsafdsafdsafsadfsadfsafdsadfsafdsadf
-    accessTokenExpiry: 9900000
-    refreshTokenExpiry: 604800000
+  profiles:
+    active: local
+  config:
+    import: optional:configserver:http://localhost:8888

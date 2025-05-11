@@ -10,6 +10,7 @@ import com.moneyminder.budget.presentation.dto.BudgetCreateReq;
 import com.moneyminder.budget.presentation.dto.BudgetUpdateReq;
 import com.moneyminder.response.APIResponse;
 import com.moneyminder.response.DataResponse;
+import com.moneyminder.user.feign.UserFeignResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,12 @@ public class BudgetController {
 
         List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email, searchReq);
         return DataResponse.of(response);
+    }
+
+    @GetMapping("/testUserInfo")
+    public APIResponse testUserInfo() {
+        UserFeignResponse userFeignResponse = budgetService.testUserInfo("rkddms123456@gmail.com");
+        return DataResponse.of(userFeignResponse);
     }
 
 }

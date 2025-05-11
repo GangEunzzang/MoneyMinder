@@ -6,6 +6,8 @@ import com.moneyminder.domain.user.application.dto.request.UserLoginReq;
 import com.moneyminder.domain.user.application.dto.request.UserSignupReq;
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.repository.UserRepository;
+import com.moneyminder.domain.user.domain.type.SocialType;
+import com.moneyminder.domain.user.domain.type.UserRole;
 import com.moneyminder.dto.JwtClaims;
 import com.moneyminder.exception.BaseException;
 import com.moneyminder.exception.ResultCode;
@@ -40,4 +42,14 @@ public class UserService {
         userRepository.save(signupReq.toDomain());
     }
 
+    public User getUserInfo(String email) {
+        return User.builder()
+                .email(email)
+                .name("이강은")
+                .userRole(UserRole.USER)
+                .socialType(SocialType.NORMAL)
+                .build();
+//        return userRepository.findByEmail(email)
+//                .orElseThrow(() -> new BaseException(ResultCode.USER_NOT_FOUND));
+    }
 }

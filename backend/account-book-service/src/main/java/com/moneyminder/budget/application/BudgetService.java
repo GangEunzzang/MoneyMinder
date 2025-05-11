@@ -10,6 +10,9 @@ import com.moneyminder.category.domain.Category;
 import com.moneyminder.category.domain.repository.CategoryRepository;
 import com.moneyminder.exception.BaseException;
 import com.moneyminder.exception.ResultCode;
+import com.moneyminder.user.feign.UserApiResponse;
+import com.moneyminder.user.feign.UserFeignClient;
+import com.moneyminder.user.feign.UserFeignResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ public class BudgetService {
 
     private final CategoryRepository categoryRepository;
     private final BudgetRepository budgetRepository;
+    private final UserFeignClient userFeignClient;
 
     @Transactional
     public BudgetServiceRes create(BudgetServiceCreateReq request) {
@@ -58,6 +62,16 @@ public class BudgetService {
         validateUserEmail(budget.userEmail(), email);
 
         budgetRepository.delete(budget);
+    }
+
+    public UserFeignResponse testUserInfo(String email) {
+        UserApiResponse<UserFeignResponse> userInfo = userFeignClient.getUserInfo(email);
+
+        if (userInfo.getCode() != 200) {
+            throw new BaseException(userInfo.getMessage());
+        }
+
+        return userInfo.getData();
     }
 
     public BudgetServiceRes getById(Long budgetId) {

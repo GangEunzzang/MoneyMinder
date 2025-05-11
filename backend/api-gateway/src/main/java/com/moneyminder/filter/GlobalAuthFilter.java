@@ -6,6 +6,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -14,9 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import java.security.Key;
-import java.util.List;
-
+@Slf4j
 @Component
 public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFilter.Config> {
 
@@ -27,7 +28,8 @@ public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFil
             "/oauth2/**",
             "/swagger-ui/**",
             "/health/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/**"
     );
 
     @Value("${auth.token.secretKey}")
@@ -50,7 +52,13 @@ public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFil
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().value();
 
+            log.info("[[GlobalAuthFilter]] start");
+            log.info("[[GlobalAuthFilter]] path: {}", path);
+
             if (isExcludedPath(path)) {
+                log.info("[[GlobalAuthFilter]] path is excluded: {}", path);
+                String rawPath = exchange.getRequest().getURI().getRawPath();
+                log.info("[[GlobalAuthFilter]] rawPath: {}", rawPath);
                 return chain.filter(exchange);
             }
 
@@ -75,6 +83,9 @@ public class GlobalAuthFilter extends AbstractGatewayFilterFactory<GlobalAuthFil
                     .header("X-USER-NAME", claims.name())
                     .header("X-USER-ROLE", claims.role())
                     .build();
+
+            log.info("[[GlobalAuthFilter]] claims: {}", claims);
+            log.info("[[GlobalAuthFilter]] end");
 
             return chain.filter(exchange);
         };

@@ -1,10 +1,9 @@
-server:
-  port: 0
-
 spring:
   application:
     name: user-service
-  profiles:
-    active: local,common,oauth2
+
   config:
     import: optional:configserver:http://localhost:8888
+
+  profiles:
+    active: local,common,oauth2

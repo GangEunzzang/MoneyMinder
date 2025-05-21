@@ -7,3 +7,22 @@ GET localhost:8888/user-service/dev,common,oauth2
 
 ### Account-Book-Service Local
 GET localhost:8888/account-book-service/local
+
+
+### Git Webhook 테스트 요청
+POST http://localhost:8888/webhook
+Content-Type: application/json
+
+{
+  "commits": [
+    {
+      "modified": [
+        "config/user-service/application.yml",
+        "config/account-book-service/application.yml"
+      ]
+    }
+  ]
+}
+
+### test
+POST http://localhost:56295/actuator/refresh

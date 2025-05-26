@@ -2,7 +2,6 @@ package com.moneyminder.domain.user.presentation;
 
 import com.moneyminder.domain.auth.domain.TokenInfo;
 import com.moneyminder.domain.user.application.UserService;
-import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.presentation.dto.LoginRequest;
 import com.moneyminder.domain.user.presentation.dto.SignupRequest;
 import com.moneyminder.response.APIResponse;
@@ -38,9 +37,11 @@ public class UserController {
 
     @GetMapping("/user-info")
     public APIResponse getUserInfo(@RequestParam("email") String email) {
-        User userInfo = userService.getUserInfo(email);
-        log.info("User Info: {}", userInfo);
-        return DataResponse.of(userInfo);
+        throw new RuntimeException("에러");
+
+//        User userInfo = userService.getUserInfo(email);
+//        log.info("User Info: {}", userInfo);
+//        return DataResponse.of(userInfo);
     }
 
 }

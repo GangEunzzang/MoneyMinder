@@ -2,15 +2,14 @@ package com.moneyminder.exception;
 
 import com.moneyminder.response.ErrorResponse;
 import io.micrometer.core.instrument.config.validate.ValidationException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -46,6 +45,7 @@ public class GlobalRestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("Unhandled exception occurred: {}", e.getMessage(), e);
         return ResponseEntity
                 .internalServerError()
                 .body(ErrorResponse.of(ResultCode.INTERNAL_ERROR, e.getMessage()));

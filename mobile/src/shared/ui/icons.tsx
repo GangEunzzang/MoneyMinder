@@ -91,3 +91,76 @@ export function IconBell({ size = 20, color = '#4E5968', strokeWidth = 1.9 }: Ic
     </Svg>
   );
 }
+
+export function IconCard({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={2} y={5} width={20} height={14} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="M2 10h20" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconRepeat({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="m17 2 4 4-4 4" {...stroke(color, strokeWidth)} />
+      <Path d="M3 11V9a4 4 0 0 1 4-4h14" {...stroke(color, strokeWidth)} />
+      <Path d="m7 22-4-4 4-4" {...stroke(color, strokeWidth)} />
+      <Path d="M21 13v2a4 4 0 0 1-4 4H3" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconChart({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M3 20V10M9 20V4M15 20v-7M21 20V8" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconTarget({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Circle cx={12} cy={12} r={8} {...stroke(color, strokeWidth)} />
+      <Circle cx={12} cy={12} r={3.5} {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconBank({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M3 10 12 4l9 6" {...stroke(color, strokeWidth)} />
+      <Path d="M5 10v9M19 10v9M9 10v9M15 10v9M3 20h18" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconBus({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={4} y={3} width={16} height={14} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="M4 10h16M7 21l2-4M17 21l-2-4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconBag({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M6 2 4 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-2-4Z" {...stroke(color, strokeWidth)} />
+      <Path d="M4 6h16M9 10a3 3 0 0 0 6 0" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconUtensils({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M4 3v7a3 3 0 0 0 6 0V3M7 10v11" {...stroke(color, strokeWidth)} />
+      <Path d="M17 3c-1.5 2-2 4-2 6h4c0-2-.5-4-2-6ZM17 9v12" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}

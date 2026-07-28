@@ -2,12 +2,22 @@ import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { findCategory } from '@/entities/category/model';
 import { filterMonth, monthKey, sumExpense } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, startOfWeek, StreakCard, weekProgress } from '@/features/mission';
 import { percent, signedWon, weekdayIndex, won, wonUnit } from '@/shared/lib/format';
 import { screenPadding, space } from '@/shared/theme';
-import { ListRow, NumText, ProgressBar, Row, SectionHeader, Stack, Text } from '@/shared/ui';
+import {
+  CategoryIcon,
+  ListRow,
+  NumText,
+  ProgressBar,
+  Row,
+  SectionHeader,
+  Stack,
+  Text,
+} from '@/shared/ui';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -67,16 +77,21 @@ export default function HomeScreen() {
           아직 기록이 없어요. 아래 ＋로 3초 만에 남겨보세요.
         </Text>
       ) : (
-        view.recent.map((t, i) => (
-          <ListRow
-            key={t.id}
-            title={t.merchant || t.categoryId}
-            subtitle={t.autoRecorded ? `${t.categoryId} · 자동기록` : t.categoryId}
-            value={signedWon(t.type === 'expense' ? -t.amount : t.amount)}
-            valueColor={t.type === 'income' ? 'mint' : 'ink'}
-            divider={i > 0}
-          />
-        ))
+        view.recent.map((t, i) => {
+          const cat = findCategory(t.categoryId);
+
+          return (
+            <ListRow
+              key={t.id}
+              leading={<CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} />}
+              title={t.merchant || cat.label}
+              subtitle={t.autoRecorded ? `${cat.label} · 자동기록` : cat.label}
+              value={signedWon(t.type === 'expense' ? -t.amount : t.amount)}
+              valueColor={t.type === 'income' ? 'mint' : 'ink'}
+              divider={i > 0}
+            />
+          );
+        })
       )}
     </ScrollView>
   );

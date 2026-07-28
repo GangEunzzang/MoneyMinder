@@ -31,18 +31,33 @@ module.exports = defineConfig([
         {
           default: 'disallow',
           policies: [
-            { from: [{ type: 'app' }], allow: [{ type: 'features' }, { type: 'entities' }, { type: 'shared' }] },
-            // features 끼리 직접 참조 금지 — 공유가 필요하면 entities로 내린다.
             {
-              from: [{ type: 'features' }],
-              allow: [
-                { type: 'features', feature: '{{from.feature}}' },
-                { type: 'entities' },
-                { type: 'shared' },
-              ],
+              from: { element: { type: 'app' } },
+              allow: { to: [{ element: { type: ['features', 'entities', 'shared'] } }] },
             },
-            { from: [{ type: 'entities' }], allow: [{ type: 'entities' }, { type: 'shared' }] },
-            { from: [{ type: 'shared' }], allow: [{ type: 'shared' }] },
+            {
+              from: { element: { type: 'features' } },
+              allow: {
+                to: [
+                  // 같은 feature 안에서만 서로 참조한다. 공유가 필요하면 entities로 내린다.
+                  {
+                    element: {
+                      type: 'features',
+                      captured: { feature: '{{ from.element.captured.feature }}' },
+                    },
+                  },
+                  { element: { type: ['entities', 'shared'] } },
+                ],
+              },
+            },
+            {
+              from: { element: { type: 'entities' } },
+              allow: { to: [{ element: { type: ['entities', 'shared'] } }] },
+            },
+            {
+              from: { element: { type: 'shared' } },
+              allow: { to: [{ element: { type: 'shared' } }] },
+            },
           ],
         },
       ],
@@ -54,18 +69,19 @@ module.exports = defineConfig([
     rules: {
       'no-restricted-syntax': [
         'error',
+        // 숫자 리터럴은 `raw`(문자열)로 매칭한다. esquery의 정규식 속성은 문자열 값에만
+        // 걸리므로 Literal[value=/…/] 는 숫자를 통째로 통과시킨다.
         {
-          selector:
-            "Property[key.name=/^(fontSize|lineHeight|letterSpacing)$/] > Literal[value=/^\\d/]",
+          selector: 'Property[key.name=/^(fontSize|lineHeight|letterSpacing)$/]',
           message: 'fontSize는 theme의 type 스케일(D23)만 사용한다. <Text variant="..."> 를 쓸 것.',
         },
         {
           selector:
-            "Property[key.name=/^(padding|paddingTop|paddingBottom|paddingLeft|paddingRight|paddingHorizontal|paddingVertical|gap|rowGap|columnGap|margin|marginTop|marginBottom|marginHorizontal|marginVertical)$/] > Literal[value=/^\\d/]",
+            "Property[key.name=/^(padding|paddingTop|paddingBottom|paddingLeft|paddingRight|paddingHorizontal|paddingVertical|gap|rowGap|columnGap|margin|marginTop|marginBottom|marginHorizontal|marginVertical)$/] > Literal[raw=/^[1-9]/]",
           message: 'spacing은 theme의 space 스케일(D24)만 사용한다.',
         },
         {
-          selector: 'Property[key.name=/^(borderRadius)$/] > Literal[value=/^\\d/]',
+          selector: 'Property[key.name="borderRadius"] > Literal[raw=/^[1-9]/]',
           message: 'radius는 theme의 radius 스케일(D24)만 사용한다.',
         },
         {

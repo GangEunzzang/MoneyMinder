@@ -1,6 +1,13 @@
 export { Button } from './Button';
+export { CategoryIcon, type IconKey } from './CategoryIcon';
 export { Chip, ChipRow } from './Chip';
+export { EmptyState } from './EmptyState';
+export { AmountField, FieldInput, FieldRow } from './fields';
 export { Divider, Row, ScreenBody, SectionHeader, Spring, Stack } from './layout';
 export { ColorSwatch, IconBadge, ListRow } from './ListRow';
 export { ProgressBar } from './ProgressBar';
+export { Segmented, type SegmentItem } from './Segmented';
+export { TabBar } from './TabBar';
 export { NumText, Text } from './Text';
+export { Toggle, ToggleRow } from './Toggle';
+export * from './icons';

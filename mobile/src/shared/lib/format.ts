@@ -66,3 +66,27 @@ export function weekdayIndex(d: Date): number {
 export function monthLabel(d: Date): string {
   return `${d.getMonth() + 1}월`;
 }
+
+/** 달력 순서(일 시작). 주간 미션의 KOREAN_WEEKDAYS(월 시작)와 용도가 다르다. */
+const CALENDAR_WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
+
+/** "8월 5일 (화)" — 내역 날짜 구분선. */
+export function dateHeading(dateKey: string): string {
+  const [y, m, d] = dateKey.split('-').map(Number);
+
+  return `${m}월 ${d}일 (${CALENDAR_WEEKDAYS[new Date(y, m - 1, d).getDay()]})`;
+}
+
+/** "2026년 8월" — 월 선택기·결산 헤더. */
+export function monthHeading(ym: string): string {
+  const [y, m] = ym.split('-').map(Number);
+
+  return `${y}년 ${m}월`;
+}
+
+/** YYYY-MM 에서 offset 개월 이동. */
+export function shiftMonth(ym: string, offset: number): string {
+  const [y, m] = ym.split('-').map(Number);
+
+  return monthKey(new Date(y, m - 1 + offset, 1));
+}

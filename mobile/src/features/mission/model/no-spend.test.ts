@@ -4,6 +4,7 @@ import {
   currentStreak,
   isNoSpendDay,
   noSpendDaysInMonth,
+  noSpendSavings,
   savedAmount,
   startOfWeek,
   weekProgress,
@@ -98,5 +99,47 @@ describe('savedAmount', () => {
 
   it('음수는 0으로 막는다', () => {
     expect(savedAmount(-100, 3)).toBe(0);
+  });
+});
+
+describe('noSpendSavings', () => {
+  const spend = (date: string, amount: number): Transaction => ({
+    id: date,
+    type: 'expense',
+    amount,
+    categoryId: 'cafe',
+    paymentMethodId: null,
+    merchant: '',
+    memo: '',
+    date,
+    autoRecorded: false,
+  });
+
+  it('쓴 날이 5일 미만이면 아낀 돈을 계산하지 않는다', () => {
+    const txns = [spend('2026-07-05', 17_000), spend('2026-07-25', 55_000)];
+
+    expect(noSpendSavings(txns, 26)).toBeNull();
+  });
+
+  it('쓴 날이 5일 이상이면 평균 × 무지출일로 계산한다', () => {
+    const txns = [1, 2, 3, 4, 5].map((d) => spend(`2026-07-0${d}`, 10_000));
+
+    expect(noSpendSavings(txns, 3)).toEqual({ amount: 30_000, spendingDays: 5 });
+  });
+
+  it('기록이 없으면 null', () => {
+    expect(noSpendSavings([], 30)).toBeNull();
+  });
+
+  it('같은 날 여러 건은 하루로 센다', () => {
+    const txns = [
+      spend('2026-07-01', 1_000),
+      { ...spend('2026-07-01', 2_000), id: 'b' },
+      spend('2026-07-02', 3_000),
+      spend('2026-07-03', 3_000),
+      spend('2026-07-04', 3_000),
+    ];
+
+    expect(noSpendSavings(txns, 1)).toBeNull();
   });
 });

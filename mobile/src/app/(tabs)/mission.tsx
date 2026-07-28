@@ -1,86 +1,125 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useMemo } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@/components/base';
-import { Badge, StreakCard, WeekProgress, type WeekDay } from '@/components/mission';
-import { useTheme } from '@/hooks/use-theme';
-import { useLedger } from '@/store/ledger';
+import { filterMonth, monthKey } from '@/entities/transaction/model';
+import { useLedger } from '@/entities/transaction/store';
+import {
+  Badge,
+  currentStreak,
+  noSpendDaysInMonth,
+  noSpendSavings,
+  startOfWeek,
+  StreakCard,
+  weekProgress,
+} from '@/features/mission';
+import { percent, weekdayIndex, won } from '@/shared/lib/format';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import { NumText, ProgressBar, Row, SectionHeader, Stack, Text } from '@/shared/ui';
 
-const WEEK: WeekDay[] = [
-  { label: '월', state: 'done' },
-  { label: '화', state: 'done' },
-  { label: '수', state: 'empty' },
-  { label: '목', state: 'done' },
-  { label: '금', state: 'today' },
-  { label: '토', state: 'empty' },
-  { label: '일', state: 'empty' },
-];
+const BADGE_DAYS = [7, 14, 30, 100];
+const WEEKLY_GOAL = 4;
+const JAR_GOAL = 100_000;
+/** noSpendSavings 가 요구하는 최소 표본. 안내 문구에서 같은 수를 말해준다. */
+const MIN_DAYS = 5;
 
 export default function MissionScreen() {
-  const c = useTheme();
-  const ledger = useLedger();
-  const week = WEEK.map((day) => (day.state === 'today' && ledger.hasExpenseToday ? { ...day, state: 'empty' as const } : day));
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  const transactions = useLedger((s) => s.transactions);
+
+  const view = useMemo(() => {
+    const today = new Date();
+    const ym = monthKey(today);
+    const { done, achieved } = weekProgress(transactions, startOfWeek(today), today);
+    const noSpend = noSpendDaysInMonth(transactions, ym, today);
+
+    return {
+      week: done,
+      achieved,
+      noSpend,
+      savings: noSpendSavings(filterMonth(transactions, ym), noSpend),
+      streak: currentStreak(transactions, today),
+      todayIndex: weekdayIndex(today),
+      spentToday: !done[weekdayIndex(today)],
+    };
+  }, [transactions]);
+
+  const left = Math.max(0, WEEKLY_GOAL - view.achieved);
+
   return (
-    <View style={[styles.fill, { backgroundColor: c.background }]}>
-      <SafeAreaView edges={['top']} style={styles.fill}>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: c.ink }]}>무지출 미션</Text>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text variant="title3" style={styles.title}>
+        미션
+      </Text>
 
-          <StreakCard count={ledger.currentStreak} longest={21} />
+      <StreakCard streak={view.streak} longest={21} week={view.week} todayIndex={view.todayIndex} />
 
-          <Card style={{ marginTop: 12, paddingVertical: 13, paddingHorizontal: 14 }}>
-            <View style={styles.rowBetween}>
-              <Text style={[styles.section, { color: c.ink }]}>이번 주 미션</Text>
-              <Text style={[styles.progress, { color: c.violetDeep }]}>주 4일 · 3/4</Text>
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <WeekProgress days={week} />
-            </View>
-            <Text style={[styles.hint, { color: c.smoke }]}>
-              {ledger.hasExpenseToday ? (
-                '오늘은 지출이 있어요 · 다음 무지출부터 다시 도전해요'
-              ) : (
-                <>
-                  오늘 무지출이면 <Text style={{ color: c.violetDeep, fontWeight: '700' }}>미션 달성!</Text>
-                </>
-              )}
+      <SectionHeader title={`이번 주 미션 · 주 ${WEEKLY_GOAL}일`} meta={`${view.achieved}/${WEEKLY_GOAL}`} accent />
+      <Stack gap="xl">
+        <ProgressBar value={view.achieved / WEEKLY_GOAL} height={7} />
+        <Text variant="micro" color="smoke">
+          {left === 0
+            ? '이번 주 목표를 달성했어요'
+            : view.spentToday
+              ? `오늘은 지출이 있어요 · ${left}일 더 성공하면 목표 달성`
+              : '오늘 무지출이면 하루 더 쌓여요'}
+        </Text>
+      </Stack>
+
+      <SectionHeader
+        title="무지출 저금통"
+        meta={view.savings ? `목표 ${percent(view.savings.amount, JAR_GOAL)}%` : undefined}
+      />
+      <Stack gap="lg" style={[styles.jar, { backgroundColor: c.violetSoft }]}>
+        {view.savings ? (
+          <>
+            <Row between center>
+              <NumText variant="title3" color="violetDeep">
+                {won(view.savings.amount)}원
+              </NumText>
+              <Text variant="micro" color="violetDeep">
+                무지출 {view.noSpend}일
+              </Text>
+            </Row>
+            <ProgressBar value={view.savings.amount / JAR_GOAL} height={6} color="violet" />
+            <Text variant="micro" color="smoke">
+              평소 하루 쓰던 만큼을 안 쓴 날마다 모았어요
             </Text>
-          </Card>
+          </>
+        ) : (
+          <>
+            <Text variant="bodyBold" color="violetDeep">
+              조금만 더 기록하면 보여드릴게요
+            </Text>
+            <Text variant="micro" color="smoke">
+              평소 얼마 쓰는지 알아야 얼마 아꼈는지도 셀 수 있어요. 지출한 날 {MIN_DAYS}일치면 충분해요.
+            </Text>
+          </>
+        )}
+      </Stack>
 
-          <Text style={[styles.section, { color: c.ink, marginTop: 16, marginBottom: 8 }]}>배지</Text>
-          <View style={styles.badges}>
-            <View style={styles.badgeCol}>
-              <Badge earned />
-              <Text style={[styles.badgeLabel, { color: c.ink }]}>7일</Text>
-            </View>
-            <View style={styles.badgeCol}>
-              <Badge earned />
-              <Text style={[styles.badgeLabel, { color: c.ink }]}>14일</Text>
-            </View>
-            <View style={styles.badgeCol}>
-              <Badge />
-              <Text style={[styles.badgeLabel, { color: c.ink }]}>30일</Text>
-            </View>
-            <View style={styles.badgeCol}>
-              <Badge />
-              <Text style={[styles.badgeLabel, { color: c.ink }]}>100일</Text>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+      <SectionHeader title="배지" meta={`${BADGE_DAYS.filter((d) => view.streak >= d).length}/${BADGE_DAYS.length}`} />
+      <Row gap="lg" style={styles.badges}>
+        {BADGE_DAYS.map((days) => (
+          <Badge key={days} days={days} streak={view.streak} />
+        ))}
+      </Row>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  scroll: { paddingHorizontal: 15, paddingTop: 8, paddingBottom: 30 },
-  title: { fontSize: 16, fontWeight: '800', letterSpacing: -0.4, paddingBottom: 10 },
-  rowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  section: { fontSize: 14, fontWeight: '700', letterSpacing: -0.3 },
-  progress: { fontSize: 11.5, fontWeight: '700' },
-  hint: { fontSize: 11.5, fontWeight: '600', textAlign: 'center', marginTop: 10 },
-  badges: { flexDirection: 'row', gap: 9 },
-  badgeCol: { flex: 1, alignItems: 'center', gap: 5 },
-  badgeLabel: { fontSize: 10.5, fontWeight: '700' },
+  screen: { flex: 1 },
+  content: { paddingHorizontal: screenPadding },
+  title: { paddingBottom: space['3xl'] },
+  jar: { padding: space['4xl'], borderRadius: radius.card },
+  badges: { alignItems: 'flex-start' },
 });

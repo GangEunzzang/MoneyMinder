@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { type ColorName, radius, useColors } from '../theme';
+import { type ColorName, radius, space, useColors } from '../theme';
 import { NumText } from './Text';
 
 type Props = {
@@ -40,5 +40,5 @@ export function ProgressBar({ value, color = 'violet', height = 6, label }: Prop
 const styles = StyleSheet.create({
   track: { borderRadius: radius.pill, overflow: 'hidden', width: '100%' },
   fill: { borderRadius: radius.pill },
-  labelled: { alignItems: 'flex-end', justifyContent: 'center', paddingHorizontal: 8 },
+  labelled: { alignItems: 'flex-end', justifyContent: 'center', paddingHorizontal: space.md },
 });

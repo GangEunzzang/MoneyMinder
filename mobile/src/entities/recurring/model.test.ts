@@ -8,7 +8,7 @@ import {
   remainingThisMonth,
   shouldAutoRecord,
   sortByUpcoming,
-} from './schedule';
+} from './model';
 
 function rec(over: Partial<Recurring> = {}): Recurring {
   return {

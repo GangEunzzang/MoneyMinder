@@ -57,12 +57,15 @@ export function AmountText({
   color?: ColorName;
   unit?: string;
 }) {
+  // 컬러 배경 위에서는 회색 단위가 배경에 묻힌다. 글자색을 따라간다.
+  const unitColor: ColorName = color === 'onColor' ? 'onColorHigh' : 'smoke';
+
   return (
     <View style={styles.amount}>
       <NumText variant={size} color={color}>
         {value}
       </NumText>
-      <Text variant={UNIT[size]} color="smoke">
+      <Text variant={UNIT[size]} color={unitColor}>
         {unit}
       </Text>
     </View>

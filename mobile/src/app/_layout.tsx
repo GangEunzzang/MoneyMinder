@@ -1,10 +1,11 @@
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme, View } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 import { useAppState } from '@/entities/app/store';
 import { fontAssets, palette } from '@/shared/theme';
+import { Splash } from '@/shared/ui';
 
 /** 네비게이션 크롬도 앱과 같은 팔레트를 쓴다. 헤더만 회색이면 화면이 두 겹으로 보인다. */
 function navTheme(dark: boolean) {
@@ -26,7 +27,7 @@ export default function RootLayout() {
 
   // 폰트 없이 먼저 그리면 시스템 폰트로 한 프레임 찍혔다가 바뀌어 글자가 튄다.
   // 복원 전에 라우팅하면 온보딩을 끝낸 사람에게 온보딩이 한 번 더 스친다.
-  if (!fontsLoaded || !hydrated) return <View style={{ flex: 1, backgroundColor: c.bg }} />;
+  if (!fontsLoaded || !hydrated) return <Splash />;
 
   return (
     <ThemeProvider value={navTheme(dark)}>

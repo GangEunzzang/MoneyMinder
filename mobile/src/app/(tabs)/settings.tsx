@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useAppState } from '@/entities/app/store';
 import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { isCard } from '@/entities/payment-method/model';
@@ -33,6 +34,7 @@ export default function SettingsScreen() {
   const methods = usePaymentMethods((s) => s.methods);
   const recurring = useRecurring((s) => s.items);
   const categories = useCategories();
+  const nickname = useAppState((s) => s.nickname);
   const [remind, setRemind] = useState(true);
 
   const streak = useMemo(() => currentStreak(transactions, new Date()), [transactions]);
@@ -49,15 +51,19 @@ export default function SettingsScreen() {
     >
       <Text variant="title3">전체</Text>
 
+      <Pressable
+        onPress={() => router.push('/profile')}
+        style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+      >
       <Card style={styles.profile}>
         <Row gap="xl" center>
           <View style={[styles.avatar, { backgroundColor: c.violet }]}>
             <Text variant="headlineFlat" color="onColor">
-              강
+              {nickname.slice(0, 1)}
             </Text>
           </View>
           <Stack gap="xxs" style={styles.mid}>
-            <Text variant="label">은짱</Text>
+            <Text variant="label">{nickname}</Text>
             <Text variant="captionMuted" color="smoke" numberOfLines={1}>
               연속 무지출 {streak}일째 · 프로필 관리
             </Text>
@@ -65,6 +71,7 @@ export default function SettingsScreen() {
           <IconChevronRight size={18} color={c.mist} />
         </Row>
       </Card>
+      </Pressable>
 
       <Card list>
         <SettingRow label="월 예산" value={wonUnit(budget)} onPress={() => router.push('/budget')} />
@@ -72,7 +79,7 @@ export default function SettingsScreen() {
           label="무지출 미션 목표"
           value={`주 ${WEEKLY_GOAL}일`}
           divider
-          onPress={() => router.push('/missions')}
+          onPress={() => router.push('/missions/settings')}
         />
         <SettingRow
           label="카테고리 관리"
@@ -101,12 +108,17 @@ export default function SettingsScreen() {
           label="무지출 리마인더"
           trailing={<Toggle on={remind} onChange={setRemind} />}
         />
+        <SettingRow label="알림 설정" divider onPress={() => router.push('/notifications')} />
         <SettingRow label="다크 모드" value="시스템" divider dimmed />
         <SettingRow label="홈 위젯 · 빠른 기록" value="준비 중" divider dimmed />
       </Card>
 
       <Card list>
-        <SettingRow label="데이터 내보내기 (CSV)" value="준비 중" dimmed />
+        <SettingRow
+          label="데이터 관리"
+          value="내보내기 · 탈퇴"
+          onPress={() => router.push('/data')}
+        />
         <SettingRow label="로그아웃" dimmed divider />
       </Card>
     </ScrollView>
@@ -125,4 +137,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mid: { flex: 1, minWidth: 0 },
+  pressed: { opacity: 0.6 },
 });

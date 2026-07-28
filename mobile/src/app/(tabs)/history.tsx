@@ -7,13 +7,13 @@ import { findCategory } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import {
-  filterMonth,
   groupByDate,
   monthKey,
   sumExpense,
   sumIncome,
   type Transaction,
 } from '@/entities/transaction/model';
+import { activeCount, applyFilter, isDefault, useFilter } from '@/entities/filter/store';
 import { useLedger } from '@/entities/transaction/store';
 import { isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
 import { dateFull, monthHeading, monthLabel, shiftMonth, signedWon, won } from '@/shared/lib/format';
@@ -25,6 +25,8 @@ import {
   EmptyState,
   IconCalendar,
   IconChevronDown,
+  IconFilter,
+  IconSearch,
   IconReceipt,
   NumText,
   Row,
@@ -46,27 +48,31 @@ export default function HistoryScreen() {
   const transactions = useLedger((s) => s.transactions);
   const categories = useCategories();
   const methods = usePaymentMethods((s) => s.methods);
+  const filter = useFilter((s) => s.filter);
   const [ym, setYm] = useState(() => monthKey(new Date()));
   const [picking, setPicking] = useState(false);
 
   const view = useMemo(() => {
-    const inMonth = filterMonth(transactions, ym);
-    const byDate = groupByDate(inMonth);
+    const scope = applyFilter(transactions, filter, ym, new Date());
+    const byDate = groupByDate(scope);
     const dates = [...byDate.keys()];
     // 무지출인 날은 거래가 없어 그룹이 안 생긴다. 판정 결과를 타임라인에 직접 끼워 넣는다.
+    // 필터가 걸린 동안은 넣지 않는다 — 걸러낸 목록에 "안 쓴 날"을 섞으면 뭘 보는 중인지 흐려진다.
     const entries: Entry[] = [
       ...dates.map((date) => ({ kind: 'day' as const, date, rows: byDate.get(date)! })),
-      ...noSpendRuns(transactions, ym, new Date()),
+      ...(isDefault(filter) ? noSpendRuns(transactions, ym, new Date()) : []),
     ].sort((a, b) => b.date.localeCompare(a.date));
 
     return {
       entries,
-      income: sumIncome(inMonth),
-      expense: sumExpense(inMonth),
+      income: sumIncome(scope),
+      expense: sumExpense(scope),
       noSpendCount: noSpendDaysInMonth(transactions, ym, new Date()),
       methodName: new Map(methods.map((m) => [m.id, m.name])),
     };
-  }, [transactions, ym, methods]);
+  }, [transactions, ym, methods, filter]);
+
+  const filters = activeCount(filter);
 
   const months = useMemo(() => {
     const now = monthKey(new Date());
@@ -116,6 +122,26 @@ export default function HistoryScreen() {
         <Row between center>
           <Text variant="title3">내역</Text>
           <Row gap="md" center>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="검색"
+              onPress={() => router.push('/history/search')}
+              style={[styles.iconPill, shadow.pill, { backgroundColor: c.surface }]}
+            >
+              <IconSearch size={17} color={c.ink} />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="필터"
+              onPress={() => router.push('/history/filter')}
+              style={[
+                styles.iconPill,
+                shadow.pill,
+                { backgroundColor: filters > 0 ? c.violet : c.surface },
+              ]}
+            >
+              <IconFilter size={17} color={filters > 0 ? c.onColor : c.ink} />
+            </Pressable>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="달력으로 보기"

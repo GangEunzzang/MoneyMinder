@@ -1,4 +1,11 @@
 export {
+  type BadgeSpec,
+  BADGES,
+  type BadgeState,
+  badgeStates,
+  earnedCount,
+} from './model/badges';
+export {
   completion,
   type Completion,
   completionStreak,

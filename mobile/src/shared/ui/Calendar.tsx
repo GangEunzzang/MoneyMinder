@@ -78,7 +78,7 @@ export function Calendar({
                       variant={cell.filled ? 'caption' : 'captionSoft'}
                       color={cell.filled ? 'onColor' : cell.muted ? 'mist' : 'inkSoft'}
                     >
-                      {cell.day}
+                      {cell.day > 0 ? cell.day : ''}
                     </Text>
                   </View>
                   <Text variant="nano" color="inkSoft" numberOfLines={1}>

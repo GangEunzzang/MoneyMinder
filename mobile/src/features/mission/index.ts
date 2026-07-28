@@ -1,4 +1,13 @@
 export {
+  completion,
+  type Completion,
+  completionStreak,
+  lastClosedDay,
+  nextTarget,
+  periodKeyOf,
+  savedByMission,
+} from './model/complete';
+export {
   avgSpendPerSpendingDay,
   currentStreak,
   isNoSpendDay,

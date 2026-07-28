@@ -16,11 +16,13 @@ import { StackBar } from '@/features/payment-method';
 import { percent, won, wonUnit } from '@/shared/lib/format';
 import { screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   ColorSwatch,
+  EmptyState,
+  IconCard,
   IconChevronRight,
   ListRow,
-  NumText,
   ScreenHeader,
   SectionHeader,
   Spring,
@@ -61,6 +63,21 @@ export default function PaymentMethodsScreen() {
     />
   );
 
+  if (methods.length === 0) {
+    return (
+      <>
+        <ScreenHeader title="결제수단" />
+        <EmptyState
+          icon={<IconCard size={30} color={c.mist} />}
+          title="등록한 결제수단이 없어요"
+          body={'카드·현금·계좌를 등록하면 기록할 때 고르고,\n이번 달 카드값도 한눈에 볼 수 있어요'}
+          actionLabel="결제수단 추가"
+          onAction={() => router.push('/payment-method/new')}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <ScreenHeader title={'결제수단'} />
@@ -72,7 +89,7 @@ export default function PaymentMethodsScreen() {
           이번 달 카드 사용액
         </Text>
         <Stack gap="xs" style={styles.amount}>
-          <NumText variant="title1">{won(view.cardTotal)}원</NumText>
+          <AmountText value={won(view.cardTotal)} />
           <Text variant="micro" color="mist">
             전체 지출 {won(view.totalSpend)}원의 {percent(view.cardTotal, view.totalSpend)}%
           </Text>
@@ -98,6 +115,7 @@ export default function PaymentMethodsScreen() {
         <Button
           label="결제수단 추가"
           variant="secondary"
+          size="sm"
           style={styles.cta}
           onPress={() => router.push('/payment-method/new')}
         />

@@ -1,20 +1,21 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
 import { describe } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { filterMonth, monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
-import { signedWon, won } from '@/shared/lib/format';
+import { signedWon, withParticle, won } from '@/shared/lib/format';
 import { screenPadding, space } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   CategoryIcon,
   ColorSwatch,
+  ConfirmDialog,
   ListRow,
-  NumText,
   Row,
   ScreenHeader,
   SectionHeader,
@@ -49,24 +50,9 @@ export default function PaymentMethodDetail() {
   }
 
   const onDelete = () => {
-    if (!confirming) {
-      setConfirming(true);
-      Alert.alert(
-        `${method.name}을 삭제할까요?`,
-        `이미 기록한 ${view.rows.length}건의 내역은 그대로 남고, 결제수단만 '없음'으로 바뀌어요`,
-        [
-          { text: '취소', style: 'cancel', onPress: () => setConfirming(false) },
-          {
-            text: '삭제',
-            style: 'destructive',
-            onPress: () => {
-              remove(method.id);
-              router.back();
-            },
-          },
-        ],
-      );
-    }
+    remove(method.id);
+    setConfirming(false);
+    router.back();
   };
 
   return (
@@ -85,9 +71,9 @@ export default function PaymentMethodDetail() {
           </Stack>
         </Row>
 
-        <NumText variant="title1" style={styles.amount}>
-          {won(view.total)}원
-        </NumText>
+        <View style={styles.amount}>
+          <AmountText value={won(view.total)} />
+        </View>
         <Text variant="micro" color="mist">
           이번 달 · 이 수단으로 {view.rows.length}건 결제했어요
         </Text>
@@ -115,8 +101,23 @@ export default function PaymentMethodDetail() {
         )}
 
         <Spring />
-        <Button label="결제수단 삭제" variant="danger" onPress={onDelete} style={styles.cta} />
+        <Button
+          label="결제수단 삭제"
+          variant="danger"
+          size="sm"
+          onPress={() => setConfirming(true)}
+          style={styles.cta}
+        />
       </ScrollView>
+
+      <ConfirmDialog
+        visible={confirming}
+        title={`${withParticle(method.name, '을', '를')} 삭제할까요?`}
+        message={`이미 기록한 ${view.rows.length}건의 내역은 그대로 남고,\n결제수단만 '없음'으로 바뀌어요`}
+        confirmLabel="삭제"
+        onCancel={() => setConfirming(false)}
+        onConfirm={onDelete}
+      />
     </>
   );
 }

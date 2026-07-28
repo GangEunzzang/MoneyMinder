@@ -70,6 +70,21 @@ export default function SettingsScreen() {
         divider
         onPress={() => router.push('/recurring')}
       />
+      <ListRow
+        title="월 결산"
+        subtitle="이번 달 지출을 한 장으로"
+        trailing={chevron}
+        divider
+        onPress={() => router.push('/monthly')}
+      />
+
+      <SectionHeader title="미션" />
+      <ListRow
+        title="미션 고르기"
+        subtitle="무지출 외에 다른 목표도 함께"
+        trailing={chevron}
+        onPress={() => router.push('/missions')}
+      />
       <ListRow title="카테고리 관리" trailing={chevron} divider />
 
       <SectionHeader title="알림" />

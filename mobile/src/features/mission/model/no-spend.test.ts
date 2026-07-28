@@ -45,6 +45,26 @@ describe('isNoSpendDay', () => {
   });
 });
 
+describe('noSpendDaysInMonth · 첫 기록 이전', () => {
+  it('기록이 하나도 없으면 0 — 안 쓴 게 아니라 앱을 안 쓴 것이다', () => {
+    expect(noSpendDaysInMonth([], '2026-06', new Date(2026, 5, 30))).toBe(0);
+  });
+
+  it('첫 기록 이전 날은 세지 않는다', () => {
+    const today = new Date(2026, 6, 10);
+
+    // 첫 기록이 7/8 → 7/1~7/7은 제외, 7/9·7/10만 무지출
+    expect(noSpendDaysInMonth([txn('2026-07-08')], '2026-07', today)).toBe(2);
+  });
+
+  it('지난달에 기록이 있으면 이번 달은 1일부터 센다', () => {
+    const today = new Date(2026, 6, 3);
+    const txns = [txn('2026-06-15'), txn('2026-07-02')];
+
+    expect(noSpendDaysInMonth(txns, '2026-07', today)).toBe(2);
+  });
+});
+
 describe('currentStreak', () => {
   const today = new Date(2026, 6, 10);
 
@@ -69,14 +89,14 @@ describe('noSpendDaysInMonth', () => {
   it('미래 날짜는 성공으로 세지 않는다', () => {
     const today = new Date(2026, 6, 3);
 
-    // 7/1~7/3 중 7/2만 지출 → 무지출 2일. 남은 28일은 아직 오지 않았다.
-    expect(noSpendDaysInMonth([txn('2026-07-02')], '2026-07', today)).toBe(2);
+    // 첫 기록이 7/2 → 7/1은 앱을 쓰기 전. 7/3만 무지출. 남은 28일은 아직 오지 않았다.
+    expect(noSpendDaysInMonth([txn('2026-07-02')], '2026-07', today)).toBe(1);
   });
 
   it('말일이 30일인 달의 경계를 정확히 센다', () => {
     const today = new Date(2026, 5, 30);
 
-    expect(noSpendDaysInMonth([], '2026-06', today)).toBe(30);
+    expect(noSpendDaysInMonth([txn('2026-06-01')], '2026-06', today)).toBe(29);
   });
 });
 

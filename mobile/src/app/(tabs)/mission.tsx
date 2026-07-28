@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,7 +16,16 @@ import {
 } from '@/features/mission';
 import { percent, weekdayIndex, won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
-import { NumText, ProgressBar, Row, SectionHeader, Stack, Text } from '@/shared/ui';
+import {
+  IconChevronRight,
+  ListRow,
+  NumText,
+  ProgressBar,
+  Row,
+  SectionHeader,
+  Stack,
+  Text,
+} from '@/shared/ui';
 
 const BADGE_DAYS = [7, 14, 30, 100];
 const WEEKLY_GOAL = 4;
@@ -105,6 +115,18 @@ export default function MissionScreen() {
           </>
         )}
       </Stack>
+
+      <SectionHeader
+        title="다른 미션"
+        meta="둘러보기"
+        accent
+      />
+      <ListRow
+        title="미션 고르기"
+        subtitle="카페 다이어트 · 예산 지키기 · 배달 줄이기"
+        trailing={<IconChevronRight size={16} color={c.mist} />}
+        onPress={() => router.push('/missions')}
+      />
 
       <SectionHeader title="배지" meta={`${BADGE_DAYS.filter((d) => view.streak >= d).length}/${BADGE_DAYS.length}`} />
       <Row gap="lg" style={styles.badges}>

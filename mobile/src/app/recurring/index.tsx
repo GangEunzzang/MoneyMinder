@@ -1,4 +1,4 @@
-import { Stack as NavStack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -25,6 +25,7 @@ import {
   ListRow,
   NumText,
   Row,
+  ScreenHeader,
   SectionHeader,
   Spring,
   Stack,
@@ -88,7 +89,7 @@ export default function RecurringScreen() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: '고정 지출' }} />
+      <ScreenHeader title={'고정 지출'} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {items.length === 0 ? (
           <EmptyState

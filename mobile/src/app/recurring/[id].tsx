@@ -1,4 +1,4 @@
-import { Stack as NavStack, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { Alert, ScrollView, StyleSheet } from 'react-native';
 
@@ -17,6 +17,7 @@ import {
   ListRow,
   NumText,
   Row,
+  ScreenHeader,
   SectionHeader,
   Spring,
   Stack,
@@ -75,7 +76,7 @@ export default function RecurringDetail() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: item.name }} />
+      <ScreenHeader title={item.name} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Row gap="xl" center style={styles.head}>
           <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} size={44} />

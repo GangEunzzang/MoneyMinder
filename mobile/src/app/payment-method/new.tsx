@@ -1,4 +1,4 @@
-import { Stack as NavStack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -12,11 +12,12 @@ import {
   FieldRow,
   IconCheck,
   Row,
-  type SegmentItem,
+  ScreenHeader,
   Segmented,
   Spring,
   Stack,
   Text,
+  type SegmentItem,
 } from '@/shared/ui';
 
 const KINDS: SegmentItem<PaymentKind>[] = (['card', 'cash', 'account'] as const).map((value) => ({
@@ -43,17 +44,15 @@ export default function NewPaymentMethod() {
 
   return (
     <>
-      <NavStack.Screen
-        options={{
-          title: '결제수단 추가',
-          headerRight: () => (
+      <ScreenHeader
+        title="결제수단 추가"
+        right={
             <Pressable onPress={onSave} disabled={!canSave}>
               <Text variant="bodyBold" color={canSave ? 'violet' : 'mist'}>
                 저장
               </Text>
             </Pressable>
-          ),
-        }}
+        }
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Segmented items={KINDS} value={kind} onChange={setKind} />

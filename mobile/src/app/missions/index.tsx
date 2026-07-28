@@ -1,4 +1,4 @@
-import { Stack as NavStack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -14,6 +14,7 @@ import {
   NumText,
   ProgressBar,
   Row,
+  ScreenHeader,
   SectionHeader,
   Stack,
   Text,
@@ -42,7 +43,7 @@ export default function MissionPicker() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: '미션 고르기' }} />
+      <ScreenHeader title={'미션 고르기'} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <SectionHeader title="진행 중" meta={`${view.running.length}개`} accent first />
         {view.running.length === 0 ? (

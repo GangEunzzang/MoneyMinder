@@ -1,6 +1,12 @@
 import { StyleSheet, Text as RNText, type TextProps } from 'react-native';
 
-import { type ColorName, type TypeName, type as typeScale, useColors } from '../theme';
+import {
+  type ColorName,
+  fontFamilyFor,
+  type TypeName,
+  type as typeScale,
+  useColors,
+} from '../theme';
 
 type Props = TextProps & {
   /** 타입 스케일 토큰. 자유 fontSize 금지 (D23). */
@@ -14,8 +20,14 @@ type Props = TextProps & {
  */
 export function Text({ variant = 'body', color = 'ink', style, ...rest }: Props) {
   const c = useColors();
+  const scale = typeScale[variant];
 
-  return <RNText style={[typeScale[variant], { color: c[color] }, style]} {...rest} />;
+  return (
+    <RNText
+      style={[scale, { fontFamily: fontFamilyFor(scale.fontWeight), color: c[color] }, style]}
+      {...rest}
+    />
+  );
 }
 
 /** 숫자가 세로로 정렬돼야 하는 자리 (금액·통계). */

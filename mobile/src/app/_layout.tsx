@@ -1,8 +1,9 @@
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 
-import { palette, type } from '@/shared/theme';
+import { fontAssets, palette } from '@/shared/theme';
 
 /** 네비게이션 크롬도 앱과 같은 팔레트를 쓴다. 헤더만 회색이면 화면이 두 겹으로 보인다. */
 function navTheme(dark: boolean) {
@@ -11,35 +12,24 @@ function navTheme(dark: boolean) {
 
   return {
     ...base,
-    colors: {
-      ...base.colors,
-      primary: c.violet,
-      background: c.bg,
-      card: c.bg,
-      text: c.ink,
-      border: c.hair,
-    },
+    colors: { ...base.colors, primary: c.violet, background: c.bg, card: c.bg, text: c.ink, border: c.hair },
   };
 }
 
 export default function RootLayout() {
   const dark = useColorScheme() === 'dark';
   const c = dark ? palette.dark : palette.light;
+  const [fontsLoaded] = useFonts(fontAssets);
+
+  // 폰트 없이 먼저 그리면 시스템 폰트로 한 프레임 찍혔다가 바뀌어 글자가 튄다.
+  if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: c.bg }} />;
 
   return (
     <ThemeProvider value={navTheme(dark)}>
-      <Stack
-        screenOptions={{
-          headerShadowVisible: false,
-          headerTitleStyle: type.headline,
-          headerTintColor: c.ink,
-          headerStyle: { backgroundColor: c.bg },
-          contentStyle: { backgroundColor: c.bg },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* 기록 화면은 자체 상단 바(닫기 + 지출/수입)를 갖는다. */}
-        <Stack.Screen name="add" options={{ presentation: 'modal', headerShown: false }} />
+      {/* 헤더는 화면마다 ScreenHeader 로 그린다. 시안에 네이티브 내비 바가 없다. */}
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="add" options={{ presentation: 'modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -69,8 +69,8 @@ export default function MissionSetup() {
           <Stack center style={[styles.icon, { backgroundColor: c.surface }]}>
             <IconTarget size={24} color={c[spec.tint]} />
           </Stack>
-          <Text variant="title3">{spec.title}</Text>
-          <Text variant="micro" color="smoke">
+          <Text variant="title3Flat">{spec.title}</Text>
+          <Text variant="callout" color="smoke">
             {spec.summary}
           </Text>
         </Stack>
@@ -82,7 +82,7 @@ export default function MissionSetup() {
           <NumText variant="title1" color={spec.tint}>
             {spec.unit === 'won' ? target.toLocaleString('ko-KR') : target}
           </NumText>
-          <Text variant="title3Soft" color="smoke">
+          <Text variant="headline" color="smoke">
             {spec.unitLabel}
           </Text>
         </Row>
@@ -104,7 +104,7 @@ export default function MissionSetup() {
 
         {baseline != null ? (
           <Stack style={[styles.note, { backgroundColor: c.surface2 }]}>
-            <Text variant="micro" color="inkSoft">
+            <Text variant="microSoft" color="smoke">
               · 지난 4주 평균은 주 {baseline}
               {spec.unitLabel}이었어요
             </Text>

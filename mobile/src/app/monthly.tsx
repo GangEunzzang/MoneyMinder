@@ -57,10 +57,10 @@ export default function MonthlyReportScreen() {
 
   const stat = (label: string, value: string, meta: string) => (
     <Stack gap="xs" style={styles.stat}>
-      <Text variant="nanoSoft" color="smoke">
+      <Text variant="nano" color="smoke">
         {label}
       </Text>
-      <NumText variant="subheadFlat">{value}</NumText>
+      <NumText variant="headlineStrong">{value}</NumText>
       <Text variant="nanoSoft" color="mist">
         {meta}
       </Text>
@@ -92,12 +92,12 @@ export default function MonthlyReportScreen() {
         ) : (
           <>
             <Row gap="xs" style={styles.amount}>
-              <NumText variant="title1">{won(report.expense)}</NumText>
+              <NumText variant="display">{won(report.expense)}</NumText>
               <Text variant="title3Soft" color="smoke">
                 원
               </Text>
             </Row>
-            <Text variant="micro" color={saved ? 'violetDeep' : 'smoke'}>
+            <Text variant="calloutBold" color={saved ? 'mint' : 'smoke'}>
               {headline(report)}
             </Text>
 
@@ -123,9 +123,9 @@ export default function MonthlyReportScreen() {
                 <Stack key={row.categoryId} gap="md" style={styles.catRow}>
                   <Row between center>
                     <Row gap="md" center>
-                      <Text variant="body">{cat.label}</Text>
+                      <Text variant="bodyBold">{cat.label}</Text>
                       {row.delta != null ? (
-                        <Text variant="nano" color={row.delta > 0 ? 'red' : 'mint'}>
+                        <Text variant="microBold" color={row.delta > 0 ? 'red' : 'mint'}>
                           {signedPercent(row.delta)}
                         </Text>
                       ) : (
@@ -148,12 +148,12 @@ export default function MonthlyReportScreen() {
 
             <Stack gap="sm" style={[styles.note, { backgroundColor: c.surface2 }]}>
               {view.jump ? (
-                <Text variant="micro" color="inkSoft">
+                <Text variant="microSoft" color="smoke">
                   · {findCategory(view.jump.categoryId).label}이 지난달보다{' '}
                   {view.jump.delta}% 늘었어요
                 </Text>
               ) : null}
-              <Text variant="micro" color="inkSoft">
+              <Text variant="microSoft" color="smoke">
                 · 연속 무지출 {view.streak}일째 · 다음 달 미션으로 이어가 보세요
               </Text>
             </Stack>
@@ -162,10 +162,11 @@ export default function MonthlyReportScreen() {
               <Button
                 label="미션 만들기"
                 variant="secondary"
+                size="sm"
                 style={styles.half}
                 onPress={() => router.push('/missions')}
               />
-              <Button label="결산 공유" style={styles.half} onPress={() => router.push('/share')} />
+              <Button label="결산 공유" size="sm" style={styles.half} onPress={() => router.push('/share')} />
             </Row>
           </>
         )}

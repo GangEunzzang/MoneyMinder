@@ -109,17 +109,17 @@ export default function RecurringScreen() {
                 <NumText variant="title2">{won(view.total)}원</NumText>
               </Stack>
               <Stack gap="xs" style={styles.right}>
-                <Text variant="caption" color="smoke">
+                <Text variant="micro" color="mist">
                   이번 달 남은
                 </Text>
-                <NumText variant="headline" color="violetDeep">
+                <NumText variant="subheadFlat" color="violetDeep">
                   {won(view.remaining)}원
                 </NumText>
               </Stack>
             </Row>
 
             {view.next ? (
-              <Text variant="micro" color="mist" style={styles.lede}>
+              <Text variant="captionSoft" color="smoke" style={styles.lede}>
                 {view.next.name}가 {relativeDay(daysUntilBilling(view.next, view.today))}에 빠져나가요
               </Text>
             ) : null}
@@ -164,6 +164,7 @@ export default function RecurringScreen() {
             <Button
               label="고정 지출 추가"
               variant="secondary"
+              size="sm"
               style={styles.cta}
               onPress={() => router.push('/recurring/new')}
             />

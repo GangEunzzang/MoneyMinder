@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { findCategory } from '@/entities/category/model';
@@ -14,19 +14,29 @@ import {
   type Transaction,
 } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
-import { noSpendDaysInMonth } from '@/features/mission';
-import { dateHeading, monthHeading, shiftMonth, signedWon, won } from '@/shared/lib/format';
-import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import { isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
+import { dateFull, monthHeading, monthLabel, shiftMonth, signedWon, won } from '@/shared/lib/format';
+import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
 import {
+  Card,
+  CategoryIcon,
   Divider,
   EmptyState,
-  IconChevronRight,
-  IconList,
+  IconChevronDown,
+  IconReceipt,
   NumText,
   Row,
   Stack,
   Text,
 } from '@/shared/ui';
+
+const TAB_CLEARANCE = 96;
+/** 월 선택기에 띄울 과거 범위. 이보다 옛날은 기록도 거의 없다. */
+const PICKER_MONTHS = 12;
+
+type Entry =
+  | { kind: 'day'; date: string; rows: Transaction[] }
+  | { kind: 'noSpend'; date: string; until: string; days: number };
 
 export default function HistoryScreen() {
   const c = useColors();
@@ -34,138 +44,254 @@ export default function HistoryScreen() {
   const transactions = useLedger((s) => s.transactions);
   const methods = usePaymentMethods((s) => s.methods);
   const [ym, setYm] = useState(() => monthKey(new Date()));
+  const [picking, setPicking] = useState(false);
 
   const view = useMemo(() => {
     const inMonth = filterMonth(transactions, ym);
-    const groups = [...groupByDate(inMonth).entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    const byDate = groupByDate(inMonth);
+    const dates = [...byDate.keys()];
+    // 무지출인 날은 거래가 없어 그룹이 안 생긴다. 판정 결과를 타임라인에 직접 끼워 넣는다.
+    const entries: Entry[] = [
+      ...dates.map((date) => ({ kind: 'day' as const, date, rows: byDate.get(date)! })),
+      ...noSpendRuns(transactions, ym, new Date()),
+    ].sort((a, b) => b.date.localeCompare(a.date));
 
     return {
-      groups,
+      entries,
       income: sumIncome(inMonth),
       expense: sumExpense(inMonth),
-      noSpend: noSpendDaysInMonth(transactions, ym, new Date()),
+      noSpendCount: noSpendDaysInMonth(transactions, ym, new Date()),
       methodName: new Map(methods.map((m) => [m.id, m.name])),
     };
   }, [transactions, ym, methods]);
 
-  const isThisMonth = ym === monthKey(new Date());
+  const months = useMemo(() => {
+    const now = monthKey(new Date());
+
+    return Array.from({ length: PICKER_MONTHS }, (_, i) => shiftMonth(now, -i));
+  }, []);
 
   const renderRow = (t: Transaction, index: number) => {
     const cat = findCategory(t.categoryId);
     const method = t.paymentMethodId ? view.methodName.get(t.paymentMethodId) : null;
-    const meta = [cat.label, t.autoRecorded ? '자동기록' : method].filter(Boolean).join(' · ');
+    const meta = [cat.label, method, t.autoRecorded ? '자동기록' : null].filter(Boolean).join(' · ');
 
     return (
-      <Row key={t.id} gap="xl" py="xl" divider={index > 0}>
-        <Stack center style={[styles.dot, { backgroundColor: c[cat.tintSoft] }]}>
-          <Stack style={[styles.inner, { backgroundColor: c[cat.tint] }]} />
-        </Stack>
-        <Stack gap="xxs" style={styles.mid}>
-          <Text variant="body" numberOfLines={1}>
-            {t.merchant || cat.label}
-          </Text>
-          <Text variant="micro" color="mist" numberOfLines={1}>
-            {meta}
-          </Text>
-        </Stack>
-        <NumText variant="bodyBold" color={t.type === 'income' ? 'mint' : 'ink'}>
-          {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
-        </NumText>
-      </Row>
+      <Pressable
+        key={t.id}
+        onPress={() => router.push(`/transaction/${t.id}`)}
+        style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+      >
+        <Row gap="xl" py="xl" divider={index > 0}>
+          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft="surface2" />
+          <Stack gap="xxs" style={styles.mid}>
+            <Text variant="body" numberOfLines={1}>
+              {t.merchant || cat.label}
+            </Text>
+            <Text variant="microSoft" color="smoke" numberOfLines={1}>
+              {meta}
+            </Text>
+          </Stack>
+          <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>
+            {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
+          </NumText>
+        </Row>
+      </Pressable>
     );
   };
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
-      ]}
-      showsVerticalScrollIndicator={false}
-    >
-      <Row between center style={styles.header}>
-        <Text variant="title3">내역</Text>
-        <Row gap="lg" center>
-          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
-            <Text variant="micro" color="smoke">
-              이전
-            </Text>
-          </Pressable>
-          <Text variant="caption">{monthHeading(ym)}</Text>
+    <>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + space.sm, paddingBottom: insets.bottom + TAB_CLEARANCE },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Row between center>
+          <Text variant="title3">내역</Text>
           <Pressable
-            onPress={() => setYm(shiftMonth(ym, 1))}
-            hitSlop={10}
-            disabled={isThisMonth}
+            accessibilityRole="button"
+            accessibilityLabel="월 선택"
+            onPress={() => setPicking(true)}
+            style={[styles.monthPill, shadow.pill, { backgroundColor: c.surface }]}
           >
-            <IconChevronRight size={14} color={isThisMonth ? c.hairStrong : c.smoke} />
+            <Text variant="calloutBold">{monthLabel(new Date(`${ym}-01T00:00:00`))}</Text>
+            <IconChevronDown size={15} color={c.ink} />
           </Pressable>
         </Row>
-      </Row>
 
-      <Row between style={[styles.summary, { backgroundColor: c.surface }]}>
-        <Stack gap="xs">
-          <Text variant="nano" color="mint">
-            수입
-          </Text>
-          <NumText variant="callout" color="mint">
-            +{won(view.income)}
-          </NumText>
-        </Stack>
-        <Divider style={styles.vline} />
-        <Stack gap="xs">
-          <Text variant="nano" color="red">
-            지출
-          </Text>
-          <NumText variant="callout">-{won(view.expense)}</NumText>
-        </Stack>
-        <Divider style={styles.vline} />
-        <Stack gap="xs">
-          <Text variant="nano" color="smoke">
-            무지출
-          </Text>
-          <NumText variant="callout" color="violetDeep">
-            {view.noSpend}일
-          </NumText>
-        </Stack>
-      </Row>
+        <Card style={styles.summary}>
+          <Row between center>
+            <SummaryCol label="수입" value={`+${won(view.income)}`} tone="mint" labelTone="mint" />
+            <Divider style={styles.vline} />
+            <SummaryCol label="지출" value={`-${won(view.expense)}`} tone="ink" labelTone="red" />
+            <Divider style={styles.vline} />
+            <SummaryCol
+              label="무지출"
+              value={`${view.noSpendCount}일`}
+              tone="violet"
+              labelTone="violet"
+            />
+          </Row>
+        </Card>
 
-      {view.groups.length === 0 ? (
-        <EmptyState
-          icon={<IconList size={24} color={c.mist} />}
-          title={`${monthHeading(ym)}에 기록이 없어요`}
-          body="아래 ＋로 3초 만에 남겨보세요. 하루 한 줄이면 한 달이 보여요."
-          actionLabel="기록하기"
-          onAction={() => router.push('/add')}
-        />
-      ) : (
-        view.groups.map(([dateKey, rows]) => (
-          <Stack key={dateKey} style={styles.group}>
-            <Row between center style={styles.groupHead}>
-              <Text variant="caption" color="smoke">
-                {dateHeading(dateKey)}
-              </Text>
-              <NumText variant="micro" color="mist">
-                {sumExpense(rows) > 0 ? `-${won(sumExpense(rows))}` : '무지출'}
-              </NumText>
-            </Row>
-            {rows.map(renderRow)}
-          </Stack>
-        ))
-      )}
-    </ScrollView>
+        {view.entries.length === 0 ? (
+          <EmptyState
+            inline
+            icon={<IconReceipt size={30} color={c.mist} />}
+            title={`${monthHeading(ym)} 내역이 없어요`}
+            body={'지출이나 수입을 기록하면\n여기에 차곡차곡 쌓여요'}
+          />
+        ) : (
+          view.entries.map((entry) =>
+            entry.kind === 'noSpend' ? (
+              <Row
+                key={entry.date}
+                gap="md"
+                center
+                style={[styles.noSpend, { backgroundColor: c.violetSoft }]}
+              >
+                <View style={[styles.noSpendDot, { backgroundColor: c.violet }]} />
+                <Text variant="caption" color="violetDeep">
+                  {entry.days === 1
+                    ? `${shortDate(entry.date)} · 무지출 성공`
+                    : `${shortDate(entry.date)}~${shortDate(entry.until)} · 무지출 ${entry.days}일`}
+                </Text>
+              </Row>
+            ) : (
+              <Stack key={entry.date} gap="md">
+                <Text variant="microBold" color="smoke">
+                  {dateFull(entry.date)}
+                </Text>
+                <Card list>{entry.rows.map(renderRow)}</Card>
+              </Stack>
+            ),
+          )
+        )}
+      </ScrollView>
+
+      <Modal visible={picking} transparent animationType="fade" onRequestClose={() => setPicking(false)}>
+        <Pressable style={[styles.scrim, { backgroundColor: c.scrim }]} onPress={() => setPicking(false)}>
+          <Pressable style={[styles.sheet, { backgroundColor: c.surface }]} onPress={() => {}}>
+            {months.map((m, i) => (
+              <Pressable
+                key={m}
+                onPress={() => {
+                  setYm(m);
+                  setPicking(false);
+                }}
+                style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+              >
+                <Row between center py="xl" divider={i > 0}>
+                  <Text variant={m === ym ? 'bodyBold' : 'body'} color={m === ym ? 'violet' : 'ink'}>
+                    {monthHeading(m)}
+                  </Text>
+                </Row>
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
   );
+}
+
+function SummaryCol({
+  label,
+  value,
+  tone,
+  labelTone,
+}: {
+  label: string;
+  value: string;
+  tone: 'mint' | 'ink' | 'violet';
+  labelTone: 'mint' | 'red' | 'violet';
+}) {
+  return (
+    <Stack gap="xs">
+      <Text variant="microBold" color={labelTone}>
+        {label}
+      </Text>
+      <NumText variant="bodyStrong" color={tone}>
+        {value}
+      </NumText>
+    </Stack>
+  );
+}
+
+/**
+ * 그 달의 무지출 구간. 하루씩 배너를 깔면 기록이 적은 달은 화면이 배너로 뒤덮여
+ * 정작 쓴 날이 안 보인다 — 이어지는 날은 한 줄로 묶는다.
+ * 첫 기록 이전과 미래는 세지 않는다.
+ */
+function noSpendRuns(
+  transactions: readonly Transaction[],
+  ym: string,
+  today: Date,
+): Extract<Entry, { kind: 'noSpend' }>[] {
+  const first = transactions.reduce<string | null>(
+    (min, t) => (min == null || t.date < min ? t.date : min),
+    null,
+  );
+  if (first == null) return [];
+
+  const [y, m] = ym.split('-').map(Number);
+  const lastDay = new Date(y, m, 0).getDate();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const runs: Extract<Entry, { kind: 'noSpend' }>[] = [];
+  let open: { from: string; to: string; days: number } | null = null;
+
+  const flush = () => {
+    if (open) runs.push({ kind: 'noSpend', date: open.from, until: open.to, days: open.days });
+    open = null;
+  };
+
+  for (let d = 1; d <= lastDay; d += 1) {
+    const key = `${ym}-${String(d).padStart(2, '0')}`;
+    if (key > todayKey) break;
+    if (key < first || !isNoSpendDay(transactions, key)) {
+      flush();
+      continue;
+    }
+    open = open ? { from: open.from, to: key, days: open.days + 1 } : { from: key, to: key, days: 1 };
+  }
+  flush();
+
+  return runs;
+}
+
+/** "7월 26일" — 배너는 요일까지 필요 없다. */
+function shortDate(dateKey: string): string {
+  const [, m, d] = dateKey.split('-').map(Number);
+
+  return `${m}월 ${d}일`;
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: screenPadding },
-  header: { paddingBottom: space['3xl'] },
-  summary: { paddingVertical: space['2xl'], paddingHorizontal: space['4xl'], borderRadius: radius.card },
-  vline: { width: StyleSheet.hairlineWidth, height: 28 },
-  group: { paddingTop: space['5xl'] },
-  groupHead: { paddingBottom: space.md },
-  dot: { width: 34, height: 34, borderRadius: radius.pill },
-  inner: { width: 10, height: 10, borderRadius: radius.pill },
+  content: { flexGrow: 1, paddingHorizontal: screenPadding, gap: space['3xl'] },
+  monthPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xxs,
+    paddingVertical: space.md,
+    paddingHorizontal: space.xl,
+    borderRadius: radius.pill,
+  },
+  summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
+  vline: { width: StyleSheet.hairlineWidth, height: 34 },
+  noSpend: { paddingVertical: space.xl, paddingHorizontal: space['2xl'], borderRadius: radius.card },
+  noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   mid: { flex: 1, minWidth: 0 },
+  pressed: { opacity: 0.6 },
+  scrim: { flex: 1, justifyContent: 'flex-end' },
+  sheet: {
+    paddingHorizontal: space['4xl'],
+    paddingBottom: space['6xl'],
+    borderTopLeftRadius: radius['4xl'],
+    borderTopRightRadius: radius['4xl'],
+  },
 });

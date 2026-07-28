@@ -74,8 +74,8 @@ export default function Onboarding() {
           <slide.Icon size={56} color={c[slide.tint]} strokeWidth={1.8} />
         </Stack>
         <Stack gap="xl" center>
-          <Text variant="title2">{slide.title}</Text>
-          <Text variant="callout" color="smoke" style={styles.copy}>
+          <Text variant="title2Soft">{slide.title}</Text>
+          <Text variant="bodySoftLead" color="smoke" style={styles.copy}>
             {slide.body}
           </Text>
         </Stack>

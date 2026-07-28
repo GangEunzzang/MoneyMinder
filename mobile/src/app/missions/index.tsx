@@ -59,15 +59,15 @@ export default function MissionPicker() {
               onTouchEnd={() => router.push(`/missions/${spec.id}`)}
             >
               <Row between center>
-                <Text variant="subheadBold">{spec.title}</Text>
-                <NumText variant="caption" color={spec.tint}>
+                <Text variant="bodyBold">{spec.title}</Text>
+                <NumText variant="calloutStrong" color={spec.tint}>
                   {progress.done}/{progress.target}
                   {spec.unit === 'won' ? '' : spec.unitLabel}
                 </NumText>
               </Row>
               <ProgressBar value={progress.ratio} height={6} color={spec.tint} />
               <Row between center>
-                <Text variant="micro" color="smoke">
+                <Text variant="micro" color="mist">
                   {targetLabel(spec, m.target)} 목표 · {remainingLabel(spec, progress)}
                 </Text>
                 <IconChevronRight size={14} color={c.mist} />

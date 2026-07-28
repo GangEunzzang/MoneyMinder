@@ -1,48 +1,43 @@
 import { router } from 'expo-router';
-import { useMemo } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { type ReactNode, useMemo } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { findMission, targetLabel } from '@/entities/mission/model';
+import { useMissions } from '@/entities/mission/store';
 import { filterMonth, monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import {
   Badge,
   currentStreak,
+  missionProgress,
   noSpendDaysInMonth,
   noSpendSavings,
   startOfWeek,
   StreakCard,
   weekProgress,
 } from '@/features/mission';
-import { percent, weekdayIndex, won } from '@/shared/lib/format';
-import { radius, screenPadding, space, useColors } from '@/shared/theme';
-import {
-  IconChevronRight,
-  ListRow,
-  NumText,
-  ProgressBar,
-  Row,
-  SectionHeader,
-  Stack,
-  Text,
-} from '@/shared/ui';
+import { KOREAN_WEEKDAYS, weekdayIndex, won } from '@/shared/lib/format';
+import { type ColorName, radius, screenPadding, space, useColors } from '@/shared/theme';
+import { Card, IconCheck, IconPiggy, IconTarget, Row, Stack, Text } from '@/shared/ui';
 
 const BADGE_DAYS = [7, 14, 30, 100];
 const WEEKLY_GOAL = 4;
-const JAR_GOAL = 100_000;
-/** noSpendSavings 가 요구하는 최소 표본. 안내 문구에서 같은 수를 말해준다. */
-const MIN_DAYS = 5;
+const TAB_CLEARANCE = 96;
 
 export default function MissionScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const transactions = useLedger((s) => s.transactions);
+  const active = useMissions((s) => s.active);
 
   const view = useMemo(() => {
     const today = new Date();
     const ym = monthKey(today);
     const { done, achieved } = weekProgress(transactions, startOfWeek(today), today);
     const noSpend = noSpendDaysInMonth(transactions, ym, today);
+    const other = active.find((m) => m.id !== 'no-spend');
+    const otherSpec = other ? findMission(other.id) : undefined;
 
     return {
       week: done,
@@ -52,84 +47,99 @@ export default function MissionScreen() {
       streak: currentStreak(transactions, today),
       todayIndex: weekdayIndex(today),
       spentToday: !done[weekdayIndex(today)],
+      other:
+        other && otherSpec
+          ? { spec: otherSpec, progress: missionProgress(otherSpec, other, transactions, today) }
+          : null,
     };
-  }, [transactions]);
+  }, [transactions, active]);
 
-  const left = Math.max(0, WEEKLY_GOAL - view.achieved);
+  const otherLabel = view.other
+    ? `${view.other.spec.title} ${view.other.progress.done}/${targetLabel(view.other.spec, view.other.progress.target)}`
+    : '무지출 외에 다른 목표도 함께';
 
   return (
     <ScrollView
       style={styles.screen}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
+        { paddingTop: insets.top + space.sm, paddingBottom: insets.bottom + TAB_CLEARANCE },
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <Text variant="title3" style={styles.title}>
-        미션
-      </Text>
+      <Text variant="title3">미션</Text>
 
-      <StreakCard streak={view.streak} longest={21} week={view.week} todayIndex={view.todayIndex} />
-
-      <SectionHeader title={`이번 주 미션 · 주 ${WEEKLY_GOAL}일`} meta={`${view.achieved}/${WEEKLY_GOAL}`} accent />
-      <Stack gap="xl">
-        <ProgressBar value={view.achieved / WEEKLY_GOAL} height={7} />
-        <Text variant="micro" color="smoke">
-          {left === 0
-            ? '이번 주 목표를 달성했어요'
-            : view.spentToday
-              ? `오늘은 지출이 있어요 · ${left}일 더 성공하면 목표 달성`
-              : '오늘 무지출이면 하루 더 쌓여요'}
-        </Text>
-      </Stack>
-
-      <SectionHeader
-        title="무지출 저금통"
-        meta={view.savings ? `목표 ${percent(view.savings.amount, JAR_GOAL)}%` : undefined}
-      />
-      <Stack gap="lg" style={[styles.jar, { backgroundColor: c.violetSoft }]}>
-        {view.savings ? (
-          <>
-            <Row between center>
-              <NumText variant="title3" color="violetDeep">
-                {won(view.savings.amount)}원
-              </NumText>
-              <Text variant="micro" color="violetDeep">
-                무지출 {view.noSpend}일
-              </Text>
-            </Row>
-            <ProgressBar value={view.savings.amount / JAR_GOAL} height={6} color="violet" />
-            <Text variant="micro" color="smoke">
-              평소 하루 쓰던 만큼을 안 쓴 날마다 모았어요
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text variant="bodyBold" color="violetDeep">
-              조금만 더 기록하면 보여드릴게요
-            </Text>
-            <Text variant="micro" color="smoke">
-              평소 얼마 쓰는지 알아야 얼마 아꼈는지도 셀 수 있어요. 지출한 날 {MIN_DAYS}일치면 충분해요.
-            </Text>
-          </>
-        )}
-      </Stack>
-
-      <SectionHeader
-        title="다른 미션"
-        meta="둘러보기"
-        accent
-      />
-      <ListRow
-        title="미션 고르기"
-        subtitle="카페 다이어트 · 예산 지키기 · 배달 줄이기"
-        trailing={<IconChevronRight size={16} color={c.mist} />}
-        onPress={() => router.push('/missions')}
+      <StreakCard
+        streak={view.streak}
+        longest={21}
+        week={view.week}
+        todayIndex={view.todayIndex}
+        showVerify
       />
 
-      <SectionHeader title="배지" meta={`${BADGE_DAYS.filter((d) => view.streak >= d).length}/${BADGE_DAYS.length}`} />
-      <Row gap="lg" style={styles.badges}>
+      <Row gap="lg">
+        <EntryCard
+          tone="violetSoft"
+          icon={<IconPiggy size={22} color={c.violet} />}
+          title="무지출 저금통"
+          subtitle={
+            view.savings ? `${won(view.savings.amount)}원 모았어요` : '조금만 더 기록하면 보여요'
+          }
+          onPress={() => router.push('/missions')}
+        />
+        <EntryCard
+          tone="mintSoft"
+          icon={<IconTarget size={20} color={c.mint} />}
+          title="다른 미션 둘러보기"
+          subtitle={otherLabel}
+          onPress={() => router.push('/missions')}
+        />
+      </Row>
+
+      <Card style={styles.weekly}>
+        <Stack gap="xl">
+          <Row between center>
+            <Text variant="bodyBold">이번 주 미션</Text>
+            <Text variant="microBold" color="violetDeep">
+              주 {WEEKLY_GOAL}일 · {view.achieved}/{WEEKLY_GOAL}
+            </Text>
+          </Row>
+
+          <Row between>
+            {KOREAN_WEEKDAYS.map((label, i) => {
+              const done = view.week[i];
+              const today = i === view.todayIndex;
+
+              return (
+                <Stack key={label} gap="sm" center>
+                  <Text variant="nanoSoft" color="smoke">
+                    {label}
+                  </Text>
+                  <View
+                    style={[
+                      styles.dot,
+                      { backgroundColor: done ? c.violet : today ? c.violetSoft : c.surface2 },
+                      today && !done ? { borderWidth: 2, borderColor: c.violet } : null,
+                    ]}
+                  >
+                    {done ? <IconCheck size={15} color={c.onColor} strokeWidth={2.6} /> : null}
+                  </View>
+                </Stack>
+              );
+            })}
+          </Row>
+
+          <Text variant="micro" color="smoke" style={styles.hint}>
+            {view.achieved >= WEEKLY_GOAL
+              ? '이번 주 목표를 달성했어요'
+              : view.spentToday
+                ? `오늘은 지출이 있어요 · ${WEEKLY_GOAL - view.achieved}일 더 성공하면 목표 달성`
+                : '오늘 무지출이면 미션 달성!'}
+          </Text>
+        </Stack>
+      </Card>
+
+      <Row between>
         {BADGE_DAYS.map((days) => (
           <Badge key={days} days={days} streak={view.streak} />
         ))}
@@ -138,10 +148,63 @@ export default function MissionScreen() {
   );
 }
 
+function EntryCard({
+  tone,
+  icon,
+  title,
+  subtitle,
+  onPress,
+}: {
+  tone: ColorName;
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+}) {
+  const c = useColors();
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.entry, pressed ? styles.pressed : undefined]}
+    >
+      <Card style={styles.entryCard}>
+        <Stack gap="md">
+          <View style={[styles.entryIcon, { backgroundColor: c[tone] }]}>{icon}</View>
+          <Stack gap="xxs">
+            <Text variant="bodyBold" numberOfLines={1}>
+              {title}
+            </Text>
+            <Text variant="micro" color="smoke" numberOfLines={1}>
+              {subtitle}
+            </Text>
+          </Stack>
+        </Stack>
+      </Card>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  content: { paddingHorizontal: screenPadding },
-  title: { paddingBottom: space['3xl'] },
-  jar: { padding: space['4xl'], borderRadius: radius.card },
-  badges: { alignItems: 'flex-start' },
+  content: { paddingHorizontal: screenPadding, gap: space['3xl'] },
+  entry: { flex: 1 },
+  entryCard: { padding: space.xl },
+  entryIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  weekly: { paddingVertical: space['2xl'], paddingHorizontal: space['3xl'] },
+  dot: {
+    width: 28,
+    height: 28,
+    borderRadius: radius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hint: { textAlign: 'center' },
+  pressed: { opacity: 0.6 },
 });

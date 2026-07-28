@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,11 +11,16 @@ function SocialButton({
   label,
   bg,
   fg,
+  mark,
+  border,
   onPress,
 }: {
   label: string;
   bg: ColorName;
   fg: ColorName;
+  /** 브랜드 글리프. 구글처럼 색이 흰 버튼은 글자만으로는 어느 서비스인지 안 읽힌다. */
+  mark?: ReactNode;
+  border?: boolean;
   onPress: () => void;
 }) {
   const c = useColors();
@@ -23,9 +29,14 @@ function SocialButton({
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [styles.social, { backgroundColor: c[bg], opacity: pressed ? 0.85 : 1 }]}
+      style={({ pressed }) => [
+        styles.social,
+        { backgroundColor: c[bg], opacity: pressed ? 0.85 : 1 },
+        border ? { borderWidth: StyleSheet.hairlineWidth, borderColor: c.hairStrong } : null,
+      ]}
     >
-      <Text variant="label" color={fg}>
+      {mark}
+      <Text variant="bodyBold" color={fg}>
         {label}
       </Text>
     </Pressable>
@@ -46,8 +57,8 @@ export default function Login() {
         <Stack center style={[styles.mark, { backgroundColor: c.violet }]}>
           <IconWallet size={40} color={c.onColor} strokeWidth={1.8} />
         </Stack>
-        <Text variant="title2">머니마인더</Text>
-        <Text variant="callout" color="smoke">
+        <Text variant="title2Soft">머니마인더</Text>
+        <Text variant="bodySoft" color="smoke">
           무지출 미션이 있는 가계부
         </Text>
       </Stack>
@@ -57,6 +68,23 @@ export default function Login() {
       <Stack gap="lg" style={[styles.actions, { paddingBottom: insets.bottom + space['4xl'] }]}>
         <SocialButton label="카카오로 시작하기" bg="kakao" fg="kakaoInk" onPress={enter} />
         <SocialButton label="Apple로 시작하기" bg="apple" fg="onColor" onPress={enter} />
+        <SocialButton
+          label="Google로 계속하기"
+          bg="surface"
+          fg="ink"
+          border
+          mark={
+            <Text variant="title3Flat" color="google">
+              G
+            </Text>
+          }
+          onPress={enter}
+        />
+
+        <Text variant="microSoft" color="mist" style={styles.terms}>
+          가입 시 이용약관 및 개인정보처리방침에 동의합니다
+        </Text>
+
         <Row center style={styles.guest}>
           <Pressable onPress={enter} hitSlop={12}>
             <Text variant="callout" color="smoke">
@@ -74,10 +102,13 @@ const styles = StyleSheet.create({
   mark: { width: 76, height: 76, borderRadius: radius['4xl'] },
   actions: { paddingHorizontal: screenPadding },
   social: {
+    flexDirection: 'row',
     height: 52,
+    gap: space.md,
     borderRadius: radius.card,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  guest: { paddingTop: space.lg },
+  terms: { textAlign: 'center', paddingTop: space.md },
+  guest: { paddingTop: space.sm },
 });

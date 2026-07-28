@@ -1,16 +1,28 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { monthlyTotal } from '@/entities/recurring/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
+import { isCard } from '@/entities/payment-method/model';
+import { monthlyTotal } from '@/entities/recurring/model';
 import { useRecurring } from '@/entities/recurring/store';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak } from '@/features/mission';
 import { won, wonUnit } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
-import { IconChevronRight, ListRow, Row, SectionHeader, Stack, Text, ToggleRow } from '@/shared/ui';
+import {
+  Card,
+  IconChevronRight,
+  Row,
+  SettingRow,
+  Stack,
+  Text,
+  Toggle,
+} from '@/shared/ui';
+
+const TAB_CLEARANCE = 96;
+const WEEKLY_GOAL = 4;
 
 export default function SettingsScreen() {
   const c = useColors();
@@ -22,93 +34,87 @@ export default function SettingsScreen() {
   const [remind, setRemind] = useState(true);
 
   const streak = useMemo(() => currentStreak(transactions, new Date()), [transactions]);
-
-  const chevron = <IconChevronRight size={16} color={c.mist} />;
+  const cards = methods.filter(isCard).length;
 
   return (
     <ScrollView
       style={styles.screen}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
+        { paddingTop: insets.top + space.sm, paddingBottom: insets.bottom + TAB_CLEARANCE },
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <Text variant="title3" style={styles.title}>
-        전체
-      </Text>
+      <Text variant="title3">전체</Text>
 
-      <Row gap="xl" center style={[styles.profile, { backgroundColor: c.surface }]}>
-        <Stack center style={[styles.avatar, { backgroundColor: c.violet }]}>
-          <Text variant="title3" color="onColor">
-            강
-          </Text>
-        </Stack>
-        <Stack gap="xxs" style={styles.mid}>
-          <Text variant="bodyBold">은짱</Text>
-          <Text variant="micro" color="smoke">
-            연속 무지출 {streak}일째
-          </Text>
-        </Stack>
-        {chevron}
-      </Row>
+      <Card style={styles.profile}>
+        <Row gap="xl" center>
+          <View style={[styles.avatar, { backgroundColor: c.violet }]}>
+            <Text variant="headlineFlat" color="onColor">
+              강
+            </Text>
+          </View>
+          <Stack gap="xxs" style={styles.mid}>
+            <Text variant="label">은짱</Text>
+            <Text variant="captionMuted" color="smoke" numberOfLines={1}>
+              연속 무지출 {streak}일째 · 프로필 관리
+            </Text>
+          </Stack>
+          <IconChevronRight size={18} color={c.mist} />
+        </Row>
+      </Card>
 
-      <SectionHeader title="돈 관리" />
-      <ListRow title="월 예산" value={wonUnit(budget)} trailing={chevron} />
-      <ListRow
-        title="결제수단"
-        value={`${methods.length}개`}
-        trailing={chevron}
-        divider
-        onPress={() => router.push('/payment-methods')}
-      />
-      <ListRow
-        title="고정 지출"
-        subtitle={recurring.length > 0 ? `매월 ${won(monthlyTotal(recurring))}원` : undefined}
-        value={`${recurring.length}건`}
-        trailing={chevron}
-        divider
-        onPress={() => router.push('/recurring')}
-      />
-      <ListRow
-        title="월 결산"
-        subtitle="이번 달 지출을 한 장으로"
-        trailing={chevron}
-        divider
-        onPress={() => router.push('/monthly')}
-      />
+      <Card list>
+        <SettingRow label="월 예산" value={wonUnit(budget)} onPress={() => router.push('/budget-setup')} />
+        <SettingRow
+          label="무지출 미션 목표"
+          value={`주 ${WEEKLY_GOAL}일`}
+          divider
+          onPress={() => router.push('/missions')}
+        />
+        <SettingRow label="카테고리 관리" divider onPress={() => router.push('/missions')} />
+        <SettingRow
+          label="결제수단 관리"
+          value={`카드 ${cards} · 현금 계좌 ${methods.length - cards}`}
+          divider
+          onPress={() => router.push('/payment-methods')}
+        />
+        <SettingRow
+          label="고정 지출"
+          value={recurring.length > 0 ? `매월 ${won(monthlyTotal(recurring))}원` : '없음'}
+          divider
+          onPress={() => router.push('/recurring')}
+        />
+        <SettingRow label="월 결산" divider onPress={() => router.push('/monthly')} />
+      </Card>
 
-      <SectionHeader title="미션" />
-      <ListRow
-        title="미션 고르기"
-        subtitle="무지출 외에 다른 목표도 함께"
-        trailing={chevron}
-        onPress={() => router.push('/missions')}
-      />
-      <ListRow title="카테고리 관리" trailing={chevron} divider />
+      <Card list>
+        <SettingRow
+          label="무지출 리마인더"
+          trailing={<Toggle on={remind} onChange={setRemind} />}
+        />
+        <SettingRow label="다크 모드" value="시스템" divider />
+        <SettingRow label="홈 위젯 · 빠른 기록" value="설정" divider />
+      </Card>
 
-      <SectionHeader title="알림" />
-      <ToggleRow
-        label="무지출 리마인더"
-        hint="저녁에 오늘 지출을 확인시켜 드려요"
-        on={remind}
-        onChange={setRemind}
-      />
-
-      <SectionHeader title="앱" />
-      <ListRow title="다크 모드" value="시스템" trailing={chevron} />
-      <ListRow title="데이터 내보내기" subtitle="CSV로 저장" trailing={chevron} divider />
-
-      <ListRow title="로그아웃" dimmed />
+      <Card list>
+        <SettingRow label="데이터 내보내기 (CSV)" onPress={() => undefined} />
+        <SettingRow label="로그아웃" dimmed divider />
+      </Card>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  content: { paddingHorizontal: screenPadding },
-  title: { paddingBottom: space['3xl'] },
-  profile: { padding: space['2xl'], borderRadius: radius.card },
-  avatar: { width: 44, height: 44, borderRadius: radius.xl },
+  content: { paddingHorizontal: screenPadding, gap: space['2xl'] },
+  profile: { padding: space['2xl'] },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: radius['3xl'],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   mid: { flex: 1, minWidth: 0 },
 });

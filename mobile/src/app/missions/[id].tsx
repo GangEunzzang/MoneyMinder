@@ -1,14 +1,14 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useMemo } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
 import { findMission, PERIOD_LABEL, targetLabel } from '@/entities/mission/model';
-import { useMissions } from '@/entities/mission/store';
+import { celebrationKey, useMissions } from '@/entities/mission/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { isExpense, type Transaction } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
-import { missionProgress, remainingLabel, startOfWeek } from '@/features/mission';
+import { completion, missionProgress, remainingLabel, startOfWeek } from '@/features/mission';
 import { KOREAN_WEEKDAYS, signedWon, toDateKey, won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
@@ -31,8 +31,26 @@ export default function MissionDetail() {
   const spec = findMission(id);
   const active = useMissions((s) => s.active.find((m) => m.id === id));
   const stop = useMissions((s) => s.stop);
+  const celebrated = useMissions((s) => s.celebrated);
   const transactions = useLedger((s) => s.transactions);
   const methods = usePaymentMethods((s) => s.methods);
+
+  const done = useMemo(
+    () => (spec && active ? completion(spec, active, transactions, new Date()) : null),
+    [spec, active, transactions],
+  );
+
+  /**
+   * 완주는 회차가 닫힌 뒤 계속 참이라 화면에 들어올 때마다 검사해야 놓치지 않는다.
+   * 축하 화면이 회차를 celebrated 에 남기므로 두 번 열리지는 않는다.
+   */
+  useFocusEffect(
+    useCallback(() => {
+      if (!spec || !done) return;
+      if (celebrated.includes(celebrationKey(spec.id, done.periodKey))) return;
+      router.push(`/missions/complete/${spec.id}`);
+    }, [spec, done, celebrated]),
+  );
 
   const view = useMemo(() => {
     if (!spec || !active) return null;

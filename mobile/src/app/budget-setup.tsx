@@ -25,8 +25,11 @@ export default function BudgetSetup() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const setBudget = useLedger((s) => s.setBudget);
+  const budget = useLedger((s) => s.budget);
+  const onboarded = useAppState((s) => s.onboarded);
   const complete = useAppState((s) => s.complete);
-  const [amount, setAmount] = useState('1200000');
+  // 온보딩 중이면 기본값에서 시작하고, 설정에서 들어왔으면 지금 예산을 보여준다.
+  const [amount, setAmount] = useState(() => String(onboarded ? budget : 1_200_000));
 
   const parsed = Number(amount);
   const canSave = Number.isSafeInteger(parsed) && parsed > 0;
@@ -34,6 +37,13 @@ export default function BudgetSetup() {
   const start = () => {
     if (!canSave) return;
     setBudget(parsed);
+
+    // 온보딩의 마지막 단계일 때만 홈으로 넘긴다. 설정에서 들어왔으면 왔던 자리로 돌아간다.
+    if (onboarded) {
+      router.back();
+
+      return;
+    }
     complete();
     router.replace('/');
   };
@@ -90,7 +100,7 @@ export default function BudgetSetup() {
       <Keypad value={amount} onChange={setAmount} />
 
       <Stack style={[styles.footer, { paddingBottom: insets.bottom + space['3xl'] }]}>
-        <Button label="시작하기" muted={!canSave} onPress={start} />
+        <Button label={onboarded ? '저장하기' : '시작하기'} muted={!canSave} onPress={start} />
       </Stack>
     </View>
   );

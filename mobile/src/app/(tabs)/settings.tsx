@@ -72,7 +72,8 @@ export default function SettingsScreen() {
           divider
           onPress={() => router.push('/missions')}
         />
-        <SettingRow label="카테고리 관리" divider onPress={() => router.push('/missions')} />
+        {/* 카테고리 관리 화면(SNGHU)이 아직 없다. 엉뚱한 데로 보내느니 갈 곳이 없음을 보여준다. */}
+        <SettingRow label="카테고리 관리" value="준비 중" divider dimmed />
         <SettingRow
           label="결제수단 관리"
           value={`카드 ${cards} · 현금 계좌 ${methods.length - cards}`}
@@ -93,12 +94,12 @@ export default function SettingsScreen() {
           label="무지출 리마인더"
           trailing={<Toggle on={remind} onChange={setRemind} />}
         />
-        <SettingRow label="다크 모드" value="시스템" divider />
-        <SettingRow label="홈 위젯 · 빠른 기록" value="설정" divider />
+        <SettingRow label="다크 모드" value="시스템" divider dimmed />
+        <SettingRow label="홈 위젯 · 빠른 기록" value="준비 중" divider dimmed />
       </Card>
 
       <Card list>
-        <SettingRow label="데이터 내보내기 (CSV)" onPress={() => undefined} />
+        <SettingRow label="데이터 내보내기 (CSV)" value="준비 중" dimmed />
         <SettingRow label="로그아웃" dimmed divider />
       </Card>
     </ScrollView>

@@ -39,12 +39,13 @@ export default function RootLayout() {
         <Stack.Protected guard={!onboarded}>
           <Stack.Screen name="onboarding" />
           <Stack.Screen name="login" />
-          <Stack.Screen name="budget-setup" />
         </Stack.Protected>
         <Stack.Protected guard={onboarded}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="add" options={{ presentation: 'modal' }} />
         </Stack.Protected>
+        {/* 예산 설정은 온보딩의 마지막 단계이자 설정의 "월 예산"이다. 어느 쪽에서도 닿아야 한다. */}
+        <Stack.Screen name="budget-setup" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

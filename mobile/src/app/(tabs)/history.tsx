@@ -4,6 +4,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import {
   filterMonth,
@@ -22,6 +23,7 @@ import {
   CategoryIcon,
   Divider,
   EmptyState,
+  IconCalendar,
   IconChevronDown,
   IconReceipt,
   NumText,
@@ -42,6 +44,7 @@ export default function HistoryScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const transactions = useLedger((s) => s.transactions);
+  const categories = useCategories();
   const methods = usePaymentMethods((s) => s.methods);
   const [ym, setYm] = useState(() => monthKey(new Date()));
   const [picking, setPicking] = useState(false);
@@ -72,7 +75,7 @@ export default function HistoryScreen() {
   }, []);
 
   const renderRow = (t: Transaction, index: number) => {
-    const cat = findCategory(t.categoryId);
+    const cat = findCategory(categories, t.categoryId);
     const method = t.paymentMethodId ? view.methodName.get(t.paymentMethodId) : null;
     const meta = [cat.label, method, t.autoRecorded ? '자동기록' : null].filter(Boolean).join(' · ');
 
@@ -112,15 +115,25 @@ export default function HistoryScreen() {
       >
         <Row between center>
           <Text variant="title3">내역</Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="월 선택"
-            onPress={() => setPicking(true)}
-            style={[styles.monthPill, shadow.pill, { backgroundColor: c.surface }]}
-          >
-            <Text variant="calloutBold">{monthLabel(new Date(`${ym}-01T00:00:00`))}</Text>
-            <IconChevronDown size={15} color={c.ink} />
-          </Pressable>
+          <Row gap="md" center>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="달력으로 보기"
+              onPress={() => router.push('/history/calendar')}
+              style={[styles.iconPill, shadow.pill, { backgroundColor: c.surface }]}
+            >
+              <IconCalendar size={17} color={c.ink} />
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="월 선택"
+              onPress={() => setPicking(true)}
+              style={[styles.monthPill, shadow.pill, { backgroundColor: c.surface }]}
+            >
+              <Text variant="calloutBold">{monthLabel(new Date(`${ym}-01T00:00:00`))}</Text>
+              <IconChevronDown size={15} color={c.ink} />
+            </Pressable>
+          </Row>
         </Row>
 
         <Card style={styles.summary}>
@@ -273,6 +286,13 @@ function shortDate(dateKey: string): string {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: { flexGrow: 1, paddingHorizontal: screenPadding, gap: space['3xl'] },
+  iconPill: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   monthPill: {
     flexDirection: 'row',
     alignItems: 'center',

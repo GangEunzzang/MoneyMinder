@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import {
   daysUntilBilling,
   isSettledThisMonth,
@@ -36,6 +37,7 @@ import {
 export default function RecurringScreen() {
   const c = useColors();
   const items = useRecurring((s) => s.items);
+  const categories = useCategories();
   const update = useRecurring((s) => s.update);
   const methods = usePaymentMethods((s) => s.methods);
 
@@ -64,7 +66,7 @@ export default function RecurringScreen() {
     items.forEach((r) => update(r.id, { remindBeforeDays: on ? 3 : 0 }));
 
   const renderRow = (r: Recurring, index: number, settled: boolean) => {
-    const cat = findCategory(r.categoryId);
+    const cat = findCategory(categories, r.categoryId);
     const method = r.paymentMethodId ? view.methodName.get(r.paymentMethodId) : null;
     const when = settled
       ? `${r.cycleDay}일 결제됨`

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { useLedger } from '@/entities/transaction/store';
 import { dateFull, signedWon } from '@/shared/lib/format';
@@ -25,6 +26,7 @@ export default function TransactionDetail() {
   const c = useColors();
   const txn = useLedger((s) => s.transactions.find((t) => t.id === id));
   const remove = useLedger((s) => s.remove);
+  const categories = useCategories();
   const methods = usePaymentMethods((s) => s.methods);
   const [confirming, setConfirming] = useState(false);
 
@@ -41,7 +43,7 @@ export default function TransactionDetail() {
     );
   }
 
-  const cat = findCategory(txn.categoryId);
+  const cat = findCategory(categories, txn.categoryId);
   const method = methods.find((m) => m.id === txn.paymentMethodId);
   const income = txn.type === 'income';
 

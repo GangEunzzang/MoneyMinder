@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { filterMonth, monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import {
@@ -32,6 +33,7 @@ import {
 export default function MonthlyReportScreen() {
   const c = useColors();
   const transactions = useLedger((s) => s.transactions);
+  const categories = useCategories();
   const [ym, setYm] = useState(() => monthKey(new Date()));
 
   const view = useMemo(() => {
@@ -117,7 +119,7 @@ export default function MonthlyReportScreen() {
 
             <SectionHeader title="많이 쓴 카테고리" meta="전월 대비" />
             {report.categories.map((row) => {
-              const cat = findCategory(row.categoryId);
+              const cat = findCategory(categories, row.categoryId);
 
               return (
                 <Stack key={row.categoryId} gap="md" style={styles.catRow}>
@@ -149,7 +151,7 @@ export default function MonthlyReportScreen() {
             <Stack gap="sm" style={[styles.note, { backgroundColor: c.surface2 }]}>
               {view.jump ? (
                 <Text variant="microSoft" color="smoke">
-                  · {findCategory(view.jump.categoryId).label}이 지난달보다{' '}
+                  · {findCategory(categories, view.jump.categoryId).label}이 지난달보다{' '}
                   {view.jump.delta}% 늘었어요
                 </Text>
               ) : null}

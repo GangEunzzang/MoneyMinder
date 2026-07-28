@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { describe } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { filterMonth, monthKey } from '@/entities/transaction/model';
@@ -29,6 +30,7 @@ export default function PaymentMethodDetail() {
   const method = usePaymentMethods((s) => s.methods.find((m) => m.id === id));
   const remove = usePaymentMethods((s) => s.remove);
   const transactions = useLedger((s) => s.transactions);
+  const categories = useCategories();
   const [confirming, setConfirming] = useState(false);
 
   const view = useMemo(() => {
@@ -85,7 +87,7 @@ export default function PaymentMethodDetail() {
           </Text>
         ) : (
           view.rows.map((t, i) => {
-            const cat = findCategory(t.categoryId);
+            const cat = findCategory(categories, t.categoryId);
 
             return (
               <ListRow

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Alert, ScrollView, StyleSheet } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { daysUntilBilling, isSettledThisMonth, nextBillingDate } from '@/entities/recurring/model';
 import { useRecurring } from '@/entities/recurring/store';
 import { usePaymentMethod } from '@/entities/payment-method/store';
@@ -26,6 +27,7 @@ import {
 } from '@/shared/ui';
 
 export default function RecurringDetail() {
+  const categories = useCategories();
   const { id } = useLocalSearchParams<{ id: string }>();
   const item = useRecurring((s) => s.items.find((r) => r.id === id));
   const update = useRecurring((s) => s.update);
@@ -54,7 +56,7 @@ export default function RecurringDetail() {
   }
 
   const today = new Date();
-  const cat = findCategory(item.categoryId);
+  const cat = findCategory(categories, item.categoryId);
   const settled = isSettledThisMonth(item, today);
 
   const onDelete = () =>

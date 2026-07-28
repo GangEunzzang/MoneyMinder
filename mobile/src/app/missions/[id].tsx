@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { findMission, PERIOD_LABEL, targetLabel } from '@/entities/mission/model';
 import { celebrationKey, useMissions } from '@/entities/mission/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
@@ -33,6 +34,7 @@ export default function MissionDetail() {
   const stop = useMissions((s) => s.stop);
   const celebrated = useMissions((s) => s.celebrated);
   const transactions = useLedger((s) => s.transactions);
+  const categories = useCategories();
   const methods = usePaymentMethods((s) => s.methods);
 
   const done = useMemo(
@@ -109,7 +111,7 @@ export default function MissionDetail() {
     ]);
 
   const renderRow = (t: Transaction, i: number) => {
-    const cat = findCategory(t.categoryId);
+    const cat = findCategory(categories, t.categoryId);
     const day = KOREAN_WEEKDAYS[(new Date(t.date).getDay() + 6) % 7];
     const method = t.paymentMethodId ? view.methodName.get(t.paymentMethodId) : null;
 

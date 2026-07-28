@@ -1,4 +1,5 @@
 export { Button } from './Button';
+export { Calendar, type DayCell, monthCells } from './Calendar';
 export { CategoryIcon, type IconKey } from './CategoryIcon';
 export { Chip, ChipRow, PayChip } from './Chip';
 export { ConfirmDialog } from './ConfirmDialog';

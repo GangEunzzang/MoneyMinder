@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { isCard } from '@/entities/payment-method/model';
 import { monthlyTotal } from '@/entities/recurring/model';
@@ -31,6 +32,7 @@ export default function SettingsScreen() {
   const budget = useLedger((s) => s.budget);
   const methods = usePaymentMethods((s) => s.methods);
   const recurring = useRecurring((s) => s.items);
+  const categories = useCategories();
   const [remind, setRemind] = useState(true);
 
   const streak = useMemo(() => currentStreak(transactions, new Date()), [transactions]);
@@ -65,15 +67,19 @@ export default function SettingsScreen() {
       </Card>
 
       <Card list>
-        <SettingRow label="월 예산" value={wonUnit(budget)} onPress={() => router.push('/budget-setup')} />
+        <SettingRow label="월 예산" value={wonUnit(budget)} onPress={() => router.push('/budget')} />
         <SettingRow
           label="무지출 미션 목표"
           value={`주 ${WEEKLY_GOAL}일`}
           divider
           onPress={() => router.push('/missions')}
         />
-        {/* 카테고리 관리 화면(SNGHU)이 아직 없다. 엉뚱한 데로 보내느니 갈 곳이 없음을 보여준다. */}
-        <SettingRow label="카테고리 관리" value="준비 중" divider dimmed />
+        <SettingRow
+          label="카테고리 관리"
+          value={`${categories.length}개`}
+          divider
+          onPress={() => router.push('/categories')}
+        />
         <SettingRow
           label="결제수단 관리"
           value={`카드 ${cards} · 현금 계좌 ${methods.length - cards}`}
@@ -86,6 +92,7 @@ export default function SettingsScreen() {
           divider
           onPress={() => router.push('/recurring')}
         />
+        <SettingRow label="통계" divider onPress={() => router.push('/stats')} />
         <SettingRow label="월 결산" divider onPress={() => router.push('/monthly')} />
       </Card>
 

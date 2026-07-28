@@ -241,6 +241,95 @@ export function IconUtensils({ size = 20, color = '#191F28', strokeWidth = 2 }: 
   );
 }
 
+export function IconFilm({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={3} y={4} width={18} height={16} rx={2.5} {...stroke(color, strokeWidth)} />
+      <Path d="M8 4v16M16 4v16M3 12h18" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconHealth({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={3} y={6} width={18} height={14} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="M9 6V4h6v2M12 10v6M9 13h6" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconBook({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M4 4h10a3 3 0 0 1 3 3v13H7a3 3 0 0 0-3 3V4Z" {...stroke(color, strokeWidth)} />
+      <Path d="M17 7h3v13h-3" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconPhone({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={6} y={2.5} width={12} height={19} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="M11 18.5h2" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconScissors({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Circle cx={6} cy={18} r={2.5} {...stroke(color, strokeWidth)} />
+      <Circle cx={18} cy={18} r={2.5} {...stroke(color, strokeWidth)} />
+      <Path d="M7.7 16.3 18 4M16.3 16.3 6 4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconPlane({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M2 13.5 21.5 5 15 21l-3.5-6.5L2 13.5Z" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconSearch({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Circle cx={11} cy={11} r={7} {...stroke(color, strokeWidth)} />
+      <Path d="m16.5 16.5 4 4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconFilter({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M3 5h18l-7 8v6l-4 2v-8L3 5Z" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconCalendar({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={3} y={5} width={18} height={16} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="M3 10h18M8 3v4M16 3v4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconDownload({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5" {...stroke(color, strokeWidth)} />
+      <Path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
 export function IconTrash({ size = 20, color = '#E5484D', strokeWidth = 2 }: IconProps) {
   return (
     <Svg {...base(size)}>

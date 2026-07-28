@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppState } from '@/entities/app/store';
 import { findCategory } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { filterMonth, monthKey, sumExpense } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, startOfWeek, StreakCard, weekProgress } from '@/features/mission';
@@ -31,6 +32,7 @@ export default function HomeScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const transactions = useLedger((s) => s.transactions);
+  const categories = useCategories();
   const budget = useLedger((s) => s.budget);
   const alerted = useAppState((s) => s.budgetAlerted);
   const alertBudget = useAppState((s) => s.alertBudget);
@@ -141,7 +143,7 @@ export default function HomeScreen() {
           ) : (
             <Card list>
               {view.recent.map((t, i) => {
-                const cat = findCategory(t.categoryId);
+                const cat = findCategory(categories, t.categoryId);
 
                 return (
                   <Pressable

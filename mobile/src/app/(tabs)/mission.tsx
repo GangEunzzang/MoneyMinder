@@ -17,7 +17,7 @@ import {
   StreakCard,
   weekProgress,
 } from '@/features/mission';
-import { KOREAN_WEEKDAYS, weekdayIndex, won } from '@/shared/lib/format';
+import { KOREAN_WEEKDAYS, weekdayIndex } from '@/shared/lib/format';
 import { type ColorName, radius, screenPadding, space, useColors } from '@/shared/theme';
 import { Card, IconCheck, IconPiggy, IconTarget, Row, Stack, Text } from '@/shared/ui';
 
@@ -81,11 +81,9 @@ export default function MissionScreen() {
         <EntryCard
           tone="violetSoft"
           icon={<IconPiggy size={22} color={c.violet} />}
-          title="무지출 저금통"
-          subtitle={
-            view.savings ? `${won(view.savings.amount)}원 모았어요` : '조금만 더 기록하면 보여요'
-          }
-          onPress={() => router.push('/missions')}
+          title="무지출 캘린더"
+          subtitle={`이번 달 무지출 ${view.noSpend}일`}
+          onPress={() => router.push('/missions/calendar')}
         />
         <EntryCard
           tone="mintSoft"

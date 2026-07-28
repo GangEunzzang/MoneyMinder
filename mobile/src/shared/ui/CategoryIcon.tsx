@@ -4,10 +4,17 @@ import type { ColorName } from '../theme';
 import { useColors } from '../theme';
 import {
   IconBag,
+  IconBook,
   IconBus,
   IconCafe,
   IconCard,
+  IconFilm,
+  IconHealth,
+  IconHome,
+  IconPhone,
+  IconPlane,
   IconRepeat,
+  IconScissors,
   IconUtensils,
   IconWallet,
 } from './icons';
@@ -21,6 +28,13 @@ const MAP = {
   repeat: IconRepeat,
   wallet: IconWallet,
   card: IconCard,
+  film: IconFilm,
+  health: IconHealth,
+  book: IconBook,
+  house: IconHome,
+  phone: IconPhone,
+  scissors: IconScissors,
+  plane: IconPlane,
 } as const;
 
 export type IconKey = keyof typeof MAP;
@@ -42,7 +56,7 @@ export function CategoryIcon({
   dimmed?: boolean;
 }) {
   const c = useColors();
-  const Cmp = MAP[icon];
+  const Cmp = MAP[icon] ?? IconWallet;
 
   return (
     <IconBadge tone={tintSoft} size={size} round={round} dimmed={dimmed}>

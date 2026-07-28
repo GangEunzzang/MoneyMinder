@@ -2,7 +2,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
-import { EXPENSE_CATEGORIES } from '@/entities/category/model';
+import { expenseCategories } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { useRecurring } from '@/entities/recurring/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { won } from '@/shared/lib/format';
@@ -25,6 +26,7 @@ import {
 const CYCLE_DAYS = [1, 5, 10, 15, 20, 25] as const;
 
 export default function NewRecurring() {
+  const categories = useCategories();
   const add = useRecurring((s) => s.add);
   const methods = usePaymentMethods((s) => s.methods);
 
@@ -99,7 +101,7 @@ export default function NewRecurring() {
             카테고리
           </Text>
           <Row gap="sm" style={styles.wrap}>
-            {EXPENSE_CATEGORIES.map((cat) => (
+            {expenseCategories(categories).map((cat) => (
               <Chip
                 key={cat.id}
                 label={cat.label}

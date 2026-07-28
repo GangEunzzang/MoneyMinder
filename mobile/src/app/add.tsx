@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { CATEGORIES, EXPENSE_CATEGORIES } from '@/entities/category/model';
+import { expenseCategories, incomeCategories } from '@/entities/category/model';
+import { useCategories } from '@/entities/category/store';
 import { isCard, type PaymentMethod } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { toDateKey, type TransactionType } from '@/entities/transaction/model';
@@ -37,8 +38,6 @@ const TYPES: SegmentItem<TransactionType>[] = [
   { value: 'income', label: '수입', color: 'mint' },
 ];
 
-const INCOME_CATEGORIES = CATEGORIES.filter((cat) => cat.id === 'salary' || cat.id === 'etc');
-
 /** 오늘부터 거슬러 4일. 날짜 선택기를 띄우지 않고 한 번에 고르게 한다. */
 const DAY_OFFSETS = [0, -1, -2, -3];
 
@@ -59,6 +58,7 @@ export default function AddScreen() {
   const add = useLedger((s) => s.add);
   const update = useLedger((s) => s.update);
   const methods = usePaymentMethods((s) => s.methods);
+  const allCategories = useCategories();
 
   const [type, setType] = useState<TransactionType>(editing?.type ?? 'expense');
   const [amount, setAmount] = useState(editing ? String(editing.amount) : '');
@@ -73,7 +73,8 @@ export default function AddScreen() {
   const [saved, setSaved] = useState<string | null>(null);
   const [detail, setDetail] = useState(false);
 
-  const categories = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const categories =
+    type === 'expense' ? expenseCategories(allCategories) : incomeCategories(allCategories);
   const parsed = Number(amount);
   const canSave = Number.isSafeInteger(parsed) && parsed > 0;
 

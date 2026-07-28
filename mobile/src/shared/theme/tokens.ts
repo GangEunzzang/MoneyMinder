@@ -26,6 +26,10 @@ export const palette = {
     onColor: '#FFFFFF',
     /** 컬러 배경 위 오버레이 (칩·요일 도트). */
     onColorSoft: '#FFFFFF2E',
+    /** 브랜드 색은 테마를 따르지 않는다 — 색 자체가 식별 수단이라 바뀌면 못 알아본다. */
+    kakao: '#FEE500',
+    kakaoInk: '#191600',
+    apple: '#000000',
   },
   dark: {
     bg: '#17151D',
@@ -48,6 +52,9 @@ export const palette = {
     redSoft: '#38222A',
     onColor: '#FFFFFF',
     onColorSoft: '#FFFFFF2E',
+    kakao: '#FEE500',
+    kakaoInk: '#191600',
+    apple: '#000000',
   },
 } as const;
 

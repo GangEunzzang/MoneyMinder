@@ -13,7 +13,7 @@ type Props = {
 };
 
 /** 예산 게이지 · 미션 진행 · 카테고리 비중이 전부 이걸 쓴다. */
-export function ProgressBar({ value, color = 'violet', height = 6, label }: Props) {
+export function ProgressBar({ value, color = 'violet', height = 9, label }: Props) {
   const c = useColors();
   const ratio = Math.max(0, Math.min(1, value));
   const filled = `${ratio * 100}%` as const;

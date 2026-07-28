@@ -73,7 +73,7 @@ export function SectionHeader({
 }) {
   return (
     <Row between center style={{ paddingTop: first ? space.xl : space['5xl'], paddingBottom: space.md }}>
-      <Text variant="subhead">{title}</Text>
+      <Text variant="subheadBold">{title}</Text>
       {meta ? (
         <Text variant="micro" color={accent ? 'violet' : 'mist'}>
           {meta}

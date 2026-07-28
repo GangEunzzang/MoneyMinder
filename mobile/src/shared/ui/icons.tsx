@@ -1,6 +1,6 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-type IconProps = { size?: number; color?: string; strokeWidth?: number };
+export type IconProps = { size?: number; color?: string; strokeWidth?: number };
 
 const base = (size: number) => ({ width: size, height: size, viewBox: '0 0 24 24' as const });
 const stroke = (color: string, w: number) => ({

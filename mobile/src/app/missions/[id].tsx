@@ -1,4 +1,4 @@
-import { Stack as NavStack, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -18,6 +18,7 @@ import {
   NumText,
   ProgressBar,
   Row,
+  ScreenHeader,
   SectionHeader,
   Spring,
   Stack,
@@ -108,7 +109,7 @@ export default function MissionDetail() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: spec.title }} />
+      <ScreenHeader title={spec.title} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text variant="caption" color="smoke" style={styles.eyebrow}>
           {PERIOD_LABEL[active.period]} 진행

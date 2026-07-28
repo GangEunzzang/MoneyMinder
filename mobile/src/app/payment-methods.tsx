@@ -1,4 +1,4 @@
-import { Stack as NavStack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -21,6 +21,7 @@ import {
   IconChevronRight,
   ListRow,
   NumText,
+  ScreenHeader,
   SectionHeader,
   Spring,
   Stack,
@@ -62,7 +63,7 @@ export default function PaymentMethodsScreen() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: '결제수단' }} />
+      <ScreenHeader title={'결제수단'} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}

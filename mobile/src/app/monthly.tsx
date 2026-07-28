@@ -1,4 +1,4 @@
-import { Stack as NavStack, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
@@ -23,6 +23,7 @@ import {
   NumText,
   ProgressBar,
   Row,
+  ScreenHeader,
   SectionHeader,
   Stack,
   Text,
@@ -68,7 +69,7 @@ export default function MonthlyReportScreen() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: `${Number(ym.slice(5))}월 결산` }} />
+      <ScreenHeader title={`${Number(ym.slice(5))}월 결산`} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Row between center style={styles.monthBar}>
           <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>

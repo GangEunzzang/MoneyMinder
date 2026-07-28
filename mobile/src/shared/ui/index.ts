@@ -6,6 +6,7 @@ export { AmountField, FieldInput, FieldRow } from './fields';
 export { Divider, Row, ScreenBody, SectionHeader, Spring, Stack } from './layout';
 export { ColorSwatch, IconBadge, ListRow } from './ListRow';
 export { ProgressBar } from './ProgressBar';
+export { ScreenHeader } from './ScreenHeader';
 export { Segmented, type SegmentItem } from './Segmented';
 export { TabBar } from './TabBar';
 export { NumText, Text } from './Text';

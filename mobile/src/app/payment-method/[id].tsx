@@ -1,4 +1,4 @@
-import { Stack as NavStack, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet } from 'react-native';
 
@@ -16,6 +16,7 @@ import {
   ListRow,
   NumText,
   Row,
+  ScreenHeader,
   SectionHeader,
   Spring,
   Stack,
@@ -70,7 +71,7 @@ export default function PaymentMethodDetail() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: method.name }} />
+      <ScreenHeader title={method.name} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Row gap="xl" center style={styles.head}>
           <ColorSwatch color={method.color} />

@@ -2,6 +2,7 @@ import { useColorScheme } from 'react-native';
 
 import { palette, type Palette } from './tokens';
 
+export * from './fonts';
 export * from './tokens';
 
 export function useColors(): Palette {

@@ -1,4 +1,4 @@
-import { Stack as NavStack, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -14,11 +14,12 @@ import {
   IconTarget,
   NumText,
   Row,
-  type SegmentItem,
+  ScreenHeader,
   Segmented,
   Spring,
   Stack,
   Text,
+  type SegmentItem,
 } from '@/shared/ui';
 
 const PERIODS: SegmentItem<MissionPeriod>[] = (['week', 'month', 'forever'] as const).map(
@@ -62,7 +63,7 @@ export default function MissionSetup() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: '미션 설정' }} />
+      <ScreenHeader title={'미션 설정'} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stack gap="lg" center style={[styles.hero, { backgroundColor: c[spec.tintSoft] }]}>
           <Stack center style={[styles.icon, { backgroundColor: c.surface }]}>

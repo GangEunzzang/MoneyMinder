@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { StyleSheet, TextInput, type TextInputProps } from 'react-native';
 
-import { type ColorName, space, type as typeScale, useColors } from '../theme';
+import { type ColorName, fontFamilyFor, space, type as typeScale, useColors } from '../theme';
 import { Row, Stack } from './layout';
 import { Text } from './Text';
 
@@ -40,7 +40,11 @@ export function AmountField({ eyebrow, value, onChange, sign, color = 'ink' }: A
           placeholder="0"
           placeholderTextColor={c.mist}
           accessibilityLabel="금액"
-          style={[styles.amountInput, typeScale.title1, { color: c[color] }]}
+          style={[
+            styles.amountInput,
+            typeScale.title1,
+            { fontFamily: fontFamilyFor(typeScale.title1.fontWeight), color: c[color] },
+          ]}
         />
         <Text variant="title3" color="smoke">
           원
@@ -82,7 +86,12 @@ export function FieldInput(props: TextInputProps) {
     <TextInput
       placeholderTextColor={c.mist}
       {...props}
-      style={[styles.fieldInput, typeScale.callout, { color: c.ink }, props.style]}
+      style={[
+        styles.fieldInput,
+        typeScale.callout,
+        { fontFamily: fontFamilyFor(typeScale.callout.fontWeight), color: c.ink },
+        props.style,
+      ]}
     />
   );
 }

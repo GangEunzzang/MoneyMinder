@@ -70,6 +70,13 @@ export function IconChevronRight({ size = 18, color = '#B0B8C1', strokeWidth = 2
     </Svg>
   );
 }
+export function IconChevronLeft({ size = 18, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M15 6l-6 6 6 6" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
 export function IconArrowDown({ size = 18, color = '#00C896', strokeWidth = 1.9 }: IconProps) {
   return (
     <Svg {...base(size)}>

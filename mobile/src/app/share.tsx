@@ -1,4 +1,4 @@
-import { Stack as NavStack } from 'expo-router';
+
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Share, StyleSheet } from 'react-native';
 
@@ -8,7 +8,7 @@ import { currentStreak, noSpendDaysInMonth, noSpendSavings } from '@/features/mi
 import { headline, monthlyReport } from '@/features/report';
 import { type ColorName, radius, screenPadding, space, useColors } from '@/shared/theme';
 import { won } from '@/shared/lib/format';
-import { Button, NumText, Row, Stack, Text } from '@/shared/ui';
+import { Button, NumText, Row, ScreenHeader, Stack, Text } from '@/shared/ui';
 
 const TONES: ColorName[] = ['violet', 'violetDeep', 'mint', 'peach'];
 
@@ -58,7 +58,7 @@ export default function ShareScreen() {
 
   return (
     <>
-      <NavStack.Screen options={{ title: '결산 공유' }} />
+      <ScreenHeader title={'결산 공유'} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stack gap="5xl" style={[styles.card, { backgroundColor: c[tone] }]}>
           <Text variant="caption" style={{ color: c.onColor, opacity: 0.85 }}>

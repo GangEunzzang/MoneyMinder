@@ -1,77 +1,171 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@/components/base';
-import { IconCafe } from '@/components/icons';
-import { TxnRow } from '@/components/TxnRow';
-import { useTheme } from '@/hooks/use-theme';
-import { formatWon, useLedger } from '@/store/ledger';
+import { findCategory } from '@/entities/category/model';
+import { usePaymentMethods } from '@/entities/payment-method/store';
+import {
+  filterMonth,
+  groupByDate,
+  monthKey,
+  sumExpense,
+  sumIncome,
+  type Transaction,
+} from '@/entities/transaction/model';
+import { useLedger } from '@/entities/transaction/store';
+import { noSpendDaysInMonth } from '@/features/mission';
+import { dateHeading, monthHeading, shiftMonth, signedWon, won } from '@/shared/lib/format';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import {
+  Divider,
+  EmptyState,
+  IconChevronRight,
+  IconList,
+  NumText,
+  Row,
+  Stack,
+  Text,
+} from '@/shared/ui';
 
 export default function HistoryScreen() {
-  const c = useTheme();
-  const ledger = useLedger();
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  const transactions = useLedger((s) => s.transactions);
+  const methods = usePaymentMethods((s) => s.methods);
+  const [ym, setYm] = useState(() => monthKey(new Date()));
+
+  const view = useMemo(() => {
+    const inMonth = filterMonth(transactions, ym);
+    const groups = [...groupByDate(inMonth).entries()].sort((a, b) => b[0].localeCompare(a[0]));
+
+    return {
+      groups,
+      income: sumIncome(inMonth),
+      expense: sumExpense(inMonth),
+      noSpend: noSpendDaysInMonth(transactions, ym, new Date()),
+      methodName: new Map(methods.map((m) => [m.id, m.name])),
+    };
+  }, [transactions, ym, methods]);
+
+  const isThisMonth = ym === monthKey(new Date());
+
+  const renderRow = (t: Transaction, index: number) => {
+    const cat = findCategory(t.categoryId);
+    const method = t.paymentMethodId ? view.methodName.get(t.paymentMethodId) : null;
+    const meta = [cat.label, t.autoRecorded ? '자동기록' : method].filter(Boolean).join(' · ');
+
+    return (
+      <Row key={t.id} gap="xl" py="xl" divider={index > 0}>
+        <Stack center style={[styles.dot, { backgroundColor: c[cat.tintSoft] }]}>
+          <Stack style={[styles.inner, { backgroundColor: c[cat.tint] }]} />
+        </Stack>
+        <Stack gap="xxs" style={styles.mid}>
+          <Text variant="body" numberOfLines={1}>
+            {t.merchant || cat.label}
+          </Text>
+          <Text variant="micro" color="mist" numberOfLines={1}>
+            {meta}
+          </Text>
+        </Stack>
+        <NumText variant="bodyBold" color={t.type === 'income' ? 'mint' : 'ink'}>
+          {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
+        </NumText>
+      </Row>
+    );
+  };
+
   return (
-    <View style={[styles.fill, { backgroundColor: c.background }]}>
-      <SafeAreaView edges={['top']} style={styles.fill}>
-        <View style={styles.pad}>
-          <Text style={[styles.title, { color: c.ink }]}>8월</Text>
-          <Card style={styles.summary}>
-            <View style={styles.sumCol}>
-              <Text style={[styles.sumLabel, { color: c.mint }]}>수입</Text>
-              <Text style={[styles.sumAmt, { color: c.mint }]}>+{formatWon(ledger.income)}</Text>
-            </View>
-            <View style={[styles.divider, { backgroundColor: c.hairStrong }]} />
-            <View style={styles.sumCol}>
-              <Text style={[styles.sumLabel, { color: c.red }]}>지출</Text>
-              <Text style={[styles.sumAmt, { color: c.ink }]}>-{formatWon(ledger.spent)}</Text>
-            </View>
-            <View style={[styles.divider, { backgroundColor: c.hairStrong }]} />
-            <View style={styles.sumCol}>
-              <Text style={[styles.sumLabel, { color: c.smoke }]}>무지출</Text>
-              <Text style={[styles.sumAmt, { color: c.violet }]}>{ledger.noSpendDays}일</Text>
-            </View>
-          </Card>
-        </View>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.day, { color: c.smoke }]}>최근 기록</Text>
-          {ledger.transactions.map((transaction) => (
-            <TxnRow
-              key={transaction.id}
-              name={transaction.merchant}
-              meta={`${transaction.category} · ${transaction.dateLabel}`}
-              amount={`${transaction.type === 'expense' ? '-' : '+'}${formatWon(transaction.amount)}`}
-              type={transaction.type}
-              icon={<IconCafe size={16} color={c.inkSoft} />}
-            />
-          ))}
-          {ledger.hasExpenseToday ? (
-            <View style={styles.noSpend}>
-              <View style={[styles.dot, { backgroundColor: c.red }]} />
-              <Text style={[styles.noSpendText, { color: c.smoke }]}>오늘 · 지출 있음</Text>
-            </View>
-          ) : null}
-          <View style={styles.noSpend}>
-            <View style={[styles.dot, { backgroundColor: c.violet }]} />
-            <Text style={[styles.noSpendText, { color: c.smoke }]}>8월 5일 · 무지출 성공</Text>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Row between center style={styles.header}>
+        <Text variant="title3">내역</Text>
+        <Row gap="lg" center>
+          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
+            <Text variant="micro" color="smoke">
+              이전
+            </Text>
+          </Pressable>
+          <Text variant="caption">{monthHeading(ym)}</Text>
+          <Pressable
+            onPress={() => setYm(shiftMonth(ym, 1))}
+            hitSlop={10}
+            disabled={isThisMonth}
+          >
+            <IconChevronRight size={14} color={isThisMonth ? c.hairStrong : c.smoke} />
+          </Pressable>
+        </Row>
+      </Row>
+
+      <Row between style={[styles.summary, { backgroundColor: c.surface }]}>
+        <Stack gap="xs">
+          <Text variant="nano" color="mint">
+            수입
+          </Text>
+          <NumText variant="callout" color="mint">
+            +{won(view.income)}
+          </NumText>
+        </Stack>
+        <Divider style={styles.vline} />
+        <Stack gap="xs">
+          <Text variant="nano" color="red">
+            지출
+          </Text>
+          <NumText variant="callout">-{won(view.expense)}</NumText>
+        </Stack>
+        <Divider style={styles.vline} />
+        <Stack gap="xs">
+          <Text variant="nano" color="smoke">
+            무지출
+          </Text>
+          <NumText variant="callout" color="violetDeep">
+            {view.noSpend}일
+          </NumText>
+        </Stack>
+      </Row>
+
+      {view.groups.length === 0 ? (
+        <EmptyState
+          icon={<IconList size={24} color={c.mist} />}
+          title={`${monthHeading(ym)}에 기록이 없어요`}
+          body="아래 ＋로 3초 만에 남겨보세요. 하루 한 줄이면 한 달이 보여요."
+          actionLabel="기록하기"
+          onAction={() => router.push('/add')}
+        />
+      ) : (
+        view.groups.map(([dateKey, rows]) => (
+          <Stack key={dateKey} style={styles.group}>
+            <Row between center style={styles.groupHead}>
+              <Text variant="caption" color="smoke">
+                {dateHeading(dateKey)}
+              </Text>
+              <NumText variant="micro" color="mist">
+                {sumExpense(rows) > 0 ? `-${won(sumExpense(rows))}` : '무지출'}
+              </NumText>
+            </Row>
+            {rows.map(renderRow)}
+          </Stack>
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  pad: { paddingHorizontal: 15, paddingTop: 8 },
-  scroll: { paddingHorizontal: 15, paddingBottom: 30 },
-  title: { fontSize: 16, fontWeight: '800', letterSpacing: -0.4, paddingBottom: 10 },
-  summary: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, paddingHorizontal: 14 },
-  sumCol: { alignItems: 'flex-start' },
-  sumLabel: { fontSize: 11, fontWeight: '700' },
-  sumAmt: { fontSize: 14, fontWeight: '800', marginTop: 2, fontVariant: ['tabular-nums'] },
-  divider: { width: 1 },
-  day: { fontSize: 11, fontWeight: '700', paddingTop: 14, paddingBottom: 1 },
-  noSpend: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 9 },
-  dot: { width: 8, height: 8, borderRadius: 99 },
-  noSpendText: { fontSize: 11.5, fontWeight: '700' },
+  screen: { flex: 1 },
+  content: { flexGrow: 1, paddingHorizontal: screenPadding },
+  header: { paddingBottom: space['3xl'] },
+  summary: { paddingVertical: space['2xl'], paddingHorizontal: space['4xl'], borderRadius: radius.card },
+  vline: { width: StyleSheet.hairlineWidth, height: 28 },
+  group: { paddingTop: space['5xl'] },
+  groupHead: { paddingBottom: space.md },
+  dot: { width: 34, height: 34, borderRadius: radius.pill },
+  inner: { width: 10, height: 10, borderRadius: radius.pill },
+  mid: { flex: 1, minWidth: 0 },
 });

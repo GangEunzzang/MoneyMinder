@@ -1,95 +1,99 @@
-import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@/components/base';
-import { IconChevronRight } from '@/components/icons';
-import { useTheme } from '@/hooks/use-theme';
-import { useLedger } from '@/store/ledger';
-
-function Row({ label, value, last }: { label: string; value?: ReactNode; last?: boolean }) {
-  const c = useTheme();
-  return (
-    <View style={[styles.row, !last && { borderBottomWidth: 1, borderBottomColor: c.hair }]}>
-      <Text style={[styles.rowLabel, { color: c.ink }]}>{label}</Text>
-      {typeof value === 'string' ? <Text style={[styles.rowValue, { color: c.smoke }]}>{value}</Text> : value}
-      <IconChevronRight size={16} color={c.mist} />
-    </View>
-  );
-}
-
-function ToggleView({ on }: { on: boolean }) {
-  const c = useTheme();
-  return (
-    <View style={[styles.toggle, { backgroundColor: on ? c.violet : c.hairStrong }]}>
-      <View style={[styles.knob, on ? { right: 3 } : { left: 3 }]} />
-    </View>
-  );
-}
+import { monthlyTotal } from '@/entities/recurring/model';
+import { usePaymentMethods } from '@/entities/payment-method/store';
+import { useRecurring } from '@/entities/recurring/store';
+import { useLedger } from '@/entities/transaction/store';
+import { currentStreak } from '@/features/mission';
+import { won, wonUnit } from '@/shared/lib/format';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import { IconChevronRight, ListRow, Row, SectionHeader, Stack, Text, ToggleRow } from '@/shared/ui';
 
 export default function SettingsScreen() {
-  const c = useTheme();
-  const ledger = useLedger();
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  const transactions = useLedger((s) => s.transactions);
+  const budget = useLedger((s) => s.budget);
+  const methods = usePaymentMethods((s) => s.methods);
+  const recurring = useRecurring((s) => s.items);
+  const [remind, setRemind] = useState(true);
+
+  const streak = useMemo(() => currentStreak(transactions, new Date()), [transactions]);
+
+  const chevron = <IconChevronRight size={16} color={c.mist} />;
+
   return (
-    <View style={[styles.fill, { backgroundColor: c.background }]}>
-      <SafeAreaView edges={['top']} style={styles.fill}>
-        <ScrollView contentContainerStyle={styles.pad} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: c.ink }]}>전체</Text>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + 96 },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text variant="title3" style={styles.title}>
+        전체
+      </Text>
 
-          <Card style={styles.profile}>
-            <View style={[styles.avatar, { backgroundColor: c.violet }]}>
-              <Text style={styles.avatarText}>강</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.pName, { color: c.ink }]}>은짱</Text>
-              <Text style={[styles.pSub, { color: c.smoke }]}>연속 무지출 {ledger.currentStreak}일째</Text>
-            </View>
-            <IconChevronRight size={18} color={c.mist} />
-          </Card>
+      <Row gap="xl" center style={[styles.profile, { backgroundColor: c.surface }]}>
+        <Stack center style={[styles.avatar, { backgroundColor: c.violet }]}>
+          <Text variant="title3" color="onColor">
+            강
+          </Text>
+        </Stack>
+        <Stack gap="xxs" style={styles.mid}>
+          <Text variant="bodyBold">은짱</Text>
+          <Text variant="micro" color="smoke">
+            연속 무지출 {streak}일째
+          </Text>
+        </Stack>
+        {chevron}
+      </Row>
 
-          <Card style={styles.group}>
-            <Row label="월 예산" value="1,200,000" />
-            <Row label="무지출 미션" value="주 4일" />
-            <Row label="카테고리 관리" last />
-          </Card>
+      <SectionHeader title="돈 관리" />
+      <ListRow title="월 예산" value={wonUnit(budget)} trailing={chevron} />
+      <ListRow
+        title="결제수단"
+        value={`${methods.length}개`}
+        trailing={chevron}
+        divider
+        onPress={() => router.push('/payment-methods')}
+      />
+      <ListRow
+        title="고정 지출"
+        subtitle={recurring.length > 0 ? `매월 ${won(monthlyTotal(recurring))}원` : undefined}
+        value={`${recurring.length}건`}
+        trailing={chevron}
+        divider
+        onPress={() => router.push('/recurring')}
+      />
+      <ListRow title="카테고리 관리" trailing={chevron} divider />
 
-          <Card style={styles.group}>
-            <View style={[styles.row, { borderBottomWidth: 1, borderBottomColor: c.hair }]}>
-              <Text style={[styles.rowLabel, { color: c.ink }]}>무지출 리마인더</Text>
-              <View style={{ marginLeft: 'auto' }}>
-                <ToggleView on />
-              </View>
-            </View>
-            <Row label="다크 모드" value="시스템" last />
-          </Card>
+      <SectionHeader title="알림" />
+      <ToggleRow
+        label="무지출 리마인더"
+        hint="저녁에 오늘 지출을 확인시켜 드려요"
+        on={remind}
+        onChange={setRemind}
+      />
 
-          <Card style={styles.group}>
-            <Row label="데이터 내보내기 (CSV)" last />
-          </Card>
-          <Card style={[styles.group, { paddingVertical: 2 }]}>
-            <View style={styles.row}>
-              <Text style={[styles.rowLabel, { color: c.smoke }]}>로그아웃</Text>
-            </View>
-          </Card>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+      <SectionHeader title="앱" />
+      <ListRow title="다크 모드" value="시스템" trailing={chevron} />
+      <ListRow title="데이터 내보내기" subtitle="CSV로 저장" trailing={chevron} divider />
+
+      <ListRow title="로그아웃" dimmed />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  pad: { paddingHorizontal: 15, paddingTop: 8, paddingBottom: 32 },
-  title: { fontSize: 16, fontWeight: '800', letterSpacing: -0.4, paddingVertical: 8 },
-  profile: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
-  avatar: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: '#fff', fontSize: 18, fontWeight: '800' },
-  pName: { fontSize: 14, fontWeight: '700', letterSpacing: -0.3 },
-  pSub: { fontSize: 11.5, marginTop: 1 },
-  group: { marginTop: 12, paddingVertical: 2, paddingHorizontal: 14 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 11 },
-  rowLabel: { fontSize: 13.5, fontWeight: '600' },
-  rowValue: { fontSize: 12, fontWeight: '600', marginLeft: 'auto' },
-  toggle: { width: 40, height: 24, borderRadius: 99, justifyContent: 'center' },
-  knob: { position: 'absolute', top: 3, width: 18, height: 18, borderRadius: 99, backgroundColor: '#fff' },
+  screen: { flex: 1 },
+  content: { paddingHorizontal: screenPadding },
+  title: { paddingBottom: space['3xl'] },
+  profile: { padding: space['2xl'], borderRadius: radius.card },
+  avatar: { width: 44, height: 44, borderRadius: radius.xl },
+  mid: { flex: 1, minWidth: 0 },
 });

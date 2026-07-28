@@ -76,3 +76,47 @@ export function startOfWeek(d: Date): Date {
 export function savedAmount(avgDailySpend: number, noSpendDays: number): number {
   return Math.max(0, Math.round(avgDailySpend * noSpendDays));
 }
+
+function spendByDate(txns: readonly Transaction[]): Map<string, number> {
+  const byDate = new Map<string, number>();
+
+  for (const t of txns) {
+    if (!isExpense(t)) continue;
+    byDate.set(t.date, (byDate.get(t.date) ?? 0) + t.amount);
+  }
+
+  return byDate;
+}
+
+/**
+ * "평소 하루" 지출 평균. 무지출인 날은 분모에서 뺀다 —
+ * 안 쓴 날까지 포함하면 평균이 낮아져서 아낀 돈이 실제보다 작게 나온다.
+ */
+export function avgSpendPerSpendingDay(txns: readonly Transaction[]): number {
+  const byDate = spendByDate(txns);
+
+  if (byDate.size === 0) return 0;
+
+  let total = 0;
+  for (const amount of byDate.values()) total += amount;
+
+  return Math.round(total / byDate.size);
+}
+
+/** 평균을 믿으려면 최소한 이만큼은 쓴 날이 있어야 한다. */
+const MIN_SPENDING_DAYS = 5;
+
+/**
+ * 무지출로 아낀 돈. 표본이 적으면 null —
+ * 두어 건 기록한 사람에게 "94만원 아꼈어요"는 격려가 아니라 거짓말이 된다.
+ */
+export function noSpendSavings(
+  monthTxns: readonly Transaction[],
+  noSpendDays: number,
+): { amount: number; spendingDays: number } | null {
+  const spendingDays = spendByDate(monthTxns).size;
+
+  if (spendingDays < MIN_SPENDING_DAYS) return null;
+
+  return { amount: savedAmount(avgSpendPerSpendingDay(monthTxns), noSpendDays), spendingDays };
+}

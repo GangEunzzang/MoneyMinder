@@ -1,14 +1,29 @@
 import { Stack as NavStack, router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { KIND_LABEL, type PaymentKind } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import type { ColorName } from '@/shared/theme';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
-import { Button, IconCheck, Row, Spring, Stack, Text } from '@/shared/ui';
+import {
+  Button,
+  FieldInput,
+  FieldRow,
+  IconCheck,
+  Row,
+  type SegmentItem,
+  Segmented,
+  Spring,
+  Stack,
+  Text,
+} from '@/shared/ui';
 
-const KINDS: PaymentKind[] = ['card', 'cash', 'account'];
+const KINDS: SegmentItem<PaymentKind>[] = (['card', 'cash', 'account'] as const).map((value) => ({
+  value,
+  label: KIND_LABEL[value],
+}));
+
 const SWATCHES: ColorName[] = ['violet', 'violetDeep', 'mint', 'peach', 'red', 'mist'];
 
 export default function NewPaymentMethod() {
@@ -41,30 +56,19 @@ export default function NewPaymentMethod() {
         }}
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Row gap="xs" style={[styles.seg, { backgroundColor: c.surface2 }]}>
-          {KINDS.map((k) => (
-            <Pressable
-              key={k}
-              onPress={() => setKind(k)}
-              style={[styles.segItem, k === kind && { backgroundColor: c.surface }]}
-            >
-              <Text variant="body" color={k === kind ? 'ink' : 'smoke'}>
-                {KIND_LABEL[k]}
-              </Text>
-            </Pressable>
-          ))}
-        </Row>
+        <Segmented items={KINDS} value={kind} onChange={setKind} />
 
-        <Stack gap="md" style={styles.field}>
-          <Text variant="caption" color="smoke">
-            {KIND_LABEL[kind]} 이름
-          </Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder={kind === 'card' ? '예: 신한체크' : '예: 카카오뱅크'}
-            placeholderTextColor={c.mist}
-            style={[styles.input, { backgroundColor: c.surface, borderColor: name ? c.violet : c.hairStrong, color: c.ink }]}
+        <Stack style={styles.field}>
+          <FieldRow
+            label={`${KIND_LABEL[kind]} 이름`}
+            input={
+              <FieldInput
+                value={name}
+                onChangeText={setName}
+                placeholder={kind === 'card' ? '신한체크' : '카카오뱅크'}
+                accessibilityLabel="이름"
+              />
+            }
           />
         </Stack>
 
@@ -100,10 +104,7 @@ export default function NewPaymentMethod() {
 
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingTop: space['3xl'], paddingBottom: space['5xl'] },
-  seg: { height: 44, borderRadius: radius.lg, padding: space.xs },
-  segItem: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radius.md },
-  field: { marginTop: space['4xl'] },
-  input: { height: 48, borderRadius: radius.card, borderWidth: 1.5, paddingHorizontal: space['2xl'], fontSize: 14, fontWeight: '600' },
+  field: { marginTop: space.md },
   swatch: { width: 44, height: 32, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   hint: { marginTop: space['3xl'] },
   footer: { marginTop: space['4xl'] },

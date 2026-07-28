@@ -1,139 +1,184 @@
-import { useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, Card } from '@/components/base';
-import { useTheme } from '@/hooks/use-theme';
-import { addTransaction } from '@/store/ledger';
+import { CATEGORIES, EXPENSE_CATEGORIES } from '@/entities/category/model';
+import { usePaymentMethods } from '@/entities/payment-method/store';
+import { toDateKey, type TransactionType } from '@/entities/transaction/model';
+import { useLedger } from '@/entities/transaction/store';
+import { relativeDay } from '@/shared/lib/format';
+import { screenPadding, space, useColors } from '@/shared/theme';
+import {
+  AmountField,
+  Button,
+  Chip,
+  FieldInput,
+  FieldRow,
+  IconPlus,
+  Row,
+  type SegmentItem,
+  Segmented,
+  Spring,
+  Stack,
+  Text,
+} from '@/shared/ui';
 
-const CATEGORIES = {
-  expense: ['카페·간식', '식비', '교통', '쇼핑', '기타'],
-  income: ['급여', '용돈', '이자', '환급', '기타'],
-} as const;
+const TYPES: SegmentItem<TransactionType>[] = [
+  { value: 'expense', label: '지출', color: 'red' },
+  { value: 'income', label: '수입', color: 'mint' },
+];
+
+const INCOME_CATEGORIES = CATEGORIES.filter((cat) => cat.id === 'salary' || cat.id === 'etc');
+
+/** 오늘부터 거슬러 4일. 날짜 선택기를 띄우지 않고 한 번에 고르게 한다. */
+const DAY_OFFSETS = [0, -1, -2, -3];
 
 export default function AddScreen() {
-  const c = useTheme();
-  const router = useRouter();
-  const [type, setType] = useState<'expense' | 'income'>('expense');
-  const [cat, setCat] = useState('카페·간식');
-  const [amount, setAmount] = useState('6100');
-  const [merchant, setMerchant] = useState('스타벅스');
-  const [dateLabel, setDateLabel] = useState('오늘');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const saved = useRef(false);
-  const close = () => {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
+  const c = useColors();
+  const add = useLedger((s) => s.add);
+  const methods = usePaymentMethods((s) => s.methods);
 
-    router.replace('/');
-  };
-  const selectType = (nextType: 'expense' | 'income') => {
-    setType(nextType);
-    setCat(CATEGORIES[nextType][0]);
-    setMerchant(nextType === 'expense' ? '스타벅스' : '급여');
-  };
-  const save = async () => {
-    if (saved.current) return;
-    const parsedAmount = Number(amount);
-    if (!Number.isSafeInteger(parsedAmount) || parsedAmount <= 0) {
-      setError('1원 이상의 금액을 입력해 주세요.');
-      return;
-    }
+  const [type, setType] = useState<TransactionType>('expense');
+  const [amount, setAmount] = useState('');
+  const [categoryId, setCategoryId] = useState('cafe');
+  const [paymentMethodId, setPaymentMethodId] = useState<string | null>(methods[0]?.id ?? null);
+  const [merchant, setMerchant] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [memo, setMemo] = useState('');
 
-    saved.current = true;
-    setSaving(true);
-    setError('');
-    try {
-      await addTransaction({ type, amount: parsedAmount, category: cat, merchant: merchant.trim() || cat, dateLabel: dateLabel.trim() || '오늘' });
-      close();
-    } catch {
-      saved.current = false;
-      setSaving(false);
-      setError('저장하지 못했어요. 다시 시도해 주세요.');
-    }
+  const categories = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  const parsed = Number(amount);
+  const canSave = Number.isSafeInteger(parsed) && parsed > 0;
+
+  const close = () => (router.canGoBack() ? router.back() : router.replace('/'));
+
+  const selectType = (next: TransactionType) => {
+    setType(next);
+    setCategoryId(next === 'expense' ? 'cafe' : 'salary');
+  };
+
+  const onSave = () => {
+    if (!canSave) return;
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+
+    add({
+      type,
+      amount: parsed,
+      categoryId,
+      paymentMethodId: type === 'expense' ? paymentMethodId : null,
+      merchant: merchant.trim(),
+      memo: memo.trim(),
+      date: toDateKey(date),
+      autoRecorded: false,
+    });
+    close();
   };
 
   return (
     <View style={[styles.fill, { backgroundColor: c.surface }]}>
       <SafeAreaView edges={['top', 'bottom']} style={styles.fill}>
-        <View style={styles.topbar}>
-          <Pressable onPress={close} hitSlop={10}>
-            <Text style={[styles.close, { color: c.inkSoft }]}>✕</Text>
+        <Row between center style={styles.topbar}>
+          <Pressable onPress={close} hitSlop={10} accessibilityLabel="닫기">
+            <View style={styles.close}>
+              <IconPlus size={18} color={c.inkSoft} />
+            </View>
           </Pressable>
-          <View style={[styles.seg, { backgroundColor: c.surface2 }]}>
-            <Pressable onPress={() => selectType('expense')} style={[styles.segItem, type === 'expense' && { backgroundColor: c.background }]}>
-              <Text style={[styles.segText, { color: type === 'expense' ? c.red : c.smoke }]}>지출</Text>
-            </Pressable>
-            <Pressable onPress={() => selectType('income')} style={[styles.segItem, type === 'income' && { backgroundColor: c.background }]}>
-              <Text style={[styles.segText, { color: type === 'income' ? c.mint : c.smoke }]}>수입</Text>
-            </Pressable>
-          </View>
-          <View style={{ width: 22 }} />
-        </View>
+          <Segmented items={TYPES} value={type} onChange={selectType} width={140} />
+          <View style={styles.spacer} />
+        </Row>
 
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <View style={styles.amountWrap}>
-            <Text style={[styles.eyebrow, { color: c.smoke }]}>얼마를 {type === 'expense' ? '쓰셨' : '받으셨'}나요?</Text>
-            <View style={styles.amountRow}>
-              <Text style={[styles.amountSign, { color: type === 'income' ? c.mint : c.ink }]}>{type === 'expense' ? '-' : '+'}</Text>
-              <TextInput
-                value={amount}
-                onChangeText={(value) => setAmount(value.replace(/\D/g, ''))}
-                keyboardType="number-pad"
-                maxLength={12}
-                selectTextOnFocus
-                style={[styles.amountInput, { color: type === 'income' ? c.mint : c.ink }]}
-                accessibilityLabel="금액"
-              />
-              <Text style={[styles.amountUnit, { color: c.smoke }]}>원</Text>
-            </View>
-          </View>
+          <AmountField
+            eyebrow={type === 'expense' ? '얼마를 쓰셨나요?' : '얼마를 받으셨나요?'}
+            value={amount}
+            onChange={setAmount}
+            sign={type === 'expense' ? '-' : '+'}
+            color={type === 'income' ? 'mint' : 'ink'}
+          />
 
-          <Text style={[styles.label, { color: c.smoke }]}>카테고리</Text>
-          <View style={styles.pills}>
-            {CATEGORIES[type].map((name) => {
-              const active = cat === name;
-              return (
-                <Pressable key={name} onPress={() => setCat(name)} style={[styles.pill, { backgroundColor: active ? c.ink : c.surface2 }]}>
-                  <Text style={[styles.pillText, { color: active ? '#fff' : c.inkSoft }]}>{name}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          <Stack gap="lg">
+            <Text variant="caption" color="smoke">
+              카테고리
+            </Text>
+            <Row gap="md" style={styles.wrap}>
+              {categories.map((cat) => (
+                <Chip
+                  key={cat.id}
+                  label={cat.label}
+                  selected={cat.id === categoryId}
+                  onPress={() => setCategoryId(cat.id)}
+                />
+              ))}
+            </Row>
+          </Stack>
 
-          <Card style={{ marginTop: 14, paddingVertical: 2, paddingHorizontal: 14, backgroundColor: c.background }}>
-            <View style={[styles.fieldRow, { borderBottomColor: c.hair, borderBottomWidth: 1 }]}>
-              <Text style={[styles.fieldLabel, { color: c.inkSoft }]}>결제처</Text>
-              <TextInput
-                value={merchant}
-                onChangeText={setMerchant}
-                style={[styles.fieldInput, { color: c.ink }]}
-                accessibilityLabel="결제처"
-              />
-            </View>
-            <View style={[styles.fieldRow, { borderBottomColor: c.hair, borderBottomWidth: 1 }]}>
-              <Text style={[styles.fieldLabel, { color: c.inkSoft }]}>날짜</Text>
-              <TextInput
-                value={dateLabel}
-                onChangeText={setDateLabel}
-                style={[styles.fieldInput, { color: c.ink }]}
-                accessibilityLabel="날짜"
-              />
-            </View>
-            <View style={styles.fieldRow}>
-              <Text style={[styles.fieldLabel, { color: c.inkSoft }]}>메모</Text>
-              <Text style={[styles.fieldInput, { color: c.mist }]}>입력</Text>
-            </View>
-          </Card>
-          {error ? <Text style={[styles.error, { color: c.red }]}>{error}</Text> : null}
+          {type === 'expense' ? (
+            <Stack gap="lg" style={styles.group}>
+              <Text variant="caption" color="smoke">
+                결제수단
+              </Text>
+              <Row gap="md" style={styles.wrap}>
+                {methods.map((m) => (
+                  <Chip
+                    key={m.id}
+                    label={m.name}
+                    selected={m.id === paymentMethodId}
+                    onPress={() => setPaymentMethodId(m.id)}
+                  />
+                ))}
+              </Row>
+            </Stack>
+          ) : null}
+
+          <Stack gap="lg" style={styles.group}>
+            <Text variant="caption" color="smoke">
+              날짜
+            </Text>
+            <Row gap="md">
+              {DAY_OFFSETS.map((value) => (
+                <Chip
+                  key={value}
+                  label={relativeDay(value)}
+                  selected={value === offset}
+                  onPress={() => setOffset(value)}
+                />
+              ))}
+            </Row>
+          </Stack>
+
+          <Stack style={styles.group}>
+            <FieldRow
+              label={type === 'expense' ? '결제처' : '보낸 곳'}
+              input={
+                <FieldInput
+                  value={merchant}
+                  onChangeText={setMerchant}
+                  placeholder={type === 'expense' ? '스타벅스' : '급여'}
+                  accessibilityLabel="결제처"
+                />
+              }
+            />
+            <FieldRow
+              label="메모"
+              divider
+              input={
+                <FieldInput
+                  value={memo}
+                  onChangeText={setMemo}
+                  placeholder="입력"
+                  accessibilityLabel="메모"
+                />
+              }
+            />
+          </Stack>
+
+          <Spring />
         </ScrollView>
 
         <View style={styles.footer}>
-          <Button label={saving ? '저장 중...' : '저장하기'} onPress={save} />
+          <Button label="저장하기" onPress={onSave} disabled={!canSave} />
         </View>
       </SafeAreaView>
     </View>
@@ -142,25 +187,11 @@ export default function AddScreen() {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  topbar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8 },
-  close: { fontSize: 20, fontWeight: '600' },
-  seg: { flexDirection: 'row', borderRadius: 10, padding: 3, gap: 2, width: 132 },
-  segItem: { flex: 1, alignItems: 'center', paddingVertical: 6, borderRadius: 8 },
-  segText: { fontSize: 12, fontWeight: '700' },
-  scroll: { paddingHorizontal: 15, paddingBottom: 20 },
-  amountWrap: { alignItems: 'center', paddingVertical: 18 },
-  eyebrow: { fontSize: 11, fontWeight: '700' },
-  amountRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 5 },
-  amountSign: { fontSize: 32, fontWeight: '800', letterSpacing: -1 },
-  amountInput: { minWidth: 40, maxWidth: 220, fontSize: 32, fontWeight: '800', letterSpacing: -1, fontVariant: ['tabular-nums'], padding: 0 },
-  amountUnit: { fontSize: 18, fontWeight: '800' },
-  label: { fontSize: 12, fontWeight: '700', marginBottom: 8 },
-  pills: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
-  pill: { paddingVertical: 7, paddingHorizontal: 12, borderRadius: 99 },
-  pillText: { fontSize: 12, fontWeight: '600' },
-  fieldRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12 },
-  fieldLabel: { fontSize: 13, fontWeight: '600' },
-  fieldInput: { minWidth: 120, padding: 0, fontSize: 13, fontWeight: '600', textAlign: 'right' },
-  error: { marginTop: 10, textAlign: 'center', fontSize: 12, fontWeight: '600' },
-  footer: { paddingHorizontal: 15, paddingBottom: 14, paddingTop: 8 },
+  topbar: { paddingHorizontal: screenPadding, paddingVertical: space.md },
+  close: { transform: [{ rotate: '45deg' }] },
+  spacer: { width: 18 },
+  scroll: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['4xl'] },
+  wrap: { flexWrap: 'wrap' },
+  group: { paddingTop: space['5xl'] },
+  footer: { paddingHorizontal: screenPadding, paddingBottom: space['2xl'], paddingTop: space.md },
 });

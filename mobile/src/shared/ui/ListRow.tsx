@@ -31,7 +31,7 @@ export function ListRow({
   onPress,
 }: Props) {
   const body = (
-    <Row gap="xl" py="xl" divider={divider}>
+    <Row gap="xl" style={styles.pad} divider={divider}>
       {leading}
       <Stack gap="xxs" style={styles.mid}>
         <Text variant="body" color={dimmed ? 'smoke' : 'ink'} numberOfLines={1}>
@@ -44,7 +44,7 @@ export function ListRow({
         ) : null}
       </Stack>
       {value ? (
-        <NumText variant="bodyBold" color={dimmed ? 'mist' : valueColor}>
+        <NumText variant="subheadBold" color={dimmed ? 'mist' : valueColor}>
           {value}
         </NumText>
       ) : null}
@@ -65,7 +65,7 @@ export function ListRow({
 export function IconBadge({
   children,
   tone = 'surface2',
-  size = 34,
+  size = 40,
   dimmed,
 }: {
   children: ReactNode;
@@ -95,6 +95,7 @@ export function ColorSwatch({ color }: { color: ColorName }) {
 }
 
 const styles = StyleSheet.create({
+  pad: { paddingVertical: 13 },
   mid: { flex: 1, minWidth: 0 },
   pressed: { opacity: 0.6 },
   badge: { borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },

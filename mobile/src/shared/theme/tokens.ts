@@ -54,22 +54,42 @@ export const palette = {
 export type ColorName = keyof typeof palette.light;
 export type Palette = Record<ColorName, string>;
 
-/** D23 — 전수조사로 확정한 11단계. 이 밖의 fontSize 금지. */
+/**
+ * D23 — 펜슬 문서의 (크기 × 굵기 × 자간) 실측 조합.
+ *
+ * 크기당 굵기를 하나만 두면 디자인이 15/600을 쓸 때 코드가 담을 그릇이 없어
+ * 15/800이나 14/600으로 어긋나게 찍힌다. 같은 크기의 굵기 변주를 전부 갖춰야
+ * 시안과 코드가 일치할 수 있다. 이 밖의 fontSize 금지.
+ */
 export const type = {
   display: { fontSize: 38, fontWeight: '800', letterSpacing: -1.5 },
-  title1: { fontSize: 32, fontWeight: '800', letterSpacing: -1.2 },
-  title2: { fontSize: 26, fontWeight: '800', letterSpacing: -0.8 },
-  title3: { fontSize: 20, fontWeight: '800', letterSpacing: -0.4 },
+  title1: { fontSize: 32, fontWeight: '800', letterSpacing: -1 },
+  title2: { fontSize: 26, fontWeight: '800', letterSpacing: -1 },
+  title2Soft: { fontSize: 26, fontWeight: '800', letterSpacing: -0.7 },
+  keypad: { fontSize: 25, fontWeight: '800', letterSpacing: -0.8 },
+  title3: { fontSize: 20, fontWeight: '800', letterSpacing: -0.5 },
+  title3Soft: { fontSize: 20, fontWeight: '700' },
+  headlineStrong: { fontSize: 16, fontWeight: '800', letterSpacing: -0.4 },
   headline: { fontSize: 16, fontWeight: '700' },
   subhead: { fontSize: 15, fontWeight: '800', letterSpacing: -0.3 },
-  body: { fontSize: 14, fontWeight: '600' },
+  subheadFlat: { fontSize: 15, fontWeight: '800' },
+  subheadBold: { fontSize: 15, fontWeight: '700', letterSpacing: -0.3 },
+  /** 버튼 라벨. 같은 15/700이지만 자간을 좁히지 않는다 (펜슬 Button/Primary). */
+  label: { fontSize: 15, fontWeight: '700' },
+  subheadSoft: { fontSize: 15, fontWeight: '600' },
   bodyBold: { fontSize: 14, fontWeight: '700' },
+  body: { fontSize: 14, fontWeight: '600' },
+  calloutStrong: { fontSize: 13, fontWeight: '800' },
+  calloutBold: { fontSize: 13, fontWeight: '700' },
   callout: { fontSize: 13, fontWeight: '600' },
+  captionStrong: { fontSize: 12, fontWeight: '800' },
   caption: { fontSize: 12, fontWeight: '700' },
+  captionSoft: { fontSize: 12, fontWeight: '600' },
+  microBold: { fontSize: 11, fontWeight: '700' },
   micro: { fontSize: 11, fontWeight: '600' },
   microSoft: { fontSize: 11, fontWeight: '500' },
   nano: { fontSize: 10, fontWeight: '700' },
-  keypad: { fontSize: 25, fontWeight: '500' },
+  nanoSoft: { fontSize: 10, fontWeight: '600' },
 } as const;
 
 export type TypeName = keyof typeof type;

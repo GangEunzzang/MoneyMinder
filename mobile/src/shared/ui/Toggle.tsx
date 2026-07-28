@@ -52,8 +52,8 @@ export function ToggleRow({
 }
 
 const styles = StyleSheet.create({
-  track: { width: 44, height: 26, borderRadius: radius.pill, justifyContent: 'center' },
-  knob: { position: 'absolute', width: 20, height: 20, borderRadius: radius.pill },
+  track: { width: 46, height: 28, borderRadius: radius.pill, justifyContent: 'center' },
+  knob: { position: 'absolute', width: 22, height: 22, borderRadius: radius.pill },
   knobOn: { right: space.xxs },
   knobOff: { left: space.xxs },
   mid: { flex: 1, minWidth: 0 },

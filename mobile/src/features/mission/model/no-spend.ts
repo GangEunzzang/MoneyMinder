@@ -8,7 +8,21 @@ export function isNoSpendDay(txns: readonly Transaction[], dateKey: string): boo
   return !txns.some((t) => t.date === dateKey && isExpense(t));
 }
 
+/** 가장 이른 기록의 날짜. 이전 날들은 "안 쓴 날"이 아니라 "앱을 안 쓴 날"이다. */
+export function firstRecordDate(txns: readonly Transaction[]): string | null {
+  let earliest: string | null = null;
+
+  for (const t of txns) {
+    if (earliest == null || t.date < earliest) earliest = t.date;
+  }
+
+  return earliest;
+}
+
 export function noSpendDaysInMonth(txns: readonly Transaction[], ym: string, today: Date): number {
+  const first = firstRecordDate(txns);
+  if (first == null) return 0;
+
   const [y, m] = ym.split('-').map(Number);
   const lastDay = new Date(y, m, 0).getDate();
   const todayKey = toDateKey(today);
@@ -18,6 +32,8 @@ export function noSpendDaysInMonth(txns: readonly Transaction[], ym: string, tod
     const key = `${ym}-${String(day).padStart(2, '0')}`;
     // 아직 오지 않은 날은 세지 않는다. 미래를 성공으로 계산하면 숫자가 거짓말이 된다.
     if (key > todayKey) break;
+    // 첫 기록 전은 세지 않는다. 기록이 없는 달을 "30일 무지출"이라 부르면 결산이 거짓말을 한다.
+    if (key < first) continue;
     if (isNoSpendDay(txns, key)) count += 1;
   }
 

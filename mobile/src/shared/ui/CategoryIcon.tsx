@@ -28,7 +28,7 @@ export function CategoryIcon({
   icon,
   tint = 'inkSoft',
   tintSoft = 'surface2',
-  size = 34,
+  size = 40,
   dimmed,
 }: {
   icon: IconKey;

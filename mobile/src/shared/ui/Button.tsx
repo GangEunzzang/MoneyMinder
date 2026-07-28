@@ -36,7 +36,7 @@ export function Button({ label, onPress, variant = 'primary', icon, disabled, st
       ]}
     >
       {icon}
-      <Text variant="bodyBold" color={tone.fg}>
+      <Text variant="label" color={tone.fg}>
         {label}
       </Text>
     </Pressable>
@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: space.sm,
+    gap: space.md,
+    paddingHorizontal: space['5xl'] - 2,
     borderRadius: radius.card,
   },
 });

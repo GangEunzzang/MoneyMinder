@@ -49,11 +49,11 @@ export function ChipRow<T extends string>({
 
 const styles = StyleSheet.create({
   chip: {
-    height: 34,
-    paddingHorizontal: space['2xl'],
+    height: 30,
+    paddingHorizontal: space.xl,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  row: { gap: space.md },
+  row: { gap: space.sm },
 });

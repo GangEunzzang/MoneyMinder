@@ -86,7 +86,7 @@ export default function MissionSetup() {
             {spec.unitLabel}
           </Text>
         </Row>
-        <Row gap="md" style={styles.choices}>
+        <Row gap="sm" style={styles.choices}>
           {spec.targetChoices.map((choice) => (
             <Chip
               key={choice}
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   icon: { width: 56, height: 56, borderRadius: radius['2xl'] },
   q: { paddingTop: space['5xl'], paddingBottom: space.md },
   targetRow: { alignItems: 'flex-end', paddingVertical: space.lg },
-  choices: { flexWrap: 'wrap' },
+  choices: { flexWrap: 'wrap', rowGap: space.sm },
   note: { padding: space['2xl'], borderRadius: radius.xl, marginTop: space['4xl'] },
   cta: { marginTop: space['4xl'] },
   empty: { flex: 1 },

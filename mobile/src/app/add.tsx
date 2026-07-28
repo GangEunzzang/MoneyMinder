@@ -102,7 +102,7 @@ export default function AddScreen() {
             <Text variant="caption" color="smoke">
               카테고리
             </Text>
-            <Row gap="md" style={styles.wrap}>
+            <Row gap="sm" style={styles.wrap}>
               {categories.map((cat) => (
                 <Chip
                   key={cat.id}
@@ -119,7 +119,7 @@ export default function AddScreen() {
               <Text variant="caption" color="smoke">
                 결제수단
               </Text>
-              <Row gap="md" style={styles.wrap}>
+              <Row gap="sm" style={styles.wrap}>
                 {methods.map((m) => (
                   <Chip
                     key={m.id}
@@ -136,7 +136,7 @@ export default function AddScreen() {
             <Text variant="caption" color="smoke">
               날짜
             </Text>
-            <Row gap="md">
+            <Row gap="sm">
               {DAY_OFFSETS.map((value) => (
                 <Chip
                   key={value}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   close: { transform: [{ rotate: '45deg' }] },
   spacer: { width: 18 },
   scroll: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['4xl'] },
-  wrap: { flexWrap: 'wrap' },
+  wrap: { flexWrap: 'wrap', rowGap: space.sm },
   group: { paddingTop: space['5xl'] },
   footer: { paddingHorizontal: screenPadding, paddingBottom: space['2xl'], paddingTop: space.md },
 });

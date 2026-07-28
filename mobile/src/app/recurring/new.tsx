@@ -83,7 +83,7 @@ export default function NewRecurring() {
         />
 
         <FieldRow label="결제 주기" value={`매월 ${cycleDay}일`} divider />
-        <Row gap="md" style={styles.days}>
+        <Row gap="sm" style={styles.days}>
           {CYCLE_DAYS.map((day) => (
             <Chip
               key={day}
@@ -98,7 +98,7 @@ export default function NewRecurring() {
           <Text variant="caption" color="smoke">
             카테고리
           </Text>
-          <Row gap="md" style={styles.wrap}>
+          <Row gap="sm" style={styles.wrap}>
             {EXPENSE_CATEGORIES.map((cat) => (
               <Chip
                 key={cat.id}
@@ -114,7 +114,7 @@ export default function NewRecurring() {
           <Text variant="caption" color="smoke">
             결제수단
           </Text>
-          <Row gap="md" style={styles.wrap}>
+          <Row gap="sm" style={styles.wrap}>
             {methods.map((m) => (
               <Chip
                 key={m.id}
@@ -152,9 +152,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenPadding,
     paddingBottom: space['5xl'],
   },
-  days: { flexWrap: 'wrap', paddingTop: space.xl },
+  days: { flexWrap: 'wrap', rowGap: space.sm, paddingTop: space.xl },
   group: { paddingTop: space['5xl'] },
-  wrap: { flexWrap: 'wrap' },
+  wrap: { flexWrap: 'wrap', rowGap: space.sm },
   split: { marginTop: space['5xl'] },
   cta: { marginTop: space['4xl'] },
 });

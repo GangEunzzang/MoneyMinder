@@ -10,6 +10,8 @@ const DIGITS = /\D/g;
 type AmountProps = {
   /** "얼마를 쓰셨나요?" — 질문형. 라벨이 아니라 말을 건다. */
   eyebrow: string;
+  /** 저장을 막은 이유를 여기서 말한다 (펜슬 Add-Error). */
+  eyebrowColor?: ColorName;
   value: string;
   onChange: (next: string) => void;
   sign?: string;
@@ -17,17 +19,24 @@ type AmountProps = {
 };
 
 /** 기록·고정지출이 공유하는 큰 금액 입력. 화면에서 가장 큰 글자라 시선이 여기 먼저 온다. */
-export function AmountField({ eyebrow, value, onChange, sign, color = 'ink' }: AmountProps) {
+export function AmountField({
+  eyebrow,
+  eyebrowColor = 'smoke',
+  value,
+  onChange,
+  sign,
+  color = 'ink',
+}: AmountProps) {
   const c = useColors();
 
   return (
     <Stack gap="sm" center style={styles.amountWrap}>
-      <Text variant="caption" color="smoke">
+      <Text variant="caption" color={eyebrowColor}>
         {eyebrow}
       </Text>
       <Row gap="xxs" center>
         {sign ? (
-          <Text variant="title1" color={color}>
+          <Text variant="display" color={color}>
             {sign}
           </Text>
         ) : null}
@@ -42,11 +51,11 @@ export function AmountField({ eyebrow, value, onChange, sign, color = 'ink' }: A
           accessibilityLabel="금액"
           style={[
             styles.amountInput,
-            typeScale.title1,
-            { fontFamily: fontFamilyFor(typeScale.title1.fontWeight), color: c[color] },
+            typeScale.display,
+            { fontFamily: fontFamilyFor(typeScale.display.fontWeight), color: c[color] },
           ]}
         />
-        <Text variant="title3" color="smoke">
+        <Text variant="title3Soft" color="smoke">
           원
         </Text>
       </Row>

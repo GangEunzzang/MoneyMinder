@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
 import { radius, space, useColors } from '../theme';
@@ -24,6 +25,45 @@ export function Chip({
       <Text variant="callout" style={{ color: selected ? c.onColor : c.inkSoft }}>
         {label}
       </Text>
+    </Pressable>
+  );
+}
+
+/**
+ * 아이콘을 단 칩. 결제수단은 이름만으로는 카드인지 계좌인지 안 보여서
+ * 글자보다 아이콘이 먼저 구분해준다 (펜슬 PayChip).
+ */
+export function PayChip({
+  label,
+  icon,
+  selected,
+  onPress,
+}: {
+  label?: string;
+  icon: ReactNode;
+  selected?: boolean;
+  onPress?: () => void;
+}) {
+  const c = useColors();
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: !!selected }}
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={[
+        styles.payChip,
+        label ? null : styles.payChipIconOnly,
+        { backgroundColor: selected ? c.ink : c.surface2 },
+      ]}
+    >
+      {icon}
+      {label ? (
+        <Text variant="calloutBold" style={{ color: selected ? c.onColor : c.inkSoft }}>
+          {label}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -56,4 +96,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   row: { gap: space.sm },
+  payChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    height: 34,
+    paddingHorizontal: space.xl,
+    borderRadius: radius.pill,
+  },
+  payChipIconOnly: { paddingHorizontal: space.lg },
 });

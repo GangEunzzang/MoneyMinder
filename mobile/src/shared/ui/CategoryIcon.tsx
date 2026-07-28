@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'react';
+
 import type { ColorName } from '../theme';
 import { useColors } from '../theme';
 import {
@@ -29,19 +31,21 @@ export function CategoryIcon({
   tint = 'inkSoft',
   tintSoft = 'surface2',
   size = 40,
+  round,
   dimmed,
 }: {
   icon: IconKey;
   tint?: ColorName;
   tintSoft?: ColorName;
   size?: number;
+  round?: ComponentProps<typeof IconBadge>['round'];
   dimmed?: boolean;
 }) {
   const c = useColors();
   const Cmp = MAP[icon];
 
   return (
-    <IconBadge tone={tintSoft} size={size} dimmed={dimmed}>
+    <IconBadge tone={tintSoft} size={size} round={round} dimmed={dimmed}>
       <Cmp size={Math.round(size * 0.5)} color={c[tint]} />
     </IconBadge>
   );

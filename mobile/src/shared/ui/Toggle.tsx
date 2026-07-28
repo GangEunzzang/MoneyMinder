@@ -39,9 +39,9 @@ export function ToggleRow({
   return (
     <Row gap="xl" py="xl" divider={divider}>
       <Stack gap="xxs" style={styles.mid}>
-        <Text variant="body">{label}</Text>
+        <Text variant="callout">{label}</Text>
         {hint ? (
-          <Text variant="micro" color="mist">
+          <Text variant="microSoft" color="mist">
             {hint}
           </Text>
         ) : null}

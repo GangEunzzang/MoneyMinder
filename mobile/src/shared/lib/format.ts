@@ -56,6 +56,17 @@ export function relativeDay(days: number): string {
   return days > 0 ? `${days}일 뒤` : `${-days}일 전`;
 }
 
+/**
+ * 받침에 맞는 조사를 붙인다. "신한체크를" / "현금을" —
+ * 사용자가 지은 이름이 문장 안으로 들어오는 자리(삭제 확인)에서 어색함이 바로 보인다.
+ */
+export function withParticle(word: string, withBatchim: string, without: string): string {
+  const last = word.charCodeAt(word.length - 1);
+  const isHangul = last >= 0xac00 && last <= 0xd7a3;
+
+  return `${word}${isHangul && (last - 0xac00) % 28 !== 0 ? withBatchim : without}`;
+}
+
 export const KOREAN_WEEKDAYS = ['월', '화', '수', '목', '금', '토', '일'] as const;
 
 /** 월요일 시작 주차 인덱스 (0=월). */
@@ -75,6 +86,13 @@ export function dateHeading(dateKey: string): string {
   const [y, m, d] = dateKey.split('-').map(Number);
 
   return `${m}월 ${d}일 (${CALENDAR_WEEKDAYS[new Date(y, m - 1, d).getDay()]})`;
+}
+
+/** "8월 6일 목요일" — 거래 상세처럼 날짜 하나만 보여주는 자리. */
+export function dateFull(dateKey: string): string {
+  const [y, m, d] = dateKey.split('-').map(Number);
+
+  return `${m}월 ${d}일 ${CALENDAR_WEEKDAYS[new Date(y, m - 1, d).getDay()]}요일`;
 }
 
 /** "2026년 8월" — 월 선택기·결산 헤더. */

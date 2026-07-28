@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { type ColorName, radius, useColors } from '../theme';
+import { type ColorName, radius, space, useColors } from '../theme';
+import { IconChevronRight } from './icons';
 import { Row, Stack } from './layout';
 import { NumText, Text } from './Text';
 
@@ -39,16 +40,61 @@ export function ListRow({
         </Text>
         {subtitle ? (
           <Text variant="micro" color="mist" numberOfLines={1}>
-            {subtitle}
-          </Text>
+          {subtitle}
+        </Text>
         ) : null}
       </Stack>
       {value ? (
-        <NumText variant="subheadBold" color={dimmed ? 'mist' : valueColor}>
+        <NumText variant="bodyBold" color={dimmed ? 'mist' : valueColor}>
           {value}
         </NumText>
       ) : null}
       {trailing}
+    </Row>
+  );
+
+  if (!onPress) return body;
+
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => (pressed ? styles.pressed : undefined)}>
+      {body}
+    </Pressable>
+  );
+}
+
+/**
+ * 설정 카드 안의 한 줄. ListRow 보다 조밀하고 좌측 아이콘이 없다 —
+ * 설정은 훑어보는 목록이라 아이콘이 붙으면 글자를 읽기 전에 눈이 흩어진다.
+ */
+export function SettingRow({
+  label,
+  value,
+  trailing,
+  divider,
+  dimmed,
+  onPress,
+}: {
+  label: string;
+  value?: string;
+  trailing?: ReactNode;
+  divider?: boolean;
+  dimmed?: boolean;
+  onPress?: () => void;
+}) {
+  const c = useColors();
+  const body = (
+    <Row between center style={styles.setting} divider={divider}>
+      <Text variant="body" color={dimmed ? 'smoke' : 'ink'}>
+        {label}
+      </Text>
+      <Row gap="sm" center>
+        {value ? (
+          <Text variant="captionSoft" color="smoke">
+            {value}
+          </Text>
+        ) : null}
+        {trailing ?? (onPress ? <IconChevronRight size={16} color={c.mist} /> : null)}
+      </Row>
     </Row>
   );
 
@@ -66,11 +112,13 @@ export function IconBadge({
   children,
   tone = 'surface2',
   size = 40,
+  round = 'lg',
   dimmed,
 }: {
   children: ReactNode;
   tone?: ColorName;
   size?: number;
+  round?: keyof typeof radius;
   dimmed?: boolean;
 }) {
   const c = useColors();
@@ -79,7 +127,13 @@ export function IconBadge({
     <View
       style={[
         styles.badge,
-        { width: size, height: size, backgroundColor: c[tone], opacity: dimmed ? 0.45 : 1 },
+        {
+          width: size,
+          height: size,
+          borderRadius: radius[round],
+          backgroundColor: c[tone],
+          opacity: dimmed ? 0.45 : 1,
+        },
       ]}
     >
       {children}
@@ -96,8 +150,9 @@ export function ColorSwatch({ color }: { color: ColorName }) {
 
 const styles = StyleSheet.create({
   pad: { paddingVertical: 13 },
+  setting: { paddingVertical: space['2xl'] },
   mid: { flex: 1, minWidth: 0 },
   pressed: { opacity: 0.6 },
-  badge: { borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
+  badge: { alignItems: 'center', justifyContent: 'center' },
   swatch: { width: 34, height: 22, borderRadius: radius.sm },
 });

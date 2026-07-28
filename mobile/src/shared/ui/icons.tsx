@@ -49,6 +49,26 @@ export function IconPerson({ size = 22, color = '#191F28', strokeWidth = 1.9 }: 
     </Svg>
   );
 }
+
+export function IconReceipt({ size = 22, color = '#191F28', strokeWidth = 1.9 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M5 3v18l2.5-1.6L10 21l2-1.6L14 21l2.5-1.6L19 21V3H5Z" {...stroke(color, strokeWidth)} />
+      <Path d="M9 8h6M9 12h6" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconGrid({ size = 22, color = '#191F28', strokeWidth = 1.9 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={3} y={3} width={7.5} height={7.5} rx={2} {...stroke(color, strokeWidth)} />
+      <Rect x={13.5} y={3} width={7.5} height={7.5} rx={2} {...stroke(color, strokeWidth)} />
+      <Rect x={3} y={13.5} width={7.5} height={7.5} rx={2} {...stroke(color, strokeWidth)} />
+      <Rect x={13.5} y={13.5} width={7.5} height={7.5} rx={2} {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
 export function IconPlus({ size = 22, color = '#191F28', strokeWidth = 2.3 }: IconProps) {
   return (
     <Svg {...base(size)}>
@@ -67,6 +87,13 @@ export function IconChevronRight({ size = 18, color = '#B0B8C1', strokeWidth = 2
   return (
     <Svg {...base(size)}>
       <Path d="M9 6l6 6-6 6" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+export function IconChevronDown({ size = 18, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M6 9l6 6 6-6" {...stroke(color, strokeWidth)} />
     </Svg>
   );
 }
@@ -127,11 +154,53 @@ export function IconChart({ size = 20, color = '#191F28', strokeWidth = 2 }: Ico
   );
 }
 
+export function IconPiggy({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path
+        d="M4 12a6 6 0 0 1 6-6h4a6 6 0 0 1 5.2 3H21v4h-1.6A6 6 0 0 1 17 16.5V20h-3v-2h-4v2H7v-3.5A6 6 0 0 1 4 12Z"
+        {...stroke(color, strokeWidth)}
+      />
+      <Path d="M10 6V4.5" {...stroke(color, strokeWidth)} />
+      <Circle cx={15.5} cy={11} r={1} fill={color} />
+    </Svg>
+  );
+}
+
+export function IconAward({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Circle cx={12} cy={9} r={5.5} {...stroke(color, strokeWidth)} />
+      <Path d="m8.5 13.8-1.3 7L12 18l4.8 2.8-1.3-7" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconTrophy({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" {...stroke(color, strokeWidth)} />
+      <Path d="M7 6H4.5v1.5A3.5 3.5 0 0 0 8 11M17 6h2.5v1.5A3.5 3.5 0 0 1 16 11" {...stroke(color, strokeWidth)} />
+      <Path d="M12 14v4M9 21h6M10 18h4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
 export function IconTarget({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
   return (
     <Svg {...base(size)}>
       <Circle cx={12} cy={12} r={8} {...stroke(color, strokeWidth)} />
       <Circle cx={12} cy={12} r={3.5} {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconSettings({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M4 6h10M18 6h2M4 18h2M10 18h10" {...stroke(color, strokeWidth)} />
+      <Circle cx={16} cy={6} r={2.2} {...stroke(color, strokeWidth)} />
+      <Circle cx={8} cy={18} r={2.2} {...stroke(color, strokeWidth)} />
     </Svg>
   );
 }
@@ -168,6 +237,57 @@ export function IconUtensils({ size = 20, color = '#191F28', strokeWidth = 2 }: 
     <Svg {...base(size)}>
       <Path d="M4 3v7a3 3 0 0 0 6 0V3M7 10v11" {...stroke(color, strokeWidth)} />
       <Path d="M17 3c-1.5 2-2 4-2 6h4c0-2-.5-4-2-6ZM17 9v12" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconTrash({ size = 20, color = '#E5484D', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M4 7h16M10 4h4M6 7l1 13h10l1-13" {...stroke(color, strokeWidth)} />
+      <Path d="M10 11v5M14 11v5" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconPencil({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M4 20h4L20 8l-4-4L4 16v4Z" {...stroke(color, strokeWidth)} />
+      <Path d="M14 6l4 4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconShare({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Circle cx={18} cy={5} r={3} {...stroke(color, strokeWidth)} />
+      <Circle cx={6} cy={12} r={3} {...stroke(color, strokeWidth)} />
+      <Circle cx={18} cy={19} r={3} {...stroke(color, strokeWidth)} />
+      <Path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+export function IconWarning({ size = 20, color = '#7C5CFF', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M12 4 2.5 20h19L12 4Z" {...stroke(color, strokeWidth)} />
+      <Path d="M12 10v4M12 17h.01" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
+/** 축하 모먼트 전용. 선 아이콘 하나로는 "해냈다"가 안 읽혀서 폭죽 줄기를 함께 그린다. */
+export function IconPartyPopper({ size = 20, color = '#FFFFFF', strokeWidth = 1.9 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Path d="M3.5 20.5 8 9l7 7-11.5 4.5Z" {...stroke(color, strokeWidth)} />
+      <Path d="M10 11.5 12.5 14" {...stroke(color, strokeWidth)} />
+      <Path d="M14.5 3.5v2M20.5 9.5h-2M18.8 5.2l-1.4 1.4" {...stroke(color, strokeWidth)} />
+      <Circle cx={20} cy={15} r={1.1} fill={color} />
+      <Circle cx={11} cy={4} r={1.1} fill={color} />
     </Svg>
   );
 }

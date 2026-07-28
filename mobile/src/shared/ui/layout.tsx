@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
 
-import { screenPadding, space, useColors } from '../theme';
+import { radius, screenPadding, shadow, space, useColors } from '../theme';
 import { Text } from './Text';
 
 type Gap = keyof typeof space;
@@ -73,7 +73,7 @@ export function SectionHeader({
 }) {
   return (
     <Row between center style={{ paddingTop: first ? space.xl : space['5xl'], paddingBottom: space.md }}>
-      <Text variant="subheadBold">{title}</Text>
+      <Text variant="subhead">{title}</Text>
       {meta ? (
         <Text variant="micro" color={accent ? 'violet' : 'mist'}>
           {meta}
@@ -87,6 +87,36 @@ export function ScreenBody({ children, style }: { children: ReactNode; style?: V
   return <View style={[styles.body, style]}>{children}</View>;
 }
 
+/**
+ * 흰 카드. 회색 배경 위에 올라가는 모든 덩어리가 이걸 쓴다.
+ * `list` 는 행이 자기 위아래 여백을 갖는 경우 — 카드가 또 여백을 주면 첫 행이 밀려 내려간다.
+ */
+export function Card({
+  children,
+  list,
+  style,
+}: {
+  children: ReactNode;
+  list?: boolean;
+  style?: ViewStyle;
+}) {
+  const c = useColors();
+
+  return (
+    <View
+      style={[
+        styles.card,
+        shadow.card,
+        list ? styles.cardList : styles.cardPad,
+        { backgroundColor: c.surface },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
   stack: { flexDirection: 'column' },
@@ -94,4 +124,7 @@ const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center' },
   spring: { flex: 1 },
   body: { flex: 1, paddingHorizontal: screenPadding },
+  card: { borderRadius: radius.card },
+  cardPad: { padding: space['3xl'] },
+  cardList: { paddingHorizontal: space['3xl'], paddingVertical: space.xxs },
 });

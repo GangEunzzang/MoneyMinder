@@ -14,6 +14,7 @@ type State = {
 
 type Actions = {
   add: (t: Omit<Transaction, 'id'>) => void;
+  update: (id: string, patch: Partial<Omit<Transaction, 'id'>>) => void;
   remove: (id: string) => void;
   setBudget: (n: number) => void;
 };
@@ -36,6 +37,13 @@ export const useLedger = create<State & Actions>()(
       add: (input) =>
         set((s) => ({
           transactions: [transactionSchema.parse({ ...input, id: nextId() }), ...s.transactions],
+        })),
+
+      update: (id, patch) =>
+        set((s) => ({
+          transactions: s.transactions.map((t) =>
+            t.id === id ? transactionSchema.parse({ ...t, ...patch }) : t,
+          ),
         })),
 
       remove: (id) => set((s) => ({ transactions: s.transactions.filter((t) => t.id !== id) })),

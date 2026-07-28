@@ -1,4 +1,4 @@
-import { StyleSheet, Text as RNText, type TextProps } from 'react-native';
+import { StyleSheet, Text as RNText, type TextProps, View } from 'react-native';
 
 import {
   type ColorName,
@@ -35,6 +35,41 @@ export function NumText({ style, ...rest }: Props) {
   return <Text style={[styles.tabular, style]} {...rest} />;
 }
 
+/** 금액 크기별로 짝이 되는 "원" 크기. 펜슬이 쓰는 조합 그대로다. */
+const UNIT: Record<'display' | 'title1' | 'title2Soft', TypeName> = {
+  display: 'title3Soft',
+  title1: 'headline',
+  title2Soft: 'calloutBold',
+};
+
+/**
+ * 금액 + 단위. "원"을 숫자와 같은 크기로 찍으면 숫자가 안 커 보인다 —
+ * 단위는 한 단계 작게, 밑선을 맞춘다.
+ */
+export function AmountText({
+  value,
+  size = 'title1',
+  color = 'ink',
+  unit = '원',
+}: {
+  value: string;
+  size?: keyof typeof UNIT;
+  color?: ColorName;
+  unit?: string;
+}) {
+  return (
+    <View style={styles.amount}>
+      <NumText variant={size} color={color}>
+        {value}
+      </NumText>
+      <Text variant={UNIT[size]} color="smoke">
+        {unit}
+      </Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
+  amount: { flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
 });

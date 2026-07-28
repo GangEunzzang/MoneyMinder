@@ -24,8 +24,10 @@ export function Row({ gap, between, center, divider, py, style, ...rest }: RowPr
       style={[
         styles.row,
         gap != null && { gap: space[gap] },
-        between && styles.between,
+        // center 가 justifyContent 를 함께 잡으므로 between 이 뒤에 와야 한다.
+        // 순서를 바꾸면 `<Row between center>` 가 조용히 가운데 정렬로 무너진다.
         center && styles.center,
+        between && styles.between,
         py != null && { paddingVertical: space[py] },
         divider && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.hair },
         style,

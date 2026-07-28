@@ -1,6 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
+
+import { persistStorage } from '@/shared/lib/storage';
 
 import { type Transaction, transactionSchema } from './model';
 
@@ -43,7 +44,7 @@ export const useLedger = create<State & Actions>()(
     }),
     {
       name: 'moneyminder.ledger.v2',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: persistStorage,
       partialize: ({ transactions, budget }) => ({ transactions, budget }),
       onRehydrateStorage: () => () => useLedger.setState({ hydrated: true }),
     },

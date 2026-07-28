@@ -1,6 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
+
+import { persistStorage } from '@/shared/lib/storage';
 
 import type { PaymentMethod } from './model';
 
@@ -29,7 +30,7 @@ export const usePaymentMethods = create<State & Actions>()(
         set((s) => ({ methods: s.methods.map((m) => (m.id === id ? { ...m, ...patch } : m)) })),
       remove: (id) => set((s) => ({ methods: s.methods.filter((m) => m.id !== id) })),
     }),
-    { name: 'moneyminder.payment-methods.v1', storage: createJSONStorage(() => AsyncStorage) },
+    { name: 'moneyminder.payment-methods.v1', storage: persistStorage },
   ),
 );
 

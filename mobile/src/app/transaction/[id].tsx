@@ -9,12 +9,12 @@ import { useLedger } from '@/entities/transaction/store';
 import { dateFull, signedWon } from '@/shared/lib/format';
 import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   CategoryIcon,
   ConfirmDialog,
   IconPencil,
   IconTrash,
-  NumText,
   Row,
   ScreenHeader,
   Stack,
@@ -75,9 +75,10 @@ export default function TransactionDetail() {
           <Text variant="subheadSoft" color="smoke">
             {heroName}
           </Text>
-          <NumText variant="title1" color={income ? 'mintText' : 'ink'}>
-            {signedWon(income ? txn.amount : -txn.amount)}원
-          </NumText>
+          <AmountText
+            value={signedWon(income ? txn.amount : -txn.amount)}
+            color={income ? 'mintText' : 'ink'}
+          />
         </Stack>
 
         <View style={[styles.card, shadow.card, { backgroundColor: c.surface }]}>

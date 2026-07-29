@@ -16,6 +16,7 @@ import { biggestJump, headline, monthlyReport, TrendChart } from '@/features/rep
 import { monthHeading, shiftMonth, signedPercent, won, wonUnit } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   Divider,
   EmptyState,
@@ -93,12 +94,7 @@ export default function MonthlyReportScreen() {
           />
         ) : (
           <>
-            <Row gap="xs" style={styles.amount}>
-              <NumText variant="display">{won(report.expense)}</NumText>
-              <Text variant="title3Soft" color="smoke">
-                원
-              </Text>
-            </Row>
+            <AmountText value={won(report.expense)} size="display" />
             <Text variant="calloutBold" color={saved ? 'mintText' : 'smoke'}>
               {headline(report)}
             </Text>

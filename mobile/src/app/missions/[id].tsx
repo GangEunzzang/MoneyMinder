@@ -13,6 +13,7 @@ import { completion, missionProgress, remainingLabel, startOfWeek } from '@/feat
 import { KOREAN_WEEKDAYS, signedWon, toDateKey, won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   CategoryIcon,
   ListRow,
@@ -134,14 +135,12 @@ export default function MissionDetail() {
         <Text variant="caption" color="smoke" style={styles.eyebrow}>
           {PERIOD_LABEL[active.period]} 진행
         </Text>
-        <Row gap="xs" style={styles.count}>
-          <NumText variant="title1" color={progress.achieved ? spec.tint : 'red'}>
-            {spec.unit === 'won' ? won(progress.done) : progress.done}
-          </NumText>
-          <Text variant="title3Soft" color="smoke">
-            / {targetLabel(spec, progress.target)}
-          </Text>
-        </Row>
+        <AmountText
+          value={String(spec.unit === 'won' ? won(progress.done) : progress.done)}
+          color={progress.achieved ? spec.tint : 'red'}
+          unit={`/ ${targetLabel(spec, progress.target)}`}
+          style={styles.count}
+        />
         <Text variant="micro" color={progress.achieved ? 'violetDeep' : 'red'}>
           {remainingLabel(spec, progress)}
         </Text>

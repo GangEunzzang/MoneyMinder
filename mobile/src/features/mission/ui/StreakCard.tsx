@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { KOREAN_WEEKDAYS } from '@/shared/lib/format';
 import { radius, shadow, space, useColors } from '@/shared/theme';
-import { IconCheck, IconFlame, NumText, Row, Stack, Text } from '@/shared/ui';
+import { AmountText, IconCheck, IconFlame, NumText, Row, Stack, Text } from '@/shared/ui';
 
 type Props = {
   streak: number;
@@ -42,14 +42,7 @@ export function StreakCard({
         </View>
       </Row>
 
-      <Row gap="xxs" style={styles.count}>
-        <NumText variant="display" color="onColor">
-          {streak}
-        </NumText>
-        <Text variant="title3Soft" color="onColorHigh">
-          일째
-        </Text>
-      </Row>
+      <AmountText value={String(streak)} size="display" color="onColor" unit="일째" />
 
       <Row between style={styles.week}>
         {KOREAN_WEEKDAYS.map((label, i) => (

@@ -1,4 +1,10 @@
-import { StyleSheet, Text as RNText, type TextProps, View } from 'react-native';
+import {
+  StyleSheet,
+  Text as RNText,
+  type TextProps,
+  View,
+  type ViewStyle,
+} from 'react-native';
 
 import {
   type ColorName,
@@ -51,17 +57,19 @@ export function AmountText({
   size = 'title1',
   color = 'ink',
   unit = '원',
+  style,
 }: {
   value: string;
   size?: keyof typeof UNIT;
   color?: ColorName;
   unit?: string;
+  style?: ViewStyle;
 }) {
   // 컬러 배경 위에서는 회색 단위가 배경에 묻힌다. 글자색을 따라간다.
   const unitColor: ColorName = color === 'onColor' ? 'onColorHigh' : 'smoke';
 
   return (
-    <View style={styles.amount}>
+    <View style={[styles.amount, style]}>
       <NumText variant={size} color={color}>
         {value}
       </NumText>

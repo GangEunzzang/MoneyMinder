@@ -8,7 +8,7 @@ import { useMissions } from '@/entities/mission/store';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, startOfWeek, weekProgress } from '@/features/mission';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
-import { Button, IconPartyPopper, NumText, Row, Spring, Stack, Text } from '@/shared/ui';
+import { AmountText, Button, IconPartyPopper, Spring, Stack, Text } from '@/shared/ui';
 
 export default function MissionCelebrate() {
   const c = useColors();
@@ -36,14 +36,13 @@ export default function MissionCelebrate() {
           <IconPartyPopper size={44} color={c.onColor} />
         </View>
 
-        <Row gap="xs" style={styles.count}>
-          <NumText variant="display" color="onColor">
-            {view.streak}
-          </NumText>
-          <Text variant="title2Light" color="onColorHigh">
-            일째
-          </Text>
-        </Row>
+        <AmountText
+          value={String(view.streak)}
+          size="display"
+          color="onColor"
+          unit="일째"
+          style={styles.count}
+        />
 
         <Text variant="title3Flat" color="onColor" style={styles.title}>
           무지출 미션 성공!

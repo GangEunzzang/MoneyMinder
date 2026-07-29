@@ -8,11 +8,11 @@ import { useLedger } from '@/entities/transaction/store';
 import { won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   Chip,
   IconCheck,
   Keypad,
-  NumText,
   Row,
   Spring,
   Stack,
@@ -61,14 +61,11 @@ export default function BudgetSetup() {
         <Text variant="callout" color="smoke">
           한 달에 이만큼
         </Text>
-        <Row gap="xxs" style={styles.amountRow}>
-          <NumText variant="display" color={canSave ? 'ink' : 'mist'}>
-            {canSave ? won(parsed) : '0'}
-          </NumText>
-          <Text variant="title3Soft" color="smoke">
-            원
-          </Text>
-        </Row>
+        <AmountText
+          value={canSave ? won(parsed) : '0'}
+          size="display"
+          color={canSave ? 'ink' : 'mist'}
+        />
       </Stack>
 
       <Row gap="sm" style={styles.presets}>

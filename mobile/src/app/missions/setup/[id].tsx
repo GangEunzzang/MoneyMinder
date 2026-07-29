@@ -9,10 +9,10 @@ import { useLedger } from '@/entities/transaction/store';
 import { toDateKey } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Button,
   Chip,
   IconTarget,
-  NumText,
   Row,
   ScreenHeader,
   Segmented,
@@ -78,14 +78,12 @@ export default function MissionSetup() {
         <Text variant="caption" color="smoke" style={styles.q}>
           {spec.question}
         </Text>
-        <Row gap="xs" center style={styles.targetRow}>
-          <NumText variant="title1" color={spec.tint}>
-            {spec.unit === 'won' ? target.toLocaleString('ko-KR') : target}
-          </NumText>
-          <Text variant="headline" color="smoke">
-            {spec.unitLabel}
-          </Text>
-        </Row>
+        <AmountText
+          value={String(spec.unit === 'won' ? target.toLocaleString('ko-KR') : target)}
+          color={spec.tint}
+          unit={spec.unitLabel}
+          style={styles.targetRow}
+        />
         <Row gap="sm" style={styles.choices}>
           {spec.targetChoices.map((choice) => (
             <Chip

@@ -370,7 +370,7 @@ export function IconShare({ size = 20, color = '#191F28', strokeWidth = 2 }: Ico
   );
 }
 
-export function IconWarning({ size = 20, color = '#7C5CFF', strokeWidth = 2 }: IconProps) {
+export function IconWarning({ size = 20, color = '#4E5968', strokeWidth = 2 }: IconProps) {
   return (
     <Svg {...base(size)}>
       <Path d="M12 4 2.5 20h19L12 4Z" {...stroke(color, strokeWidth)} />

@@ -241,6 +241,15 @@ export function IconUtensils({ size = 20, color = '#191F28', strokeWidth = 2 }: 
   );
 }
 
+export function IconTv({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
+  return (
+    <Svg {...base(size)}>
+      <Rect x={2.5} y={7} width={19} height={13} rx={3} {...stroke(color, strokeWidth)} />
+      <Path d="m8 3 4 4 4-4" {...stroke(color, strokeWidth)} />
+    </Svg>
+  );
+}
+
 export function IconFilm({ size = 20, color = '#191F28', strokeWidth = 2 }: IconProps) {
   return (
     <Svg {...base(size)}>

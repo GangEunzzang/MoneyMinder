@@ -15,6 +15,7 @@ import {
   IconPlane,
   IconRepeat,
   IconScissors,
+  IconTv,
   IconUtensils,
   IconWallet,
 } from './icons';
@@ -35,6 +36,7 @@ const MAP = {
   phone: IconPhone,
   scissors: IconScissors,
   plane: IconPlane,
+  tv: IconTv,
 } as const;
 
 export type IconKey = keyof typeof MAP;

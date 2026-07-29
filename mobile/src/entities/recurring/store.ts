@@ -22,7 +22,7 @@ const SEED: Recurring[] = [
     name: 'SKT 통신비',
     amount: 55_000,
     cycleDay: 25,
-    categoryId: 'subscription',
+    categoryId: 'telecom',
     paymentMethodId: 'kb',
     autoRecord: true,
     remindBeforeDays: 3,

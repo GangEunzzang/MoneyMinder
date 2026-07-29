@@ -92,7 +92,7 @@ export default function HistoryScreen() {
         style={({ pressed }) => (pressed ? styles.pressed : undefined)}
       >
         <Row gap="xl" py="xl" divider={index > 0}>
-          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft="surface2" />
+          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} />
           <Stack gap="xxs" style={styles.mid}>
             <Text variant="body" numberOfLines={1}>
               {t.merchant || cat.label}

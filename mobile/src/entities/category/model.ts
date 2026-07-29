@@ -8,6 +8,7 @@ export type IconKey =
   | 'bag'
   | 'repeat'
   | 'wallet'
+  | 'tv'
   | 'film'
   | 'health'
   | 'book'
@@ -48,6 +49,7 @@ export const CATEGORY_ICONS: IconKey[] = [
   'phone',
   'scissors',
   'plane',
+  'tv',
   'repeat',
   'wallet',
 ];
@@ -65,7 +67,7 @@ export const SEED_CATEGORIES: readonly Category[] = [
   { id: 'telecom', label: '통신', icon: 'phone', tint: 'violet', tintSoft: 'violetSoft' },
   { id: 'beauty', label: '미용', icon: 'scissors', tint: 'peach', tintSoft: 'peachSoft' },
   { id: 'travel', label: '여행', icon: 'plane', tint: 'mint', tintSoft: 'mintSoft' },
-  { id: 'subscription', label: '구독', icon: 'repeat', tint: 'red', tintSoft: 'redSoft' },
+  { id: 'subscription', label: '구독', icon: 'tv', tint: 'red', tintSoft: 'redSoft' },
   { id: 'salary', label: '수입', icon: 'wallet', tint: 'mint', tintSoft: 'mintSoft', income: true },
   { id: 'etc', label: '기타', icon: 'wallet', tint: 'mist', tintSoft: 'surface2' },
 ] as const;

@@ -67,7 +67,7 @@ export default function TransactionDetail() {
       <ScreenHeader title="거래 상세" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stack gap="lg" center style={styles.hero}>
-          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft="surface2" size={60} round="3xl" />
+          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} size={60} round="3xl" />
           <Text variant="subheadSoft" color="smoke">
             {txn.merchant || cat.label}
           </Text>

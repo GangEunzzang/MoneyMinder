@@ -16,7 +16,16 @@ import {
 import { activeCount, applyFilter, isDefault, useFilter } from '@/entities/filter/store';
 import { useLedger } from '@/entities/transaction/store';
 import { isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
-import { dateFull, monthHeading, monthLabel, shiftMonth, signedWon, won } from '@/shared/lib/format';
+import { monthPace } from '@/features/report';
+import {
+  dateFull,
+  monthHeading,
+  monthLabel,
+  shiftMonth,
+  signedWon,
+  won,
+  wonUnit,
+} from '@/shared/lib/format';
 import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
 import {
   Card,
@@ -73,6 +82,7 @@ export default function HistoryScreen() {
   }, [transactions, ym, methods, filter]);
 
   const filters = activeCount(filter);
+  const pace = useMemo(() => monthPace(transactions, ym, new Date()), [transactions, ym]);
 
   const months = useMemo(() => {
     const now = monthKey(new Date());
@@ -175,6 +185,13 @@ export default function HistoryScreen() {
               labelTone="violet"
             />
           </Row>
+          {pace.previous > 0 ? (
+            <Row center style={styles.pace}>
+              <Text variant="micro" color={pace.saved >= 0 ? 'mint' : 'red'}>
+                지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
+              </Text>
+            </Row>
+          ) : null}
         </Card>
 
         {view.entries.length === 0 ? (
@@ -209,6 +226,8 @@ export default function HistoryScreen() {
               ) : (
                 <View key={entry.date}>
                   <Row
+                    between
+                    center
                     style={[
                       styles.dayHead,
                       index > 0 ? [styles.topLine, { borderTopColor: c.hairStrong }] : undefined,
@@ -217,6 +236,10 @@ export default function HistoryScreen() {
                     <Text variant="microBold" color="smoke">
                       {dateFull(entry.date)}
                     </Text>
+                    {/* 일자 줄에 그날 합계를 얹는다. 라벨만 있으면 빈 줄이 하루마다 생긴다. */}
+                    <NumText variant="microBold" color="mist">
+                      {sumExpense(entry.rows) > 0 ? `-${won(sumExpense(entry.rows))}` : ''}
+                    </NumText>
                   </Row>
                   {entry.rows.map(renderRow)}
                 </View>
@@ -342,6 +365,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
+  pace: { paddingTop: space['2xl'] },
   vline: { width: StyleSheet.hairlineWidth, height: 34 },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },

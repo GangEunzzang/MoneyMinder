@@ -89,6 +89,11 @@ module.exports = defineConfig([
           message: '색은 theme의 palette 토큰만 사용한다. hex 직접 입력 금지.',
         },
         {
+          // 보라 히어로 면을 화면에서 다시 칠하면 radius·padding·shadow 가 각자 흘러간다.
+          selector: 'Property[key.name="backgroundColor"] > MemberExpression[property.name="violetFill"]',
+          message: '보라 히어로 면은 <HeroCard> 를 쓴다. violetFill 을 화면에서 직접 칠하지 않는다.',
+        },
+        {
           // 히어로 금액을 화면에서 직접 조합하면 AmountText가 정한 단위 짝을 벗어난다.
           selector:
             'JSXOpeningElement[name.name="NumText"] > JSXAttribute[name.name="variant"][value.value=/^(display|title1|title2Soft)$/]',

@@ -1,14 +1,15 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
 
 import { expenseCategories } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
 import { filterMonth, monthKey, sumByCategory } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { percent, won, wonUnit } from '@/shared/lib/format';
-import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  HeroCard,
   AmountText,
   Button,
   Card,
@@ -58,7 +59,7 @@ export default function BudgetScreen() {
     <>
       <ScreenHeader title="예산 설정" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
+        <HeroCard style={styles.heroGap}>
           <Stack gap="sm">
             <Text variant="captionSoft" color="onColorHigh">
               이번 달 총 예산
@@ -72,7 +73,7 @@ export default function BudgetScreen() {
               </Pressable>
             </Row>
           </Stack>
-        </View>
+        </HeroCard>
 
         <SectionHeader
           title="카테고리별 예산"
@@ -145,7 +146,7 @@ export default function BudgetScreen() {
 
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['5xl'] },
-  hero: { marginTop: space.xl, padding: space['4xl'], borderRadius: radius['3xl'] },
+  heroGap: { marginTop: space.xl },
   heroRow: { alignItems: 'flex-end' },
   mid: { flex: 1, minWidth: 0 },
   pressed: { opacity: 0.6 },

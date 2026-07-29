@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { KOREAN_WEEKDAYS } from '@/shared/lib/format';
-import { radius, shadow, space, useColors } from '@/shared/theme';
-import { AmountText, IconCheck, IconFlame, NumText, Row, Stack, Text } from '@/shared/ui';
+import { radius, space, useColors } from '@/shared/theme';
+import { AmountText, HeroCard, IconCheck, IconFlame, NumText, Row, Stack, Text } from '@/shared/ui';
 
 type Props = {
   streak: number;
@@ -27,7 +27,7 @@ export function StreakCard({
   const c = useColors();
 
   return (
-    <Stack gap="2xl" style={[styles.card, shadow.raised, { backgroundColor: c.violetFill }]}>
+    <HeroCard gap="2xl">
       <Row between center>
         <Row gap="sm" center>
           <IconFlame size={16} color={c.onColor} strokeWidth={1.9} />
@@ -79,12 +79,11 @@ export function StreakCard({
           </Text>
         </Pressable>
       ) : null}
-    </Stack>
+    </HeroCard>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius['3xl'], padding: space['4xl'] },
   pill: { paddingHorizontal: space.lg, paddingVertical: space.xs, borderRadius: radius.pill },
   count: { alignItems: 'baseline' },
   week: { paddingTop: space.xs },

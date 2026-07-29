@@ -5,8 +5,9 @@ import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
 import { monthHeading, shiftMonth, toDateKey } from '@/shared/lib/format';
-import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  HeroCard,
   Calendar,
   Card,
   type DayCell,
@@ -50,7 +51,7 @@ export default function MissionCalendar() {
     <>
       <ScreenHeader title="무지출 캘린더" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
+        <HeroCard>
           <Row between>
             <Stack gap="sm">
               <Text variant="captionSoft" color="onColorHigh">
@@ -69,7 +70,7 @@ export default function MissionCalendar() {
               </NumText>
             </Stack>
           </Row>
-        </View>
+        </HeroCard>
 
         <Row between center>
           <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     paddingBottom: space['5xl'],
     gap: space['3xl'],
   },
-  hero: { padding: space['4xl'], borderRadius: radius['3xl'] },
+
   right: { alignItems: 'flex-end' },
   legend: { paddingTop: space['3xl'] },
   dot: { width: 8, height: 8, borderRadius: radius.xs },

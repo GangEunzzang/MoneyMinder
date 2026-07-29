@@ -117,8 +117,32 @@ export function Card({
   );
 }
 
+/**
+ * 보라 히어로. 화면 맨 위에서 그 화면의 주제를 한 덩어리로 말하는 자리 —
+ * 흰 `Card` 와 짝이다. 면은 `violetFill`: 브랜드 `violet` 위 흰 15/700 은 4.35:1 로 AA 미달이고,
+ * 다크에서는 `violet` 이 밝아져 2.88:1 까지 떨어진다.
+ */
+export function HeroCard({
+  children,
+  gap,
+  style,
+}: {
+  children: ReactNode;
+  gap?: keyof typeof space;
+  style?: ViewStyle;
+}) {
+  const c = useColors();
+
+  return (
+    <Stack gap={gap} style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }, style]}>
+      {children}
+    </Stack>
+  );
+}
+
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
+  hero: { borderRadius: radius['3xl'], padding: space['4xl'] },
   stack: { flexDirection: 'column' },
   between: { justifyContent: 'space-between' },
   center: { alignItems: 'center', justifyContent: 'center' },

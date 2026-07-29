@@ -6,7 +6,16 @@ export { ConfirmDialog } from './ConfirmDialog';
 export { EmptyState } from './EmptyState';
 export { AmountField, FieldInput, FieldRow } from './fields';
 export { Keypad } from './Keypad';
-export { Card, Divider, Row, ScreenBody, SectionHeader, Spring, Stack } from './layout';
+export {
+  Card,
+  Divider,
+  HeroCard,
+  Row,
+  ScreenBody,
+  SectionHeader,
+  Spring,
+  Stack,
+} from './layout';
 export { ColorSwatch, IconBadge, ListRow, SettingRow } from './ListRow';
 export { ProgressBar } from './ProgressBar';
 export { ScreenHeader } from './ScreenHeader';

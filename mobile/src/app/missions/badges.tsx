@@ -6,8 +6,9 @@ import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { type BadgeState, badgeStates, earnedCount } from '@/features/mission';
 import { percent } from '@/shared/lib/format';
-import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
+import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  HeroCard,
   Card,
   IconAward,
   IconFlame,
@@ -48,7 +49,7 @@ export default function BadgeCollection() {
     <>
       <ScreenHeader title="배지 컬렉션" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
+        <HeroCard>
           <Stack gap="xl">
             <Row gap="xxs" style={styles.count}>
               <NumText variant="title2Flat" color="onColor">
@@ -63,7 +64,7 @@ export default function BadgeCollection() {
               {percent(earned, states.length)}%
             </Text>
           </Stack>
-        </View>
+        </HeroCard>
 
         <Card>
           <Stack gap="6xl">
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     paddingBottom: space['5xl'],
     gap: space['3xl'],
   },
-  hero: { padding: space['4xl'], borderRadius: radius['3xl'] },
+
   count: { alignItems: 'baseline' },
   cell: { flex: 1 },
   disc: {

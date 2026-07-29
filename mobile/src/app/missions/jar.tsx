@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { filterMonth, monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
@@ -10,10 +10,11 @@ import {
   noSpendSavings,
 } from '@/features/mission';
 import { dateFull, monthLabel, percent, toDateKey, won } from '@/shared/lib/format';
-import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
+import { screenPadding, space } from '@/shared/theme';
 import {
   AmountText,
   Card,
+  HeroCard,
   NumText,
   ProgressBar,
   Row,
@@ -26,7 +27,6 @@ import {
 const GOAL = 100_000;
 
 export default function SavingsJar() {
-  const c = useColors();
   const transactions = useLedger((s) => s.transactions);
 
   const view = useMemo(() => {
@@ -62,7 +62,7 @@ export default function SavingsJar() {
     <>
       <ScreenHeader title="무지출 저금통" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
+        <HeroCard>
           <Stack gap="lg">
             <Text variant="callout" color="onColorHigh">
               무지출로 아낀 돈
@@ -74,7 +74,7 @@ export default function SavingsJar() {
                 : `무지출 ${view.days}일 · 평균을 낼 기록이 아직 모자라요`}
             </Text>
           </Stack>
-        </View>
+        </HeroCard>
 
         <Card>
           <Stack gap="xl">
@@ -135,5 +135,5 @@ const styles = StyleSheet.create({
     paddingBottom: space['5xl'],
     gap: space['3xl'],
   },
-  hero: { padding: space['4xl'], borderRadius: radius['3xl'] },
+
 });

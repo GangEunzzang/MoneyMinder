@@ -46,10 +46,14 @@ export default function TransactionDetail() {
   const cat = findCategory(categories, txn.categoryId);
   const method = methods.find((m) => m.id === txn.paymentMethodId);
   const income = txn.type === 'income';
+  const heroName = txn.merchant || cat.label;
 
   const rows: [string, string][] = [
     ['카테고리', cat.label],
-    ...(txn.merchant ? [[income ? '보낸 곳' : '결제처', txn.merchant] as [string, string]] : []),
+    // 히어로가 이미 결제처를 말했으면 같은 값을 한 번 더 쓰지 않는다.
+    ...(txn.merchant && txn.merchant !== heroName
+      ? [[income ? '보낸 곳' : '결제처', txn.merchant] as [string, string]]
+      : []),
     ['날짜', dateFull(txn.date)],
     ...(method ? [['결제수단', method.name] as [string, string]] : []),
     ...(txn.autoRecorded ? [['기록', '고정 지출에서 자동기록'] as [string, string]] : []),
@@ -67,9 +71,9 @@ export default function TransactionDetail() {
       <ScreenHeader title="거래 상세" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Stack gap="lg" center style={styles.hero}>
-          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} size={60} round="3xl" />
+          <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft="surface2" size={60} round="3xl" />
           <Text variant="subheadSoft" color="smoke">
-            {txn.merchant || cat.label}
+            {heroName}
           </Text>
           <NumText variant="title1" color={income ? 'mint' : 'ink'}>
             {signedWon(income ? txn.amount : -txn.amount)}원

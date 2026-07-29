@@ -185,30 +185,44 @@ export default function HistoryScreen() {
             body={'지출이나 수입을 기록하면\n여기에 차곡차곡 쌓여요'}
           />
         ) : (
-          view.entries.map((entry) =>
-            entry.kind === 'noSpend' ? (
-              <Row
-                key={entry.date}
-                gap="md"
-                center
-                style={[styles.noSpend, { backgroundColor: c.violetSoft }]}
-              >
-                <View style={[styles.noSpendDot, { backgroundColor: c.violet }]} />
-                <Text variant="caption" color="violetDeep">
-                  {entry.days === 1
-                    ? `${shortDate(entry.date)} · 무지출 성공`
-                    : `${shortDate(entry.date)}~${shortDate(entry.until)} · 무지출 ${entry.days}일`}
-                </Text>
-              </Row>
-            ) : (
-              <Stack key={entry.date} gap="md">
-                <Text variant="microBold" color="smoke">
-                  {dateFull(entry.date)}
-                </Text>
-                <Card list>{entry.rows.map(renderRow)}</Card>
-              </Stack>
-            ),
-          )
+          /*
+           * 한 달치를 카드 한 장에 담는다. 일자마다 카드를 열면 하루 1건인 날이
+           * 카드 껍데기만큼 자리를 먹어 목록이 성글어진다. 일자는 리듬, 카드는 그릇.
+           */
+          <Card list>
+            {view.entries.map((entry, index) =>
+              entry.kind === 'noSpend' ? (
+                <Row
+                  key={entry.date}
+                  gap="md"
+                  center
+                  py="lg"
+                  style={index > 0 ? [styles.topLine, { borderTopColor: c.hairStrong }] : undefined}
+                >
+                  <View style={[styles.noSpendDot, { backgroundColor: c.violet }]} />
+                  <Text variant="micro" color="violetDeep">
+                    {entry.days === 1
+                      ? `${shortDate(entry.date)} · 무지출 성공`
+                      : `${shortDate(entry.date)}~${shortDate(entry.until)} · 무지출 ${entry.days}일`}
+                  </Text>
+                </Row>
+              ) : (
+                <View key={entry.date}>
+                  <Row
+                    style={[
+                      styles.dayHead,
+                      index > 0 ? [styles.topLine, { borderTopColor: c.hairStrong }] : undefined,
+                    ]}
+                  >
+                    <Text variant="microBold" color="smoke">
+                      {dateFull(entry.date)}
+                    </Text>
+                  </Row>
+                  {entry.rows.map(renderRow)}
+                </View>
+              ),
+            )}
+          </Card>
         )}
       </ScrollView>
 
@@ -313,8 +327,8 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: { flexGrow: 1, paddingHorizontal: screenPadding, gap: space['3xl'] },
   iconPill: {
-    width: 38,
-    height: 38,
+    width: 36,
+    height: 36,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
@@ -322,15 +336,16 @@ const styles = StyleSheet.create({
   monthPill: {
     flexDirection: 'row',
     alignItems: 'center',
+    height: 36,
     gap: space.xxs,
-    paddingVertical: space.md,
     paddingHorizontal: space.xl,
     borderRadius: radius.pill,
   },
   summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
   vline: { width: StyleSheet.hairlineWidth, height: 34 },
-  noSpend: { paddingVertical: space.xl, paddingHorizontal: space['2xl'], borderRadius: radius.card },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
+  dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },
+  topLine: { borderTopWidth: StyleSheet.hairlineWidth },
   mid: { flex: 1, minWidth: 0 },
   pressed: { opacity: 0.6 },
   scrim: { flex: 1, justifyContent: 'flex-end' },

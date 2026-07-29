@@ -4,7 +4,7 @@ export { CategoryIcon, type IconKey } from './CategoryIcon';
 export { Chip, ChipRow, PayChip } from './Chip';
 export { ConfirmDialog } from './ConfirmDialog';
 export { EmptyState } from './EmptyState';
-export { AmountField, FieldInput, FieldRow } from './fields';
+export { AmountField, DetailRow, FieldInput, FieldRow } from './fields';
 export { MonthPager } from './MonthPager';
 export { Keypad } from './Keypad';
 export {

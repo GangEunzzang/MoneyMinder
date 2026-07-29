@@ -1,14 +1,16 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { useLedger } from '@/entities/transaction/store';
 import { dateFull, signedWon } from '@/shared/lib/format';
-import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
+import { screenPadding, space, useColors } from '@/shared/theme';
 import {
+  Card,
+  DetailRow,
   AmountText,
   Button,
   CategoryIcon,
@@ -81,18 +83,11 @@ export default function TransactionDetail() {
           />
         </Stack>
 
-        <View style={[styles.card, shadow.card, { backgroundColor: c.surface }]}>
+        <Card list>
           {rows.map(([key, value], index) => (
-            <Row key={key} between py="xl" divider={index > 0}>
-              <Text variant="bodySoft" color="smoke">
-                {key}
-              </Text>
-              <Text variant="body" numberOfLines={1} style={styles.value}>
-                {value}
-              </Text>
-            </Row>
+            <DetailRow key={key} label={key} value={value} divider={index > 0} />
           ))}
-        </View>
+        </Card>
 
         <Row gap="lg" style={styles.footer}>
           <Button
@@ -130,8 +125,6 @@ export default function TransactionDetail() {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['4xl'] },
   hero: { paddingTop: space['5xl'], paddingBottom: space['4xl'] },
-  card: { borderRadius: radius.card, paddingHorizontal: space['3xl'] },
-  value: { flexShrink: 1, paddingLeft: space['3xl'] },
   footer: { paddingTop: space['4xl'] },
   action: { flex: 1 },
   gone: { flex: 1 },

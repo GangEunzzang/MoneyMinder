@@ -87,6 +87,31 @@ export function FieldRow({ label, value, input, divider }: FieldProps) {
   );
 }
 
+/**
+ * 읽기 전용 라벨-값 행. `FieldRow` 는 폼(13)이고 이건 읽으러 온 화면(14) —
+ * 펜슬이 두 크기를 따로 정해 뒀다. 값이 주인공이므로 라벨을 흐리게 둔다.
+ */
+export function DetailRow({
+  label,
+  value,
+  divider,
+}: {
+  label: string;
+  value: string;
+  divider?: boolean;
+}) {
+  return (
+    <Row between py="xl" divider={divider}>
+      <Text variant="bodySoft" color="smoke">
+        {label}
+      </Text>
+      <Text variant="body" numberOfLines={1} style={styles.detailValue}>
+        {value}
+      </Text>
+    </Row>
+  );
+}
+
 /** FieldRow 안에 들어가는 우측 정렬 입력. 라벨과 값이 한 줄에서 균형을 잡는다. */
 export function FieldInput(props: TextInputProps) {
   const c = useColors();
@@ -109,4 +134,5 @@ const styles = StyleSheet.create({
   amountWrap: { paddingVertical: space['5xl'] },
   amountInput: { minWidth: 40, maxWidth: 220, padding: 0, fontVariant: ['tabular-nums'] },
   fieldInput: { minWidth: 140, padding: 0, textAlign: 'right' },
+  detailValue: { flexShrink: 1, paddingLeft: space['3xl'] },
 });

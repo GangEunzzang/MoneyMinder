@@ -29,6 +29,7 @@ import {
 } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Card,
   CategoryIcon,
   ConfirmDialog,
@@ -133,12 +134,7 @@ export default function HomeScreen() {
                 <Text variant="captionSoft" color="smoke">
                   {view.month}
                 </Text>
-                <Row gap="xxs" style={styles.spendTop}>
-                  <NumText variant="title2Soft">{won(view.spent)}</NumText>
-                  <Text variant="calloutBold" color="smoke">
-                    원
-                  </Text>
-                </Row>
+                <AmountText value={won(view.spent)} size="title2Soft" />
               </Row>
               <ProgressBar value={view.ratio} color={over ? 'red' : 'violet'} />
               <Row between>

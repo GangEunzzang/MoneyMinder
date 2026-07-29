@@ -7,9 +7,10 @@ import { useCategories } from '@/entities/category/store';
 import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { monthlyReport } from '@/features/report';
-import { monthHeading, monthLabel, percent, shiftMonth, won, wonUnit } from '@/shared/lib/format';
+import { monthLabel, percent, won, wonUnit } from '@/shared/lib/format';
 import { screenPadding, space, useColors } from '@/shared/theme';
 import {
+  MonthPager,
   AmountText,
   Card,
   CategoryIcon,
@@ -39,7 +40,6 @@ export default function StatsScreen() {
   );
 
   const saved = report.saved > 0;
-  const isThisMonth = ym === monthKey(new Date());
 
   return (
     <>
@@ -54,23 +54,7 @@ export default function StatsScreen() {
         }
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Row between center>
-          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
-            <Text variant="callout" color="smoke">
-              이전
-            </Text>
-          </Pressable>
-          <Text variant="calloutBold">{monthHeading(ym)}</Text>
-          <Pressable
-            onPress={() => setYm(shiftMonth(ym, 1))}
-            hitSlop={10}
-            disabled={isThisMonth}
-          >
-            <Text variant="callout" color={isThisMonth ? 'mist' : 'smoke'}>
-              다음
-            </Text>
-          </Pressable>
-        </Row>
+        <MonthPager ym={ym} onChange={setYm} />
 
         <Card>
           <Stack gap="lg">

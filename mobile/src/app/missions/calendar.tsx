@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
-import { monthHeading, shiftMonth, toDateKey } from '@/shared/lib/format';
+import { monthHeading, toDateKey } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  MonthPager,
   HeroCard,
   Calendar,
   Card,
@@ -72,19 +73,7 @@ export default function MissionCalendar() {
           </Row>
         </HeroCard>
 
-        <Row between center>
-          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
-            <Text variant="callout" color="smoke">
-              이전
-            </Text>
-          </Pressable>
-          <Text variant="calloutBold">{monthHeading(ym)}</Text>
-          <Pressable onPress={() => setYm(shiftMonth(ym, 1))} hitSlop={10}>
-            <Text variant="callout" color="smoke">
-              다음
-            </Text>
-          </Pressable>
-        </Row>
+        <MonthPager ym={ym} onChange={setYm} />
 
         <Card>
           <Calendar

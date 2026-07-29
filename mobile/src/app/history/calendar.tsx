@@ -7,9 +7,10 @@ import { useCategories } from '@/entities/category/store';
 import { filterMonth, groupByDate, monthKey, sumExpense } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { isNoSpendDay, noSpendDaysInMonth } from '@/features/mission';
-import { dateFull, monthHeading, shiftMonth, signedWon, toDateKey, won } from '@/shared/lib/format';
+import { dateFull, monthHeading, signedWon, toDateKey, won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
+  MonthPager,
   Calendar,
   Card,
   CategoryIcon,
@@ -75,19 +76,7 @@ export default function HistoryCalendar() {
         }
       />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Row between center>
-          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
-            <Text variant="callout" color="smoke">
-              이전
-            </Text>
-          </Pressable>
-          <Text variant="calloutBold">{monthHeading(ym)}</Text>
-          <Pressable onPress={() => setYm(shiftMonth(ym, 1))} hitSlop={10}>
-            <Text variant="callout" color="smoke">
-              다음
-            </Text>
-          </Pressable>
-        </Row>
+        <MonthPager ym={ym} onChange={setYm} />
 
         <Card>
           <Calendar

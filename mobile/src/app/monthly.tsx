@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { findCategory } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
@@ -18,10 +18,10 @@ import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
   AmountText,
   Button,
+  MonthPager,
   Divider,
   EmptyState,
   IconChart,
-  IconChevronRight,
   NumText,
   ProgressBar,
   Row,
@@ -55,7 +55,6 @@ export default function MonthlyReportScreen() {
   }, [transactions, ym]);
 
   const { report } = view;
-  const isThisMonth = ym === monthKey(new Date());
   const saved = report.saved > 0;
 
   const stat = (label: string, value: string, meta: string) => (
@@ -74,17 +73,7 @@ export default function MonthlyReportScreen() {
     <>
       <ScreenHeader title={`${Number(ym.slice(5))}월 결산`} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Row between center style={styles.monthBar}>
-          <Pressable onPress={() => setYm(shiftMonth(ym, -1))} hitSlop={10}>
-            <Text variant="micro" color="smoke">
-              이전
-            </Text>
-          </Pressable>
-          <Text variant="caption">{monthHeading(ym)}</Text>
-          <Pressable onPress={() => setYm(shiftMonth(ym, 1))} hitSlop={10} disabled={isThisMonth}>
-            <IconChevronRight size={14} color={isThisMonth ? c.mist : c.smoke} />
-          </Pressable>
-        </Row>
+        <MonthPager ym={ym} onChange={setYm} />
 
         {report.expense === 0 ? (
           <EmptyState

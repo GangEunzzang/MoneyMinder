@@ -173,12 +173,16 @@ export default function HistoryScreen() {
           </Row>
         </Row>
 
-        <Card style={styles.summary}>
+        <Card>
           <Stack gap="xl">
             {/* 내역에 들어온 이유는 "이 달에 얼마 썼나"다. 그 숫자 하나가 주인공이어야 한다. */}
             <Stack gap="xxs">
+              {/* 부호가 아니라 라벨이 맥락을 진다 — 히어로 앞의 마이너스는 숫자의 정렬축을 밀어낸다. */}
+              <Text variant="microBold" color="smoke">
+                지출
+              </Text>
               <Row gap="xxs" style={styles.heroRow}>
-                <NumText variant="title1">-{won(view.expense)}</NumText>
+                <NumText variant="title1">{won(view.expense)}</NumText>
                 <Text variant="subheadBold" color="smoke">
                   원
                 </Text>
@@ -366,7 +370,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.xl,
     borderRadius: radius.pill,
   },
-  summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
   heroRow: { alignItems: 'baseline' },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },

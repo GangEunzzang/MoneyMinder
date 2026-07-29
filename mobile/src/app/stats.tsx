@@ -7,13 +7,12 @@ import { useCategories } from '@/entities/category/store';
 import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { monthlyReport } from '@/features/report';
-import { monthHeading, monthLabel, shiftMonth, won, wonUnit } from '@/shared/lib/format';
+import { monthHeading, monthLabel, percent, shiftMonth, won, wonUnit } from '@/shared/lib/format';
 import { screenPadding, space, useColors } from '@/shared/theme';
 import {
   AmountText,
   Card,
   CategoryIcon,
-  IconChevronDown,
   IconChevronRight,
   NumText,
   ProgressBar,
@@ -31,6 +30,7 @@ export default function StatsScreen() {
   const c = useColors();
   const categories = useCategories();
   const transactions = useLedger((s) => s.transactions);
+  const categoryBudgets = useLedger((s) => s.categoryBudgets);
   const [ym, setYm] = useState(() => monthKey(new Date()));
 
   const report = useMemo(
@@ -60,16 +60,13 @@ export default function StatsScreen() {
               이전
             </Text>
           </Pressable>
-          <Row gap="xxs" center>
-            <Text variant="calloutBold">{monthHeading(ym)}</Text>
-            <IconChevronDown size={14} color={c.ink} />
-          </Row>
+          <Text variant="calloutBold">{monthHeading(ym)}</Text>
           <Pressable
             onPress={() => setYm(shiftMonth(ym, 1))}
             hitSlop={10}
             disabled={isThisMonth}
           >
-            <Text variant="callout" color={isThisMonth ? 'hairStrong' : 'smoke'}>
+            <Text variant="callout" color={isThisMonth ? 'mist' : 'smoke'}>
               다음
             </Text>
           </Pressable>
@@ -82,7 +79,7 @@ export default function StatsScreen() {
             </Text>
             <AmountText value={won(report.expense)} size="title2Soft" />
             {report.prevExpense > 0 ? (
-              <Text variant="callout" color={saved ? 'mint' : 'red'}>
+              <Text variant="callout" color={saved ? 'mintText' : 'red'}>
                 지난달보다 {wonUnit(report.saved)} {saved ? '덜' : '더'} 썼어요
               </Text>
             ) : (
@@ -105,6 +102,8 @@ export default function StatsScreen() {
           <Card list>
             {report.categories.map((row, i) => {
               const cat = findCategory(categories, row.categoryId);
+              const limit = categoryBudgets[row.categoryId] ?? 0;
+              const over = limit > 0 && row.amount > limit;
 
               return (
                 <Row key={row.categoryId} gap="xl" py="xl" divider={i > 0}>
@@ -114,13 +113,27 @@ export default function StatsScreen() {
                       <Text variant="body">{cat.label}</Text>
                       <NumText variant="bodyBold">{won(row.amount)}</NumText>
                     </Row>
-                    <ProgressBar value={row.share / 100} height={6} color={cat.tint} />
+                    {/*
+                     * 예산을 넣은 카테고리는 총액 비중이 아니라 소진율을 보여준다.
+                     * 비중 37%는 잘 쓴 건지 아닌지를 판단할 기준이 못 된다.
+                     */}
+                    <ProgressBar
+                      value={limit > 0 ? row.amount / limit : row.share / 100}
+                      height={6}
+                      color={over ? 'red' : cat.tint}
+                    />
                     <Row between>
-                      <Text variant="captionSoft" color="smoke">
-                        {row.share}%
-                      </Text>
+                      {limit > 0 ? (
+                        <NumText variant="captionSoft" color={over ? 'red' : 'smoke'}>
+                          예산 {won(limit)}원 중 {percent(row.amount, limit)}%
+                        </NumText>
+                      ) : (
+                        <Text variant="captionSoft" color="smoke">
+                          {row.share}%
+                        </Text>
+                      )}
                       {row.delta != null ? (
-                        <Text variant="microBold" color={row.delta > 0 ? 'red' : 'mint'}>
+                        <Text variant="microBold" color={row.delta > 0 ? 'red' : row.delta < 0 ? 'mintText' : 'smoke'}>
                           {row.delta > 0 ? '+' : ''}
                           {row.delta}%
                         </Text>

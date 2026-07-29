@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppState } from '@/entities/app/store';
@@ -16,7 +16,17 @@ import {
 } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, startOfWeek, StreakCard, weekProgress } from '@/features/mission';
-import { monthLabel, percent, signedWon, weekdayIndex, won, wonUnit } from '@/shared/lib/format';
+import { nextAutoCharge, type Upcoming } from '@/features/recurring';
+import { useRecurring } from '@/entities/recurring/store';
+import {
+  dateHeading,
+  monthLabel,
+  percent,
+  signedWon,
+  weekdayIndex,
+  won,
+  wonUnit,
+} from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
   Card,
@@ -35,12 +45,22 @@ import {
 /** 탭바가 떠 있는 만큼 마지막 카드가 가리지 않도록 비워둔다. */
 const TAB_CLEARANCE = 96;
 
+/** "오늘/내일"은 날짜보다 먼저 읽힌다. 3일 밖은 날짜가 더 쓸모 있다. */
+function chargeLabel(u: Upcoming): string {
+  if (u.daysLeft === 0) return '오늘';
+  if (u.daysLeft === 1) return '내일';
+  if (u.daysLeft <= 3) return `${u.daysLeft}일 뒤`;
+
+  return dateHeading(u.date);
+}
+
 export default function HomeScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const transactions = useLedger((s) => s.transactions);
   const categories = useCategories();
   const methods = usePaymentMethods((s) => s.methods);
+  const recurring = useRecurring((s) => s.items);
   const budget = useLedger((s) => s.budget);
   const alerted = useAppState((s) => s.budgetAlerted);
   const alertBudget = useAppState((s) => s.alertBudget);
@@ -58,11 +78,12 @@ export default function HomeScreen() {
       week: done,
       todayIndex: weekdayIndex(today),
       recent: transactions.slice(0, 4),
+      charge: nextAutoCharge(recurring, today),
       methodName: new Map(methods.map((m) => [m.id, m.name])),
       ym: monthKey(today),
       month: monthLabel(today),
     };
-  }, [transactions, budget, methods]);
+  }, [transactions, budget, methods, recurring]);
 
   const over = view.left < 0;
   const warnBudget = over && budget > 0 && !alerted.includes(view.ym);
@@ -87,6 +108,8 @@ export default function HomeScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="알림"
+            onPress={() => router.push('/notifications')}
+            hitSlop={8}
             style={[styles.bell, { backgroundColor: c.surface }]}
           >
             <IconBell size={18} color={c.inkSoft} />
@@ -128,6 +151,20 @@ export default function HomeScreen() {
               </Row>
             </Stack>
           </Card>
+
+          {/*
+           * 자동기록은 사용자가 아무것도 안 사도 지출을 남기고 그날 무지출을 깬다.
+           * 끊기고 나서 알면 앱이 거짓말한 것처럼 보이므로 미리 말한다.
+           */}
+          {view.charge ? (
+            <Row gap="md" center style={styles.charge}>
+              <View style={[styles.chargeDot, { backgroundColor: c.peach }]} />
+              <Text variant="micro" color="inkSoft" numberOfLines={1}>
+                {chargeLabel(view.charge)} · {view.charge.recurring.name}{' '}
+                {wonUnit(view.charge.recurring.amount)} 자동기록
+              </Text>
+            </Row>
+          ) : null}
         </Stack>
 
         <Stack gap="xl">
@@ -170,7 +207,7 @@ export default function HomeScreen() {
                           {txnMeta(t, cat.label, view.methodName.get(t.paymentMethodId ?? ''))}
                         </Text>
                       </Stack>
-                      <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>
+                      <NumText variant="subheadBold" color={t.type === 'income' ? 'mintText' : 'ink'}>
                         {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
                       </NumText>
                     </Row>
@@ -212,6 +249,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   spendTop: { alignItems: 'flex-end' },
+  charge: { paddingHorizontal: space.xs },
+  chargeDot: { width: 5, height: 5, borderRadius: radius.pill },
   mid: { flex: 1, minWidth: 0 },
   pressed: { opacity: 0.6 },
 });

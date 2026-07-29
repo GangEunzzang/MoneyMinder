@@ -80,7 +80,7 @@ export default function StatsTrend() {
         <SectionHeader title="이번 달" />
         <Card>
           <Stack gap="xl">
-            <Text variant="bodyBold" color={saved ? 'mint' : 'red'}>
+            <Text variant="bodyBold" color={saved ? 'mintText' : 'red'}>
               {view.report.prevExpense > 0
                 ? `지난달보다 ${wonUnit(view.report.saved)} ${saved ? '덜' : '더'} 썼어요`
                 : '지난달 기록이 없어 비교할 수 없어요'}

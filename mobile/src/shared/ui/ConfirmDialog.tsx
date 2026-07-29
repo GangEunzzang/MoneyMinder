@@ -81,7 +81,7 @@ export function ConfirmDialog({
             <Button
               label={confirmLabel}
               size="sm"
-              style={[styles.action, { backgroundColor: tone === 'danger' ? c.red : c.violet }]}
+              style={[styles.action, { backgroundColor: tone === 'danger' ? c.redFill : c.violetFill }]}
               onPress={onConfirm}
             />
           </Row>

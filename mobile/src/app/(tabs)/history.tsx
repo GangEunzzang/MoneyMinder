@@ -112,7 +112,7 @@ export default function HistoryScreen() {
               {txnMeta(t, cat.label, method)}
             </Text>
           </Stack>
-          <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>
+          <NumText variant="subheadBold" color={t.type === 'income' ? 'mintText' : 'ink'}>
             {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
           </NumText>
         </Row>
@@ -188,7 +188,7 @@ export default function HistoryScreen() {
           </Row>
           {pace.previous > 0 ? (
             <Row center style={styles.pace}>
-              <Text variant="micro" color={pace.saved >= 0 ? 'mint' : 'red'}>
+              <Text variant="micro" color={pace.saved >= 0 ? 'mintText' : 'red'}>
                 지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
               </Text>
             </Row>
@@ -238,7 +238,7 @@ export default function HistoryScreen() {
                       {dateFull(entry.date)}
                     </Text>
                     {/* 일자 줄에 그날 합계를 얹는다. 라벨만 있으면 빈 줄이 하루마다 생긴다. */}
-                    <NumText variant="microBold" color="mist">
+                    <NumText variant="microBold" color="inkSoft">
                       {sumExpense(entry.rows) > 0 ? `-${won(sumExpense(entry.rows))}` : ''}
                     </NumText>
                   </Row>

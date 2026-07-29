@@ -58,7 +58,7 @@ export default function BudgetScreen() {
     <>
       <ScreenHeader title="예산 설정" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violet }]}>
+        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
           <Stack gap="sm">
             <Text variant="captionSoft" color="onColorHigh">
               이번 달 총 예산

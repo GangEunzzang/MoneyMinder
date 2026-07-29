@@ -72,6 +72,7 @@ export function SettingRow({
   trailing,
   divider,
   dimmed,
+  danger,
   onPress,
 }: {
   label: string;
@@ -79,12 +80,14 @@ export function SettingRow({
   trailing?: ReactNode;
   divider?: boolean;
   dimmed?: boolean;
+  /** 되돌릴 수 없는 줄. dimmed 가 "못 누름"이라 위험한 줄은 반드시 다른 표시가 필요하다. */
+  danger?: boolean;
   onPress?: () => void;
 }) {
   const c = useColors();
   const body = (
     <Row between center style={styles.setting} divider={divider}>
-      <Text variant="body" color={dimmed ? 'smoke' : 'ink'}>
+      <Text variant="body" color={danger ? 'red' : dimmed ? 'smoke' : 'ink'}>
         {label}
       </Text>
       <Row gap="sm" center>

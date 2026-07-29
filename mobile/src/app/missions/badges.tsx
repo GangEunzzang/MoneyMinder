@@ -48,7 +48,7 @@ export default function BadgeCollection() {
     <>
       <ScreenHeader title="배지 컬렉션" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violet }]}>
+        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
           <Stack gap="xl">
             <Row gap="xxs" style={styles.count}>
               <NumText variant="title2Flat" color="onColor">

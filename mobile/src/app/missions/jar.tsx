@@ -62,7 +62,7 @@ export default function SavingsJar() {
     <>
       <ScreenHeader title="무지출 저금통" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violet }]}>
+        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
           <Stack gap="lg">
             <Text variant="callout" color="onColorHigh">
               무지출로 아낀 돈
@@ -115,7 +115,7 @@ export default function SavingsJar() {
                     {key === view.todayKey ? '오늘' : dateFull(key).split(' ')[2]}
                   </Text>
                 </Stack>
-                <NumText variant="bodyBold" color="mint">
+                <NumText variant="bodyBold" color="mintText">
                   +{won(view.rate)}
                 </NumText>
               </Row>

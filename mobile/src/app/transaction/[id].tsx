@@ -75,7 +75,7 @@ export default function TransactionDetail() {
           <Text variant="subheadSoft" color="smoke">
             {heroName}
           </Text>
-          <NumText variant="title1" color={income ? 'mint' : 'ink'}>
+          <NumText variant="title1" color={income ? 'mintText' : 'ink'}>
             {signedWon(income ? txn.amount : -txn.amount)}원
           </NumText>
         </Stack>

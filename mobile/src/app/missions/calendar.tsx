@@ -50,7 +50,7 @@ export default function MissionCalendar() {
     <>
       <ScreenHeader title="무지출 캘린더" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violet }]}>
+        <View style={[styles.hero, shadow.raised, { backgroundColor: c.violetFill }]}>
           <Row between>
             <Stack gap="sm">
               <Text variant="captionSoft" color="onColorHigh">

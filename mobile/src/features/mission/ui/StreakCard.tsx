@@ -27,7 +27,7 @@ export function StreakCard({
   const c = useColors();
 
   return (
-    <Stack gap="2xl" style={[styles.card, shadow.raised, { backgroundColor: c.violet }]}>
+    <Stack gap="2xl" style={[styles.card, shadow.raised, { backgroundColor: c.violetFill }]}>
       <Row between center>
         <Row gap="sm" center>
           <IconFlame size={16} color={c.onColor} strokeWidth={1.9} />
@@ -64,7 +64,7 @@ export function StreakCard({
                 i === todayIndex && !week[i] ? { borderWidth: 2, borderColor: c.onColor } : null,
               ]}
             >
-              {week[i] ? <IconCheck size={14} color={c.violet} strokeWidth={2.6} /> : null}
+              {week[i] ? <IconCheck size={14} color={c.violetFill} strokeWidth={2.6} /> : null}
             </View>
           </Stack>
         ))}

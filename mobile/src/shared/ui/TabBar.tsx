@@ -55,7 +55,7 @@ export function TabBar({ state, navigation }: Props) {
 
   const renderTab = ({ name, label, Icon }: (typeof TABS)[number]) => {
     const active = activeName === name;
-    const color = active ? c.violet : c.mist;
+    const color = active ? c.violet : c.smoke;
 
     return (
       <Pressable
@@ -81,7 +81,7 @@ export function TabBar({ state, navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="기록하기"
-            style={[styles.fab, fabShadow, { backgroundColor: c.violet }]}
+            style={[styles.fab, fabShadow, { backgroundColor: c.violetFill }]}
             onPress={() => router.push('/add')}
           >
             <IconPlus size={24} color={c.onColor} strokeWidth={2.3} />

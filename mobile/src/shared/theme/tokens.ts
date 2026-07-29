@@ -12,16 +12,22 @@ export const palette = {
     hairStrong: '#E5E8EB',
     ink: '#191F28',
     inkSoft: '#4E5968',
-    smoke: '#8B95A1',
+    smoke: '#626C77',
     mist: '#B0B8C1',
     violet: '#7C5CFF',
+    /** 흰 글씨를 얹는 보라 면. 브랜드 violet 은 15/700 흰 글씨에서 4.35:1 로 AA 에 못 미친다. */
+    violetFill: '#6A4AEE',
     violetDeep: '#5947C2',
     violetSoft: '#EFEAFF',
     mint: '#00C896',
+    /** 숫자를 실어 나르는 초록. 채움용 mint 는 흰 배경에서 2.16:1 이라 글자로 못 쓴다. */
+    mintText: '#00785C',
     mintSoft: '#E4F7F0',
     peach: '#FF8A66',
     peachSoft: '#FFF1EB',
     red: '#E5484D',
+    /** 흰 글씨를 얹는 빨강 면 (삭제 확인). red 는 3.91:1. */
+    redFill: '#C93A3F',
     redSoft: '#FDECEC',
     onColor: '#FFFFFF',
     /** 컬러 배경 위 오버레이 (칩·요일 도트). */
@@ -45,16 +51,23 @@ export const palette = {
     hairStrong: '#2F2C3D',
     ink: '#EDECF2',
     inkSoft: '#B3B0C2',
-    smoke: '#8A879A',
+    smoke: '#9C99AC',
     mist: '#5B586B',
     violet: '#9D86FF',
+    /**
+     * 다크에서 violet 을 그대로 면으로 쓰면 흰 글씨가 2.88:1 이다.
+     * 어두운 배경에서 강조로 쓰는 밝은 violet 과, 흰 글씨를 받치는 면은 같은 색일 수 없다.
+     */
+    violetFill: '#5B3FD9',
     violetDeep: '#C4B5FD',
     violetSoft: '#241F3D',
     mint: '#2BD6A6',
+    mintText: '#4EE0B8',
     mintSoft: '#12332A',
     peach: '#FF9D7D',
     peachSoft: '#3A2620',
     red: '#FF6B6F',
+    redFill: '#B03035',
     redSoft: '#38222A',
     onColor: '#FFFFFF',
     onColorSoft: '#FFFFFF2E',

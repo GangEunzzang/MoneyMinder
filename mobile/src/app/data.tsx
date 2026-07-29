@@ -74,7 +74,7 @@ export default function DataScreen() {
         <SectionHeader title="계정" />
         <Card list>
           <SettingRow label="로그아웃" dimmed />
-          <SettingRow label="회원 탈퇴" divider dimmed onPress={() => setLeaving(true)} />
+          <SettingRow label="회원 탈퇴" divider danger onPress={() => setLeaving(true)} />
         </Card>
 
         <Text variant="captionMutedLead" color="smoke" style={styles.note}>

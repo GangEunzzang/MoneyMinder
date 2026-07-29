@@ -63,7 +63,7 @@ export default function MonthlyReportScreen() {
         {label}
       </Text>
       <NumText variant="headlineStrong">{value}</NumText>
-      <Text variant="nanoSoft" color="mist">
+      <Text variant="nanoSoft" color="smoke">
         {meta}
       </Text>
     </Stack>
@@ -81,7 +81,7 @@ export default function MonthlyReportScreen() {
           </Pressable>
           <Text variant="caption">{monthHeading(ym)}</Text>
           <Pressable onPress={() => setYm(shiftMonth(ym, 1))} hitSlop={10} disabled={isThisMonth}>
-            <IconChevronRight size={14} color={isThisMonth ? c.hairStrong : c.smoke} />
+            <IconChevronRight size={14} color={isThisMonth ? c.mist : c.smoke} />
           </Pressable>
         </Row>
 
@@ -99,7 +99,7 @@ export default function MonthlyReportScreen() {
                 원
               </Text>
             </Row>
-            <Text variant="calloutBold" color={saved ? 'mint' : 'smoke'}>
+            <Text variant="calloutBold" color={saved ? 'mintText' : 'smoke'}>
               {headline(report)}
             </Text>
 
@@ -127,18 +127,18 @@ export default function MonthlyReportScreen() {
                     <Row gap="md" center>
                       <Text variant="bodyBold">{cat.label}</Text>
                       {row.delta != null ? (
-                        <Text variant="microBold" color={row.delta > 0 ? 'red' : 'mint'}>
+                        <Text variant="microBold" color={row.delta > 0 ? 'red' : row.delta < 0 ? 'mintText' : 'smoke'}>
                           {signedPercent(row.delta)}
                         </Text>
                       ) : (
-                        <Text variant="nanoSoft" color="mist">
+                        <Text variant="nanoSoft" color="smoke">
                           처음
                         </Text>
                       )}
                     </Row>
                     <Row gap="md" center>
                       <NumText variant="bodyBold">{wonUnit(row.amount)}</NumText>
-                      <NumText variant="nanoSoft" color="mist">
+                      <NumText variant="nanoSoft" color="smoke">
                         {row.share}%
                       </NumText>
                     </Row>

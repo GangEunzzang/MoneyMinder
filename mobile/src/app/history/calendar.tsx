@@ -137,7 +137,7 @@ export default function HistoryCalendar() {
                         </Stack>
                         <NumText
                           variant="subheadBold"
-                          color={t.type === 'income' ? 'mint' : 'ink'}
+                          color={t.type === 'income' ? 'mintText' : 'ink'}
                         >
                           {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
                         </NumText>

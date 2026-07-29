@@ -37,7 +37,7 @@ export function Button({
 }: Props) {
   const c = useColors();
   const tone = {
-    primary: { bg: c.violet, fg: 'onColor' as const },
+    primary: { bg: c.violetFill, fg: 'onColor' as const },
     secondary: { bg: c.surface2, fg: 'ink' as const },
     danger: { bg: c.redSoft, fg: 'red' as const },
   }[variant];

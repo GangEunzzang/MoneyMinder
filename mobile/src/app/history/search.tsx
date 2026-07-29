@@ -113,7 +113,7 @@ export default function HistorySearch() {
                             .join(' · ')}
                         </Text>
                       </Stack>
-                      <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>
+                      <NumText variant="subheadBold" color={t.type === 'income' ? 'mintText' : 'ink'}>
                         {signedWon(t.type === 'expense' ? -t.amount : t.amount)}
                       </NumText>
                     </Row>

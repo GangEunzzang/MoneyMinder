@@ -30,6 +30,7 @@ import {
 } from '@/shared/lib/format';
 import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme';
 import {
+  AmountText,
   Card,
   CategoryIcon,
   Divider,
@@ -181,12 +182,7 @@ export default function HistoryScreen() {
               <Text variant="microBold" color="smoke">
                 지출
               </Text>
-              <Row gap="xxs" style={styles.heroRow}>
-                <NumText variant="title1">{won(view.expense)}</NumText>
-                <Text variant="subheadBold" color="smoke">
-                  원
-                </Text>
-              </Row>
+              <AmountText value={won(view.expense)} />
               {pace.previous > 0 ? (
                 <Text variant="captionSoft" color={pace.saved >= 0 ? 'mintText' : 'red'}>
                   지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
@@ -194,7 +190,7 @@ export default function HistoryScreen() {
               ) : null}
             </Stack>
             <Divider />
-            <Row between>
+            <Row gap="5xl">
               <SummaryStat label="수입" value={`+${won(view.income)}`} tone="mintText" />
               <SummaryStat label="무지출" value={`${view.noSpendCount}일`} tone="violet" />
             </Row>
@@ -370,7 +366,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.xl,
     borderRadius: radius.pill,
   },
-  heroRow: { alignItems: 'baseline' },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },
   topLine: { borderTopWidth: StyleSheet.hairlineWidth },

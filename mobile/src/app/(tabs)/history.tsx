@@ -32,6 +32,7 @@ import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme'
 import {
   Card,
   CategoryIcon,
+  Divider,
   EmptyState,
   IconCalendar,
   IconChevronDown,
@@ -173,23 +174,27 @@ export default function HistoryScreen() {
         </Row>
 
         <Card style={styles.summary}>
-          <Row>
-            <SummaryCol label="수입" value={`+${won(view.income)}`} tone="mintText" />
-            <SummaryCol label="지출" value={`-${won(view.expense)}`} tone="ink" align="center" />
-            <SummaryCol
-              label="무지출"
-              value={`${view.noSpendCount}일`}
-              tone="violet"
-              align="flex-end"
-            />
-          </Row>
-          {pace.previous > 0 ? (
-            <Row center style={styles.pace}>
-              <Text variant="captionSoft" color={pace.saved >= 0 ? 'mintText' : 'red'}>
-                지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
-              </Text>
+          <Stack gap="xl">
+            {/* 내역에 들어온 이유는 "이 달에 얼마 썼나"다. 그 숫자 하나가 주인공이어야 한다. */}
+            <Stack gap="xxs">
+              <Row gap="xxs" style={styles.heroRow}>
+                <NumText variant="title1">-{won(view.expense)}</NumText>
+                <Text variant="subheadBold" color="smoke">
+                  원
+                </Text>
+              </Row>
+              {pace.previous > 0 ? (
+                <Text variant="captionSoft" color={pace.saved >= 0 ? 'mintText' : 'red'}>
+                  지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
+                </Text>
+              ) : null}
+            </Stack>
+            <Divider />
+            <Row between>
+              <SummaryStat label="수입" value={`+${won(view.income)}`} tone="mintText" />
+              <SummaryStat label="무지출" value={`${view.noSpendCount}일`} tone="violet" />
             </Row>
-          ) : null}
+          </Stack>
         </Card>
 
         {view.entries.length === 0 ? (
@@ -273,30 +278,25 @@ export default function HistoryScreen() {
   );
 }
 
-/**
- * 라벨은 값의 이름표지 색 코드가 아니다 — 색은 값에만 얹는다.
- * 세 칸을 등폭으로 두어야 숫자가 놓이는 세로 축이 생긴다.
- */
-function SummaryCol({
+/** 히어로 아래 보조 지표. 라벨은 값의 이름표지 색 코드가 아니다 — 색은 값에만 얹는다. */
+function SummaryStat({
   label,
   value,
   tone,
-  align = 'flex-start',
 }: {
   label: string;
   value: string;
-  tone: 'mintText' | 'ink' | 'violet';
-  align?: 'flex-start' | 'center' | 'flex-end';
+  tone: 'mintText' | 'violet';
 }) {
   return (
-    <Stack gap="xxs" style={[styles.col, { alignItems: align }]}>
+    <Row gap="sm" center>
       <Text variant="microBold" color="smoke">
         {label}
       </Text>
-      <NumText variant="subheadBold" color={tone}>
+      <NumText variant="captionSoft" color={tone}>
         {value}
       </NumText>
-    </Stack>
+    </Row>
   );
 }
 
@@ -367,8 +367,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
-  pace: { paddingTop: space['2xl'] },
-  col: { flex: 1 },
+  heroRow: { alignItems: 'baseline' },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },
   topLine: { borderTopWidth: StyleSheet.hairlineWidth },

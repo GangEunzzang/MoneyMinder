@@ -32,7 +32,6 @@ import { radius, screenPadding, shadow, space, useColors } from '@/shared/theme'
 import {
   Card,
   CategoryIcon,
-  Divider,
   EmptyState,
   IconCalendar,
   IconChevronDown,
@@ -174,21 +173,19 @@ export default function HistoryScreen() {
         </Row>
 
         <Card style={styles.summary}>
-          <Row between center>
-            <SummaryCol label="수입" value={`+${won(view.income)}`} tone="mint" labelTone="mint" />
-            <Divider style={styles.vline} />
-            <SummaryCol label="지출" value={`-${won(view.expense)}`} tone="ink" labelTone="red" />
-            <Divider style={styles.vline} />
+          <Row>
+            <SummaryCol label="수입" value={`+${won(view.income)}`} tone="mintText" />
+            <SummaryCol label="지출" value={`-${won(view.expense)}`} tone="ink" align="center" />
             <SummaryCol
               label="무지출"
               value={`${view.noSpendCount}일`}
               tone="violet"
-              labelTone="violet"
+              align="flex-end"
             />
           </Row>
           {pace.previous > 0 ? (
             <Row center style={styles.pace}>
-              <Text variant="micro" color={pace.saved >= 0 ? 'mintText' : 'red'}>
+              <Text variant="captionSoft" color={pace.saved >= 0 ? 'mintText' : 'red'}>
                 지난달 같은 기간보다 {wonUnit(pace.saved)} {pace.saved >= 0 ? '덜' : '더'} 쓰는 중
               </Text>
             </Row>
@@ -276,23 +273,27 @@ export default function HistoryScreen() {
   );
 }
 
+/**
+ * 라벨은 값의 이름표지 색 코드가 아니다 — 색은 값에만 얹는다.
+ * 세 칸을 등폭으로 두어야 숫자가 놓이는 세로 축이 생긴다.
+ */
 function SummaryCol({
   label,
   value,
   tone,
-  labelTone,
+  align = 'flex-start',
 }: {
   label: string;
   value: string;
-  tone: 'mint' | 'ink' | 'violet';
-  labelTone: 'mint' | 'red' | 'violet';
+  tone: 'mintText' | 'ink' | 'violet';
+  align?: 'flex-start' | 'center' | 'flex-end';
 }) {
   return (
-    <Stack gap="xs">
-      <Text variant="microBold" color={labelTone}>
+    <Stack gap="xxs" style={[styles.col, { alignItems: align }]}>
+      <Text variant="microBold" color="smoke">
         {label}
       </Text>
-      <NumText variant="bodyStrong" color={tone}>
+      <NumText variant="subheadBold" color={tone}>
         {value}
       </NumText>
     </Stack>
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
   },
   summary: { paddingVertical: space['3xl'], paddingHorizontal: space['2xl'] },
   pace: { paddingTop: space['2xl'] },
-  vline: { width: StyleSheet.hairlineWidth, height: 34 },
+  col: { flex: 1 },
   noSpendDot: { width: 8, height: 8, borderRadius: radius.xs },
   dayHead: { paddingTop: space['2xl'], paddingBottom: space.xs },
   topLine: { borderTopWidth: StyleSheet.hairlineWidth },

@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
     height: TRACK_HEIGHT,
-    padding: space.xxs,
-    gap: space.xxs,
-    borderRadius: radius.md,
+    padding: space.xs,
+    gap: space.xs,
+    borderRadius: radius.lg,
   },
   fill: { alignSelf: 'stretch' },
-  item: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radius.sm },
+  item: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radius.md },
 });

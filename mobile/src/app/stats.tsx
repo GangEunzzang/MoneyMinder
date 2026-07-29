@@ -6,8 +6,8 @@ import { findCategory } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
 import { monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
-import { monthlyReport } from '@/features/report';
-import { monthLabel, percent, won, wonUnit } from '@/shared/lib/format';
+import { headline, monthlyReport } from '@/features/report';
+import { monthLabel, percent, won } from '@/shared/lib/format';
 import { screenPadding, space, useColors } from '@/shared/theme';
 import {
   MonthPager,
@@ -62,15 +62,9 @@ export default function StatsScreen() {
               {monthLabel(new Date(`${ym}-01T00:00:00`))} 지출
             </Text>
             <AmountText value={won(report.expense)} size="title2Soft" />
-            {report.prevExpense > 0 ? (
-              <Text variant="callout" color={saved ? 'mintText' : 'red'}>
-                지난달보다 {wonUnit(report.saved)} {saved ? '덜' : '더'} 썼어요
-              </Text>
-            ) : (
-              <Text variant="callout" color="smoke">
-                비교할 지난달 기록이 없어요
-              </Text>
-            )}
+            <Text variant="callout" color={report.prevExpense <= 0 ? 'smoke' : saved ? 'mintText' : 'red'}>
+              {headline(report)}
+            </Text>
           </Stack>
         </Card>
 

@@ -1,5 +1,13 @@
-import { filterMonth, sumByCategory, sumExpense, type Transaction } from '@/entities/transaction/model';
+import {
+  filterMonth,
+  monthKey,
+  sumByCategory,
+  sumExpense,
+  type Transaction,
+} from '@/entities/transaction/model';
 import { shiftMonth } from '@/shared/lib/format';
+
+import { monthPace } from './pace';
 
 export type CategoryRow = {
   categoryId: string;
@@ -14,6 +22,8 @@ export type TrendPoint = { ym: string; expense: number; current: boolean };
 
 export type MonthlyReport = {
   ym: string;
+  /** 진행 중인 달인지. 비교 기준과 문구가 갈린다. */
+  running: boolean;
   expense: number;
   prevExpense: number;
   /** 지난달보다 덜 쓴 금액. 음수면 더 썼다는 뜻. */
@@ -63,19 +73,26 @@ export function trend(txns: readonly Transaction[], ym: string, months = 6): Tre
   });
 }
 
+/**
+ * 진행 중인 달은 지난달 "전체"와 견주면 안 된다 — 3일에 "지난달보다 55만원 덜 썼어요"는
+ * 아직 안 끝났을 뿐인데 잘한 것처럼 말한다. 내역의 `monthPace` 와 같은 기준을 쓴다.
+ */
 export function monthlyReport(
   txns: readonly Transaction[],
   ym: string,
   categoryLimit = 4,
+  today: Date = new Date(),
 ): MonthlyReport {
   const expense = sumExpense(filterMonth(txns, ym));
-  const prevExpense = sumExpense(filterMonth(txns, shiftMonth(ym, -1)));
+  const running = ym === monthKey(today);
+  const pace = monthPace(txns, ym, today);
 
   return {
     ym,
+    running,
     expense,
-    prevExpense,
-    saved: prevExpense - expense,
+    prevExpense: running ? pace.previous : sumExpense(filterMonth(txns, shiftMonth(ym, -1))),
+    saved: running ? pace.saved : sumExpense(filterMonth(txns, shiftMonth(ym, -1))) - expense,
     categories: categoryRows(txns, ym, categoryLimit),
     trend: trend(txns, ym),
   };
@@ -87,10 +104,14 @@ export function monthlyReport(
  */
 export function headline(report: MonthlyReport): string {
   if (report.prevExpense <= 0) return '이번 달 첫 기록이에요';
-  if (report.saved > 0) return `지난달보다 ${report.saved.toLocaleString('ko-KR')}원 덜 썼어요`;
-  if (report.saved < 0) return `지난달보다 ${(-report.saved).toLocaleString('ko-KR')}원 더 썼어요`;
 
-  return '지난달과 똑같이 썼어요';
+  const scope = report.running ? '지난달 같은 기간보다' : '지난달보다';
+  const tail = report.running ? '쓰는 중' : '썼어요';
+
+  if (report.saved > 0) return `${scope} ${report.saved.toLocaleString('ko-KR')}원 덜 ${tail}`;
+  if (report.saved < 0) return `${scope} ${(-report.saved).toLocaleString('ko-KR')}원 더 ${tail}`;
+
+  return report.running ? '지난달 같은 기간과 똑같이 쓰는 중' : '지난달과 똑같이 썼어요';
 }
 
 /** 가장 크게 늘어난 카테고리. 결산 하단 인사이트에 쓴다. */

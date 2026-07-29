@@ -87,24 +87,42 @@ describe('trend', () => {
 });
 
 describe('headline', () => {
-  it('덜 썼으면 아낀 금액을 말한다', () => {
-    expect(headline(monthlyReport(TXNS, '2026-06'))).toBe('이번 달 첫 기록이에요');
+  // 끝난 달 기준. 오늘이 언제든 결과가 같아야 한다.
+  const DONE = new Date(2026, 7, 15);
+  // 진행 중인 달 기준 (7월 15일).
+  const RUNNING = new Date(2026, 6, 15);
+
+  it('끝난 달은 지난달 전체와 견주고 과거형으로 말한다', () => {
+    expect(headline(monthlyReport(TXNS, '2026-07', 4, DONE))).toBe('지난달보다 50,000원 더 썼어요');
   });
 
-  it('더 썼으면 더 쓴 금액을 말한다', () => {
-    expect(headline(monthlyReport(TXNS, '2026-07'))).toBe('지난달보다 50,000원 더 썼어요');
+  it('진행 중인 달은 지난달 같은 기간과 견주고 진행형으로 말한다', () => {
+    const txns = [spend('2026-07-10', 30_000), spend('2026-06-10', 10_000), spend('2026-06-28', 90_000)];
+
+    // 6월 28일 지출은 아직 오지 않은 날이라 비교에서 빠진다.
+    expect(headline(monthlyReport(txns, '2026-07', 4, RUNNING))).toBe(
+      '지난달 같은 기간보다 20,000원 더 쓰는 중',
+    );
   });
 
   it('비교할 지난달이 없으면 지난달을 들먹이지 않는다', () => {
-    expect(headline(monthlyReport([spend('2026-07-01', 1000)], '2026-07'))).toBe(
+    expect(headline(monthlyReport([spend('2026-07-01', 1000)], '2026-07', 4, DONE))).toBe(
       '이번 달 첫 기록이에요',
     );
   });
 
-  it('똑같이 썼으면 그렇게 말한다', () => {
+  it('끝난 달이 똑같으면 과거형으로 말한다', () => {
     const same = [spend('2026-07-01', 1000), spend('2026-06-01', 1000)];
 
-    expect(headline(monthlyReport(same, '2026-07'))).toBe('지난달과 똑같이 썼어요');
+    expect(headline(monthlyReport(same, '2026-07', 4, DONE))).toBe('지난달과 똑같이 썼어요');
+  });
+
+  it('진행 중인 달이 똑같으면 진행형으로 말한다', () => {
+    const same = [spend('2026-07-01', 1000), spend('2026-06-01', 1000)];
+
+    expect(headline(monthlyReport(same, '2026-07', 4, RUNNING))).toBe(
+      '지난달 같은 기간과 똑같이 쓰는 중',
+    );
   });
 });
 

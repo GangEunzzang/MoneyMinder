@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { space } from '../theme';
@@ -21,14 +22,25 @@ const BACKSPACE = '⌫';
  *  - 시안이 카테고리·결제수단을 키패드와 같은 화면에 놓았다. 자판이 덮으면 못 고른다.
  */
 export function Keypad({ value, onChange }: { value: string; onChange: (next: string) => void }) {
+  /**
+   * 채워진 금액을 고치러 들어왔을 때 첫 숫자는 이어 붙이지 않고 갈아엎는다.
+   * 17,000원을 고치려고 1을 눌렀는데 170,001이 되면 아무도 그걸 원하지 않는다.
+   * 이어 쓰고 싶으면 ⌫ 를 한 번 누르면 된다 — 그 순간부터는 평범한 키패드다.
+   */
+  const [typed, setTyped] = useState(false);
+
   const press = (key: string) => {
     if (key === BACKSPACE) {
+      setTyped(true);
       onChange(value.slice(0, -1));
 
       return;
     }
+
+    const base = typed ? value : '';
+    setTyped(true);
     // 0 만 남는 입력은 만들지 않는다 — "000" 은 금액이 아니다.
-    const next = value === '' && key.startsWith('0') ? '' : value + key;
+    const next = base === '' && key.startsWith('0') ? '' : base + key;
     if (next.length <= MAX_DIGITS) onChange(next);
   };
 

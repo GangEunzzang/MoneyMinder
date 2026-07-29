@@ -17,14 +17,14 @@ import {
   startOfWeek,
   StreakCard,
   weekProgress,
+  WeekDots,
 } from '@/features/mission';
-import { KOREAN_WEEKDAYS, weekdayIndex, won } from '@/shared/lib/format';
+import { weekdayIndex, won } from '@/shared/lib/format';
 import { type ColorName, radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
   Card,
   ConfirmDialog,
   IconAward,
-  IconCheck,
   IconChevronRight,
   IconPiggy,
   IconSettings,
@@ -150,29 +150,7 @@ export default function MissionScreen() {
             </Text>
           </Row>
 
-          <Row between>
-            {KOREAN_WEEKDAYS.map((label, i) => {
-              const done = view.week[i];
-              const today = i === view.todayIndex;
-
-              return (
-                <Stack key={label} gap="sm" center>
-                  <Text variant="nanoSoft" color="smoke">
-                    {label}
-                  </Text>
-                  <View
-                    style={[
-                      styles.dot,
-                      { backgroundColor: done ? c.violet : today ? c.violetSoft : c.surface2 },
-                      today && !done ? { borderWidth: 2, borderColor: c.violet } : null,
-                    ]}
-                  >
-                    {done ? <IconCheck size={15} color={c.onColor} strokeWidth={2.6} /> : null}
-                  </View>
-                </Stack>
-              );
-            })}
-          </Row>
+          <WeekDots week={view.week} todayIndex={view.todayIndex} />
 
           <Text variant="micro" color="smoke" style={styles.hint}>
             {view.achieved >= weeklyGoal
@@ -288,13 +266,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dot: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.xl,
     alignItems: 'center',
     justifyContent: 'center',
   },

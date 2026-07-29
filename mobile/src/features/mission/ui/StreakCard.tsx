@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { KOREAN_WEEKDAYS } from '@/shared/lib/format';
 import { radius, space, useColors } from '@/shared/theme';
-import { AmountText, HeroCard, IconCheck, IconFlame, NumText, Row, Stack, Text } from '@/shared/ui';
+import { AmountText, HeroCard, IconCheck, IconFlame, NumText, Row, Text } from '@/shared/ui';
+
+import { WeekDots } from './WeekDots';
 
 type Props = {
   streak: number;
@@ -44,24 +45,7 @@ export function StreakCard({
 
       <AmountText value={String(streak)} size="display" color="onColor" unit="일째" />
 
-      <Row between style={styles.week}>
-        {KOREAN_WEEKDAYS.map((label, i) => (
-          <Stack key={label} gap="md" center>
-            <Text variant="nanoSoft" color="onColorMid">
-              {label}
-            </Text>
-            <View
-              style={[
-                styles.dot,
-                { backgroundColor: week[i] ? c.onColor : c.onColorSoft },
-                i === todayIndex && !week[i] ? { borderWidth: 2, borderColor: c.onColor } : null,
-              ]}
-            >
-              {week[i] ? <IconCheck size={14} color={c.violetFill} strokeWidth={2.6} /> : null}
-            </View>
-          </Stack>
-        ))}
-      </Row>
+      <WeekDots week={week} todayIndex={todayIndex} onColor />
 
       {showVerify ? (
         <Pressable
@@ -86,14 +70,6 @@ export function StreakCard({
 const styles = StyleSheet.create({
   pill: { paddingHorizontal: space.lg, paddingVertical: space.xs, borderRadius: radius.pill },
   count: { alignItems: 'baseline' },
-  week: { paddingTop: space.xs },
-  dot: {
-    width: 26,
-    height: 26,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   verify: {
     flexDirection: 'row',
     alignItems: 'center',

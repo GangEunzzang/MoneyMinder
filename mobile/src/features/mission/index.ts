@@ -27,3 +27,4 @@ export {
 export { missionProgress, type Progress, remainingLabel } from './model/progress';
 export { Badge } from './ui/Badge';
 export { StreakCard } from './ui/StreakCard';
+export { WeekDots } from './ui/WeekDots';

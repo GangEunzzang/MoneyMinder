@@ -11,6 +11,8 @@ import {
   monthKey,
   sumExpense,
   sumIncome,
+  txnMeta,
+  txnTitle,
   type Transaction,
 } from '@/entities/transaction/model';
 import { activeCount, applyFilter, isDefault, useFilter } from '@/entities/filter/store';
@@ -93,7 +95,6 @@ export default function HistoryScreen() {
   const renderRow = (t: Transaction, index: number) => {
     const cat = findCategory(categories, t.categoryId);
     const method = t.paymentMethodId ? view.methodName.get(t.paymentMethodId) : null;
-    const meta = [cat.label, method, t.autoRecorded ? '자동기록' : null].filter(Boolean).join(' · ');
 
     return (
       <Pressable
@@ -105,10 +106,10 @@ export default function HistoryScreen() {
           <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} />
           <Stack gap="xxs" style={styles.mid}>
             <Text variant="body" numberOfLines={1}>
-              {t.merchant || cat.label}
+              {txnTitle(t, cat.label)}
             </Text>
             <Text variant="microSoft" color="smoke" numberOfLines={1}>
-              {meta}
+              {txnMeta(t, cat.label, method)}
             </Text>
           </Stack>
           <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>

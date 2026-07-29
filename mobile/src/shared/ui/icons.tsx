@@ -114,7 +114,9 @@ export function IconArrowDown({ size = 18, color = '#00C896', strokeWidth = 1.9 
 export function IconCafe({ size = 18, color = '#4E5968', strokeWidth = 1.7 }: IconProps) {
   return (
     <Svg {...base(size)}>
-      <Path d="M7 8h10l-.8 8a2 2 0 01-2 1.8H9.8a2 2 0 01-2-1.8L7 8zM9.5 8V6a2.5 2.5 0 015 0v2" {...stroke(color, strokeWidth)} />
+      <Path d="M6 9h10v5.5a4 4 0 01-4 4h-2a4 4 0 01-4-4V9z" {...stroke(color, strokeWidth)} />
+      <Path d="M16 10.5h1.3a2.4 2.4 0 010 4.8H16" {...stroke(color, strokeWidth)} />
+      <Path d="M9 4.5v2M13 4.5v2" {...stroke(color, strokeWidth)} />
     </Svg>
   );
 }

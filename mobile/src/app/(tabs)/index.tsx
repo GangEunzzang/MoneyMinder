@@ -6,7 +6,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppState } from '@/entities/app/store';
 import { findCategory } from '@/entities/category/model';
 import { useCategories } from '@/entities/category/store';
-import { filterMonth, monthKey, sumExpense } from '@/entities/transaction/model';
+import { usePaymentMethods } from '@/entities/payment-method/store';
+import {
+  filterMonth,
+  monthKey,
+  sumExpense,
+  txnMeta,
+  txnTitle,
+} from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { currentStreak, startOfWeek, StreakCard, weekProgress } from '@/features/mission';
 import { monthLabel, percent, signedWon, weekdayIndex, won, wonUnit } from '@/shared/lib/format';
@@ -33,6 +40,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const transactions = useLedger((s) => s.transactions);
   const categories = useCategories();
+  const methods = usePaymentMethods((s) => s.methods);
   const budget = useLedger((s) => s.budget);
   const alerted = useAppState((s) => s.budgetAlerted);
   const alertBudget = useAppState((s) => s.alertBudget);
@@ -50,10 +58,11 @@ export default function HomeScreen() {
       week: done,
       todayIndex: weekdayIndex(today),
       recent: transactions.slice(0, 4),
+      methodName: new Map(methods.map((m) => [m.id, m.name])),
       ym: monthKey(today),
       month: monthLabel(today),
     };
-  }, [transactions, budget]);
+  }, [transactions, budget, methods]);
 
   const over = view.left < 0;
   const warnBudget = over && budget > 0 && !alerted.includes(view.ym);
@@ -155,10 +164,10 @@ export default function HomeScreen() {
                       <CategoryIcon icon={cat.icon} tint={cat.tint} tintSoft={cat.tintSoft} />
                       <Stack gap="xxs" style={styles.mid}>
                         <Text variant="body" numberOfLines={1}>
-                          {t.merchant || cat.label}
+                          {txnTitle(t, cat.label)}
                         </Text>
                         <Text variant="microSoft" color="smoke" numberOfLines={1}>
-                          {t.autoRecorded ? `${cat.label} · 자동기록` : cat.label}
+                          {txnMeta(t, cat.label, view.methodName.get(t.paymentMethodId ?? ''))}
                         </Text>
                       </Stack>
                       <NumText variant="subheadBold" color={t.type === 'income' ? 'mint' : 'ink'}>

@@ -28,6 +28,24 @@ export function isExpense(t: Transaction): boolean {
   return t.type === 'expense';
 }
 
+/** 목록 행의 제목. 상호가 없으면 카테고리가 대신 선다. */
+export function txnTitle(t: Transaction, categoryLabel: string): string {
+  return t.merchant || categoryLabel;
+}
+
+/**
+ * 제목 아래 보조 줄. 제목이 이미 카테고리면 카테고리를 빼야 같은 말이 두 번 나오지 않는다.
+ */
+export function txnMeta(t: Transaction, categoryLabel: string, methodName?: string | null): string {
+  const parts = [
+    t.merchant ? categoryLabel : null,
+    methodName,
+    t.autoRecorded ? '자동기록' : null,
+  ];
+
+  return parts.filter(Boolean).join(' · ');
+}
+
 export function sumExpense(txns: readonly Transaction[]): number {
   return txns.reduce((sum, t) => (isExpense(t) ? sum + t.amount : sum), 0);
 }

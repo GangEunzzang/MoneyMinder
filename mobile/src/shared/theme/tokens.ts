@@ -30,6 +30,8 @@ export const palette = {
     redFill: '#C93A3F',
     redSoft: '#FDECEC',
     onColor: '#FFFFFF',
+    /** ink 면 위 글자. ink 는 테마마다 밝기가 뒤집히므로 흰색 고정이면 다크에서 사라진다. */
+    onInk: '#FFFFFF',
     /** 컬러 배경 위 오버레이 (칩·요일 도트). */
     onColorSoft: '#FFFFFF2E',
     /** 컬러 배경 위 텍스트 3단. 흰색 하나로는 본문·설명·라벨의 층이 무너진다. */
@@ -70,6 +72,7 @@ export const palette = {
     redFill: '#B03035',
     redSoft: '#38222A',
     onColor: '#FFFFFF',
+    onInk: '#17151D',
     onColorSoft: '#FFFFFF2E',
     onColorHigh: '#FFFFFFCC',
     onColorMid: '#FFFFFFB3',

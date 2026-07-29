@@ -22,7 +22,7 @@ export function Chip({
       onPress={onPress}
       style={[styles.chip, { backgroundColor: selected ? c.ink : c.surface2 }]}
     >
-      <Text variant="callout" style={{ color: selected ? c.onColor : c.inkSoft }}>
+      <Text variant="callout" style={{ color: selected ? c.onInk : c.inkSoft }}>
         {label}
       </Text>
     </Pressable>
@@ -60,7 +60,7 @@ export function PayChip({
     >
       {icon}
       {label ? (
-        <Text variant="calloutBold" style={{ color: selected ? c.onColor : c.inkSoft }}>
+        <Text variant="calloutBold" style={{ color: selected ? c.onInk : c.inkSoft }}>
           {label}
         </Text>
       ) : null}

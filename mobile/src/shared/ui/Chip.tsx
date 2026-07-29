@@ -20,9 +20,9 @@ export function Chip({
       accessibilityRole="button"
       accessibilityState={{ selected: !!selected }}
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: selected ? c.ink : c.surface2 }]}
+      style={[styles.chip, { backgroundColor: selected ? c.violetFill : c.surface2 }]}
     >
-      <Text variant="callout" style={{ color: selected ? c.onInk : c.inkSoft }}>
+      <Text variant="callout" style={{ color: selected ? c.onColor : c.inkSoft }}>
         {label}
       </Text>
     </Pressable>
@@ -55,12 +55,12 @@ export function PayChip({
       style={[
         styles.payChip,
         label ? null : styles.payChipIconOnly,
-        { backgroundColor: selected ? c.ink : c.surface2 },
+        { backgroundColor: selected ? c.violetFill : c.surface2 },
       ]}
     >
       {icon}
       {label ? (
-        <Text variant="calloutBold" style={{ color: selected ? c.onInk : c.inkSoft }}>
+        <Text variant="calloutBold" style={{ color: selected ? c.onColor : c.inkSoft }}>
           {label}
         </Text>
       ) : null}

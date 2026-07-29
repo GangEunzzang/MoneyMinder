@@ -125,7 +125,7 @@ export default function TransactionDetail() {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['4xl'] },
   hero: { paddingTop: space['5xl'], paddingBottom: space['4xl'] },
-  footer: { paddingTop: space['4xl'] },
+  footer: { marginTop: 'auto', paddingTop: space['4xl'] },
   action: { flex: 1 },
   gone: { flex: 1 },
 });

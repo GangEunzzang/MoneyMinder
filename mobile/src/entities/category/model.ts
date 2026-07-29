@@ -34,7 +34,7 @@ export const CATEGORY_TINTS: { tint: ColorName; tintSoft: ColorName }[] = [
   { tint: 'mint', tintSoft: 'mintSoft' },
   { tint: 'red', tintSoft: 'redSoft' },
   { tint: 'violetDeep', tintSoft: 'violetSoft' },
-  { tint: 'mist', tintSoft: 'surface2' },
+  { tint: 'smoke', tintSoft: 'surface2' },
 ];
 
 export const CATEGORY_ICONS: IconKey[] = [
@@ -62,14 +62,14 @@ export const SEED_CATEGORIES: readonly Category[] = [
   { id: 'shopping', label: '쇼핑', icon: 'bag', tint: 'violetDeep', tintSoft: 'violetSoft' },
   { id: 'culture', label: '문화', icon: 'film', tint: 'violet', tintSoft: 'violetSoft' },
   { id: 'health', label: '의료', icon: 'health', tint: 'red', tintSoft: 'redSoft' },
-  { id: 'education', label: '교육', icon: 'book', tint: 'violetDeep', tintSoft: 'violetSoft' },
-  { id: 'living', label: '생활', icon: 'house', tint: 'mint', tintSoft: 'mintSoft' },
-  { id: 'telecom', label: '통신', icon: 'phone', tint: 'violet', tintSoft: 'violetSoft' },
-  { id: 'beauty', label: '미용', icon: 'scissors', tint: 'peach', tintSoft: 'peachSoft' },
+  { id: 'education', label: '교육', icon: 'book', tint: 'mint', tintSoft: 'mintSoft' },
+  { id: 'living', label: '생활', icon: 'house', tint: 'peach', tintSoft: 'peachSoft' },
+  { id: 'telecom', label: '통신', icon: 'phone', tint: 'violetDeep', tintSoft: 'violetSoft' },
+  { id: 'beauty', label: '미용', icon: 'scissors', tint: 'violet', tintSoft: 'violetSoft' },
   { id: 'travel', label: '여행', icon: 'plane', tint: 'mint', tintSoft: 'mintSoft' },
-  { id: 'subscription', label: '구독', icon: 'tv', tint: 'red', tintSoft: 'redSoft' },
+  { id: 'subscription', label: '구독', icon: 'tv', tint: 'violetDeep', tintSoft: 'violetSoft' },
   { id: 'salary', label: '수입', icon: 'wallet', tint: 'mint', tintSoft: 'mintSoft', income: true },
-  { id: 'etc', label: '기타', icon: 'wallet', tint: 'mist', tintSoft: 'surface2' },
+  { id: 'etc', label: '기타', icon: 'wallet', tint: 'smoke', tintSoft: 'surface2' },
 ] as const;
 
 /** 지워진 카테고리를 참조하는 옛 기록이 화면을 깨뜨리지 않도록 여기로 떨어뜨린다. */
@@ -77,7 +77,7 @@ export const FALLBACK: Category = {
   id: 'etc',
   label: '기타',
   icon: 'wallet',
-  tint: 'mist',
+  tint: 'smoke',
   tintSoft: 'surface2',
 };
 

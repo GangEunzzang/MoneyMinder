@@ -34,11 +34,11 @@ import {
   CategoryIcon,
   ConfirmDialog,
   IconBell,
-  IconChevronRight,
   IconWarning,
   NumText,
   ProgressBar,
   Row,
+  SectionHeader,
   Stack,
   Text,
 } from '@/shared/ui';
@@ -127,7 +127,7 @@ export default function HomeScreen() {
         />
 
         <Stack gap="xl">
-          <Text variant="calloutBold">이번 달 지출</Text>
+          <SectionHeader title="이번 달 지출" first />
           <Card>
             <Stack gap="xl">
               <Row between style={styles.spendTop}>
@@ -164,17 +164,9 @@ export default function HomeScreen() {
         </Stack>
 
         <Stack gap="xl">
-          <Row between center>
-            <Text variant="subheadBold">최근 기록</Text>
-            <Pressable onPress={() => router.push('/history')} hitSlop={10}>
-              <Row gap="xxs" center>
-                <Text variant="captionSoft" color="smoke">
-                  전체
-                </Text>
-                <IconChevronRight size={14} color={c.smoke} />
-              </Row>
-            </Pressable>
-          </Row>
+          <Pressable onPress={() => router.push('/history')} hitSlop={10}>
+            <SectionHeader title="최근 기록" meta="전체" first />
+          </Pressable>
 
           {view.recent.length === 0 ? (
             <Card>
@@ -217,8 +209,8 @@ export default function HomeScreen() {
 
       <ConfirmDialog
         visible={warnBudget}
-        icon={<IconWarning size={24} color={c.violet} />}
-        iconTone="violetSoft"
+        icon={<IconWarning size={24} color={c.red} />}
+        iconTone="redSoft"
         tone="primary"
         title="예산을 초과했어요"
         message={`${view.month} 예산을 넘겼어요\n무지출로 다시 균형을 맞춰볼까요?`}

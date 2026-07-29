@@ -180,7 +180,7 @@ export default function MonthlyReportScreen() {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['5xl'] },
   monthBar: { paddingTop: space.md, paddingBottom: space['4xl'] },
-  amount: { alignItems: 'flex-end' },
+  amount: { alignItems: 'baseline' },
   split: { marginTop: space['5xl'] },
   stats: { paddingVertical: space['3xl'] },
   stat: { flex: 1 },

@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  count: { alignItems: 'flex-end', paddingTop: space['6xl'] },
+  count: { alignItems: 'baseline', paddingTop: space['6xl'] },
   title: { paddingTop: space.xl, textAlign: 'center' },
   desc: { paddingTop: space.xl, textAlign: 'center', maxWidth: 280 },
   actions: { paddingHorizontal: screenPadding },

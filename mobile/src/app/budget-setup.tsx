@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   head: { paddingHorizontal: screenPadding, paddingTop: space['5xl'] },
   amountWrap: { paddingVertical: space['5xl'] },
-  amountRow: { alignItems: 'flex-end' },
+  amountRow: { alignItems: 'baseline' },
   presets: { flexWrap: 'wrap', rowGap: space.sm, paddingHorizontal: screenPadding },
   note: {
     marginHorizontal: screenPadding,

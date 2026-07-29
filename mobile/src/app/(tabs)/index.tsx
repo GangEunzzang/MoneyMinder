@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  spendTop: { alignItems: 'flex-end' },
+  spendTop: { alignItems: 'baseline' },
   charge: { paddingHorizontal: space.xs },
   chargeDot: { width: 5, height: 5, borderRadius: radius.pill },
   mid: { flex: 1, minWidth: 0 },

@@ -285,11 +285,11 @@ function MethodIcon({ method, selected }: { method: PaymentMethod; selected: boo
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  topbar: { paddingHorizontal: screenPadding, paddingTop: space.xs },
+  topbar: { paddingHorizontal: screenPadding, paddingTop: space['4xl'] },
   close: { transform: [{ rotate: '45deg' }] },
   spacer: { width: 24 },
   amountWrap: { paddingTop: space['6xl'] - 2, paddingBottom: space['5xl'] - 2 },
-  amountRow: { alignItems: 'flex-end' },
+  amountRow: { alignItems: 'baseline' },
   section: { paddingHorizontal: screenPadding },
   sectionTop: { paddingHorizontal: screenPadding, paddingTop: space['4xl'] },
   detailWrap: { paddingHorizontal: screenPadding, paddingTop: space['2xl'] },

@@ -74,5 +74,5 @@ export function AmountText({
 
 const styles = StyleSheet.create({
   tabular: { fontVariant: ['tabular-nums'] },
-  amount: { flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
+  amount: { flexDirection: 'row', alignItems: 'baseline', gap: 3 },
 });

@@ -205,7 +205,7 @@ export default function MissionDetail() {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: screenPadding, paddingBottom: space['5xl'] },
   eyebrow: { paddingTop: space['3xl'] },
-  count: { alignItems: 'flex-end', paddingTop: space.xs },
+  count: { alignItems: 'baseline', paddingTop: space.xs },
   week: { paddingTop: space['5xl'] },
   day: { flex: 1 },
   dot: { width: 32, height: 32, borderRadius: radius.pill },

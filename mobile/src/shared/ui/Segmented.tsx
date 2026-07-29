@@ -32,6 +32,7 @@ export function Segmented<T extends string>({ items, value, onChange, width }: P
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             onPress={() => onChange(item.value)}
+            hitSlop={{ top: HIT, bottom: HIT }}
             style={[styles.item, selected && { backgroundColor: c.surface }]}
           >
             <Text variant="callout" color={selected ? (item.color ?? 'ink') : 'smoke'}>
@@ -44,14 +45,18 @@ export function Segmented<T extends string>({ items, value, onChange, width }: P
   );
 }
 
+/** 보이는 높이는 38이지만 손가락에는 44를 준다. 작아 보이자고 오탭을 늘릴 수는 없다. */
+const TRACK_HEIGHT = 38;
+const HIT = (44 - TRACK_HEIGHT) / 2;
+
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
-    height: 44,
-    padding: space.xs,
-    gap: space.xs,
-    borderRadius: radius.lg,
+    height: TRACK_HEIGHT,
+    padding: space.xxs,
+    gap: space.xxs,
+    borderRadius: radius.md,
   },
   fill: { alignSelf: 'stretch' },
-  item: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radius.md },
+  item: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: radius.sm },
 });

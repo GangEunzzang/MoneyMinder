@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     gap: space['3xl'],
   },
   hero: { padding: space['4xl'], borderRadius: radius['3xl'] },
-  count: { alignItems: 'flex-end' },
+  count: { alignItems: 'baseline' },
   cell: { flex: 1 },
   disc: {
     width: 56,

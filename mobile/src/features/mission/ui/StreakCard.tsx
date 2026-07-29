@@ -93,7 +93,7 @@ export function StreakCard({
 const styles = StyleSheet.create({
   card: { borderRadius: radius['3xl'], padding: space['4xl'] },
   pill: { paddingHorizontal: space.lg, paddingVertical: space.xs, borderRadius: radius.pill },
-  count: { alignItems: 'flex-end' },
+  count: { alignItems: 'baseline' },
   week: { paddingTop: space.xs },
   dot: {
     width: 26,

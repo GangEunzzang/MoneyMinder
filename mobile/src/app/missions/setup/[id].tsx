@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   hero: { padding: space['5xl'], borderRadius: radius['3xl'], marginTop: space['3xl'] },
   icon: { width: 56, height: 56, borderRadius: radius['2xl'] },
   q: { paddingTop: space['5xl'], paddingBottom: space.md },
-  targetRow: { alignItems: 'flex-end', paddingVertical: space.lg },
+  targetRow: { alignItems: 'baseline', paddingVertical: space.lg },
   choices: { flexWrap: 'wrap', rowGap: space.sm },
   note: { padding: space['2xl'], borderRadius: radius.xl, marginTop: space['4xl'] },
   cta: { marginTop: space['4xl'] },

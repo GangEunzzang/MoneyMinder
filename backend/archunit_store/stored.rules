@@ -1,0 +1,8 @@
+#
+#Sat Aug 01 00:40:22 KST 2026
+domain\ \uACC4\uCE35\uC740\ infrastructure\ \uB97C\ import\ \uD558\uC9C0\ \uC54A\uB294\uB2E4,\ because\ \uC758\uC874\uC740\ \uC548\uCABD\uC73C\uB85C\uB9CC\ \uD750\uB978\uB2E4\ \u2014\ \uC800\uC7A5\uC18C\uB97C\ \uBC14\uAFD4\uB3C4\ \uB3C4\uBA54\uC778\uC740\ \uADF8\uB300\uB85C\uC5EC\uC57C\ \uD55C\uB2E4=67d6faba-374c-4ed0-9e12-70f0a42bd222
+methods\ that\ are\ declared\ in\ classes\ that\ have\ simple\ name\ ending\ with\ 'Service'\ and\ are\ public\ and\ have\ name\ starting\ with\ 'get'\ should\ @Transactional(readOnly\ \=\ true)\ \uB97C\ \uBD99\uC778\uB2E4,\ because\ \uC4F0\uAE30\ \uD2B8\uB79C\uC7AD\uC158\uC73C\uB85C\ \uC870\uD68C\uAC00\ \uB3CC\uBA74\ flush\u00B7dirty\ check\ \uBE44\uC6A9\uC744\ \uADF8\uB300\uB85C\ \uBB38\uB2E4=cbf34924-3679-49fa-9b8f-a66aa86f0701
+Repository\ \uAD6C\uD604\uCCB4\uB294\ infrastructure\ \uC544\uB798\ \uB454\uB2E4=d42d11ce-e51c-4e59-ad47-b1ab642b2382
+domain\ \uACC4\uCE35\uC740\ application\u00B7presentation\ \uC744\ import\ \uD558\uC9C0\ \uC54A\uB294\uB2E4,\ because\ \uC870\uD68C\ \uACB0\uACFC\uB97C\ DTO\ \uB85C\ \uBC14\uB85C\ \uBC1B\uC73C\uB824\uB2E4\ \uACC4\uCE35\uC774\ \uB4A4\uC9D1\uD614\uB2E4=aaa1498f-6d02-4b61-ac54-3cc4e41ae758
+classes\ that\ reside\ in\ a\ package\ 'com.moneyminder..'\ should\ \uC18C\uBB38\uC790\ \uD328\uD0A4\uC9C0\uC5D0\ \uC788\uB2E4=f52c4353-6f88-4b84-9cc1-559e111b9808
+infrastructure\ \uB294\ presentation\ \uC744\ import\ \uD558\uC9C0\ \uC54A\uB294\uB2E4=d53f52be-dbc1-4306-a6c6-23d2271f015c

@@ -18,7 +18,11 @@ public record AccountBookServiceUpdateReq(
 
         String memo,
 
-        String userEmail
+        String userEmail,
+
+        Long paymentMethodId,
+
+        String merchant
 ) {
 
 
@@ -30,6 +34,8 @@ public record AccountBookServiceUpdateReq(
                 .amount(amount)
                 .transactionDate(transactionDate)
                 .memo(memo)
+                .paymentMethodId(paymentMethodId)
+                .merchant(merchant)
                 .build();
     }
 }

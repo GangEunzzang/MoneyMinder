@@ -51,19 +51,33 @@ public class AccountBookEntity extends BaseTimeEntity {
     @Comment("메모")
     private String memo;
 
+    @Comment("결제수단 식별자")
+    private Long paymentMethodId;
+
+    @Comment("상호")
+    private String merchant;
+
+    @Comment("고정지출에서 자동 기록된 건지")
+    @ColumnDefault("false")
+    private Boolean autoRecorded = Boolean.FALSE;
+
     @Comment("삭제 여부")
     @ColumnDefault("false")
     private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
     private AccountBookEntity(Long id, String categoryCode, String userEmail, BigInteger amount,
-            LocalDate transactionDate, String memo, boolean isDeleted) {
+            LocalDate transactionDate, String memo, Long paymentMethodId, String merchant, boolean autoRecorded,
+            boolean isDeleted) {
         this.id = id;
         this.categoryCode = categoryCode;
         this.userEmail = userEmail;
         this.amount = amount;
         this.transactionDate = transactionDate;
         this.memo = memo;
+        this.paymentMethodId = paymentMethodId;
+        this.merchant = merchant;
+        this.autoRecorded = autoRecorded;
         this.isDeleted = isDeleted;
     }
 
@@ -75,6 +89,9 @@ public class AccountBookEntity extends BaseTimeEntity {
                 .amount(accountBook.getAmount())
                 .transactionDate(accountBook.getTransactionDate())
                 .memo(accountBook.getMemo())
+                .paymentMethodId(accountBook.getPaymentMethodId())
+                .merchant(accountBook.getMerchant())
+                .autoRecorded(accountBook.isAutoRecorded())
                 .build();
     }
 
@@ -86,6 +103,9 @@ public class AccountBookEntity extends BaseTimeEntity {
                 .amount(amount)
                 .transactionDate(transactionDate)
                 .memo(memo)
+                .paymentMethodId(paymentMethodId)
+                .merchant(merchant)
+                .autoRecorded(Boolean.TRUE.equals(autoRecorded))
                 .build();
     }
 }

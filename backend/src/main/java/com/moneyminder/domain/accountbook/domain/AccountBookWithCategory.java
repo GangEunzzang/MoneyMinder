@@ -12,6 +12,9 @@ public record AccountBookWithCategory(
         BigInteger amount,
         LocalDate transactionDate,
         String memo,
+        Long paymentMethodId,
+        String merchant,
+        Boolean autoRecorded,
         String categoryCode,
         String categoryName,
         CategoryType categoryType

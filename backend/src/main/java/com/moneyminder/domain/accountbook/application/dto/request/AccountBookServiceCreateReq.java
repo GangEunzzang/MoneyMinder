@@ -16,7 +16,11 @@ public record AccountBookServiceCreateReq(
 
         LocalDate transactionDate,
 
-        String userEmail
+        String userEmail,
+
+        Long paymentMethodId,
+
+        String merchant
 ) {
 
     public AccountBook toDomain() {
@@ -26,6 +30,8 @@ public record AccountBookServiceCreateReq(
                 .amount(amount)
                 .transactionDate(transactionDate)
                 .memo(memo)
+                .paymentMethodId(paymentMethodId)
+                .merchant(merchant)
                 .build();
     }
 

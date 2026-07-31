@@ -22,7 +22,11 @@ public record AccountBookUpdateReq(
         LocalDate transactionDate,
 
         @NotNull
-        String memo
+        String memo,
+
+        Long paymentMethodId,
+
+        String merchant
 
 ) {
 
@@ -33,6 +37,8 @@ public record AccountBookUpdateReq(
                 .categoryCode(categoryCode)
                 .transactionDate(transactionDate)
                 .memo(memo)
+                .paymentMethodId(paymentMethodId)
+                .merchant(merchant)
                 .userEmail(email)
                 .build();
     }

@@ -10,13 +10,19 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: false
         use_sql_comments: false
         show_sql: false
         dialect: org.hibernate.dialect.MySQLDialect
+
+  flyway:
+    enabled: true
+    # 이미 테이블이 있는 DB 에 처음 붙일 때 V1 을 실행하지 않고 기준선으로 삼는다
+    baseline-on-migrate: true
+    baseline-version: 1
 
   data:
     redis:

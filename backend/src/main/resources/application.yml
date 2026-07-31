@@ -31,7 +31,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: health,info,prometheus
 
 server:
   forward-headers-strategy: native

@@ -7,6 +7,7 @@ import com.moneyminder.domain.auth.infrastructure.oauth2.handler.OAuth2FailureHa
 import com.moneyminder.domain.auth.infrastructure.oauth2.handler.Oauth2SuccessHandler;
 import com.moneyminder.domain.auth.infrastructure.oauth2.service.PrincipalOAuth2UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -18,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,6 +31,9 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oauth2FailureHandler;
     private final JwtProvider jwtProvider;
 
+    @Qualifier("handlerExceptionResolver")
+    private final HandlerExceptionResolver handlerExceptionResolver;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -36,6 +41,7 @@ public class SecurityConfig {
                         auth.requestMatchers(
                                         "/login/**",
                                         "/health/**",
+                                        "/actuator/health",
                                         "/api/auth/**",
                                         "/api/v1/user/**"
                                 )
@@ -55,7 +61,8 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(new CustomOAuth2RedirectFilter(), OAuth2AuthorizationRequestRedirectFilter.class)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, handlerExceptionResolver),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -72,7 +79,6 @@ public class SecurityConfig {
                 "/js/**",
                 "/img/**",
                 "/lib/**",
-                "/actuator/**",
                 "/error"
         );
     }

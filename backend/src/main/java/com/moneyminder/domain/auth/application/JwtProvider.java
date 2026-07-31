@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -177,8 +178,14 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * jti 가 없으면 payload 가 {고정 subject, 만료초} 뿐이라 같은 초에 만든 토큰이 서로 같아진다.
+     * 그러면 쓴 토큰을 지워도 새 토큰이 같은 값이라 회전이 되지 않고,
+     * 다른 사용자가 같은 초에 로그인하면 Redis 에서 서로의 항목을 덮어쓴다.
+     */
     private String generateRefreshToken() {
         return Jwts.builder()
+                .setId(UUID.randomUUID().toString())
                 .setSubject(REFRESH_TOKEN_SUBJECT)
                 .setExpiration(Date.from(Instant.now().plusMillis(tokenProperties.getRefreshTokenExpiry())))
                 .signWith(key, SignatureAlgorithm.HS256)

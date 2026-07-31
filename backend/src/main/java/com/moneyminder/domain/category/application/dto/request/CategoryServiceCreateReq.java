@@ -1,5 +1,6 @@
 package com.moneyminder.domain.category.application.dto.request;
 
+import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import lombok.Builder;
 
@@ -16,4 +17,7 @@ public record CategoryServiceCreateReq(
 
 ) {
 
+    public Category toDomain() {
+        return Category.create(categoryName, categoryType, description, userEmail);
+    }
 }

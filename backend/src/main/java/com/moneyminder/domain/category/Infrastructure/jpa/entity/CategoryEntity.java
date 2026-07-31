@@ -1,8 +1,8 @@
-package com.moneyminder.domain.category.Infrastructure.jpa.entity;
+package com.moneyminder.domain.category.infrastructure.jpa.entity;
 
-import com.moneyminder.domain.category.Infrastructure.jpa.converter.CategoryTypeConverter;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.type.CategoryType;
+import com.moneyminder.domain.category.infrastructure.jpa.converter.CategoryTypeConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -65,6 +65,18 @@ public class CategoryEntity {
         this.isDeleted = isDeleted;
     }
 
+    public static CategoryEntity from(Category category) {
+        return CategoryEntity.builder()
+                .id(category.getId())
+                .categoryName(category.getCategoryName())
+                .categoryCode(category.getCategoryCode())
+                .categoryType(category.getCategoryType())
+                .isCustom(category.isCustom())
+                .userEmail(category.getUserEmail())
+                .description(category.getDescription())
+                .build();
+    }
+
     public Category toDomain() {
         return Category.builder()
                 .id(id)
@@ -77,6 +89,3 @@ public class CategoryEntity {
                 .build();
     }
 }
-
-
-

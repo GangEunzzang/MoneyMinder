@@ -1,6 +1,6 @@
 package com.moneyminder.global.exception;
 
-import com.moneyminder.global.annotaion.SlackNotification;
+import com.moneyminder.global.annotation.SlackNotification;
 import com.moneyminder.global.response.ErrorResponse;
 import io.micrometer.core.instrument.config.validate.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;

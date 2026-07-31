@@ -5,17 +5,17 @@ import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearch
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdateReq;
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.domain.Budget;
+import com.moneyminder.domain.budget.domain.BudgetWithCategory;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,50 +29,55 @@ public class BudgetService {
     public BudgetServiceRes create(BudgetServiceCreateReq request) {
         validateCategoryCode(request.categoryCode());
 
-        BudgetServiceSearchReq search = BudgetServiceSearchReq.from(request.categoryCode(), request.year(), request.month());
-        List<BudgetServiceRes> exists = budgetRepository.findByEmailAndSearch(request.userEmail(), search);
+        BudgetServiceSearchReq search = BudgetServiceSearchReq.from(request.categoryCode(), request.year(),
+                request.month());
+        List<BudgetWithCategory> exists = budgetRepository.findByEmailAndSearch(request.userEmail(), search.toCond());
 
         if (!exists.isEmpty()) {
             throw new BaseException(ResultCode.BUDGET_ALREADY_EXISTS);
         }
 
-        Budget budget = budgetRepository.save(Budget.create(request));
+        Budget budget = budgetRepository.save(request.toDomain());
         return mapToServiceResponse(budget);
     }
 
     @Transactional
     public BudgetServiceRes update(BudgetServiceUpdateReq request) {
-        Budget currentBudget = budgetRepository.getById(request.budgetId());
+        Budget budget = budgetRepository.getById(request.budgetId());
 
-        validateUserEmail(currentBudget.userEmail(), request.userEmail());
+        budget.validateOwner(request.userEmail());
+        budget.changeAmount(request.amount());
 
-        Budget updatedBudget = currentBudget.update(request);
-        budgetRepository.save(updatedBudget);
+        budgetRepository.save(budget);
 
-        return mapToServiceResponse(updatedBudget);
+        return mapToServiceResponse(budget);
     }
 
     @Transactional
     public void delete(Long budgetId, String email) {
         Budget budget = budgetRepository.getById(budgetId);
 
-        validateUserEmail(budget.userEmail(), email);
+        budget.validateOwner(email);
 
         budgetRepository.delete(budget);
     }
 
+    @Transactional(readOnly = true)
     public BudgetServiceRes getById(Long budgetId) {
         return budgetRepository.findById(budgetId)
                 .map(this::mapToServiceResponse)
                 .orElseThrow(() -> new BaseException(ResultCode.BUDGET_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
     public List<BudgetServiceRes> getByEmailAndSearch(String email, BudgetServiceSearchReq searchReq) {
-        return budgetRepository.findByEmailAndSearch(email, searchReq);
+        return budgetRepository.findByEmailAndSearch(email, searchReq.toCond()).stream()
+                .map(BudgetServiceRes::from)
+                .toList();
     }
 
     private BudgetServiceRes mapToServiceResponse(Budget budget) {
-        Category category = categoryRepository.findByCategoryCode(budget.categoryCode())
+        Category category = categoryRepository.findByCategoryCode(budget.getCategoryCode())
                 .orElseGet(Category::defaultCategory);
 
         return BudgetServiceRes.fromDomain(budget, category);
@@ -83,12 +88,5 @@ public class BudgetService {
             throw new BaseException(ResultCode.CATEGORY_NOT_FOUND);
         }
     }
-
-    private void validateUserEmail(String currentEmail, String updateEmail) {
-        if (!currentEmail.equals(updateEmail)) {
-            throw new BaseException(ResultCode.BUDGET_FORBIDDEN);
-        }
-    }
-
 
 }

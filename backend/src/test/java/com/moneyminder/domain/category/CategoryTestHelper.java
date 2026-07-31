@@ -1,8 +1,8 @@
 package com.moneyminder.domain.category;
 
 import com.moneyminder.AuthHelper;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryUpdateReq;
+import com.moneyminder.domain.category.presentation.dto.CategoryCreateReq;
+import com.moneyminder.domain.category.presentation.dto.CategoryUpdateReq;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

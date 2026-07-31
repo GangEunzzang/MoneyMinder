@@ -1,5 +1,9 @@
 package com.moneyminder.domain.budget;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+
 import com.moneyminder.domain.budget.application.BudgetService;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceCreateReq;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
@@ -12,6 +16,8 @@ import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
+import java.math.BigInteger;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,13 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.math.BigInteger;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class BudgetServiceTest {
@@ -96,7 +95,7 @@ public class BudgetServiceTest {
             Budget findBudget = budgetRepository.findById(response.budgetId()).get();
 
             // then
-            assertThat(findBudget.year()).isEqualTo(request.year());
+            assertThat(findBudget.getYear()).isEqualTo(request.year());
         }
 
         @DisplayName("수정 - 성공적으로 예산을 수정한다.")
@@ -114,7 +113,7 @@ public class BudgetServiceTest {
             Budget findBudget = budgetRepository.findById(1L).get();
 
             // then
-            assertThat(findBudget.amount()).isEqualTo(20000);
+            assertThat(findBudget.getAmount()).isEqualTo(20000);
         }
 
         @DisplayName("삭제 - 성공적으로 예산을 삭제한다.")
@@ -151,13 +150,14 @@ public class BudgetServiceTest {
             String email = "테스트";
             Integer year = 2021;
 
-            Budget budget = Budget.create(BudgetServiceCreateReq.builder()
+            Budget budget = BudgetServiceCreateReq.builder()
                     .year(2022)
                     .month(2)
                     .userEmail("테스트")
                     .amount(BigInteger.valueOf(100000))
                     .categoryCode("카테고리코드")
-                    .build());
+                    .build()
+                    .toDomain();
 
             budgetRepository.save(budget);
 
@@ -177,9 +177,9 @@ public class BudgetServiceTest {
         @Test
         void whenGetBudgetByUserEmailAndYearAndMonth_thenSuccess() {
             // given
-            String email = setupBudget.userEmail();
-            Integer year = setupBudget.year();
-            Integer month = setupBudget.month();
+            String email = setupBudget.getUserEmail();
+            Integer year = setupBudget.getYear();
+            Integer month = setupBudget.getMonth();
 
             // when
             List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email,
@@ -230,11 +230,11 @@ public class BudgetServiceTest {
         void whenCreateBudget_thenThrowException() {
             // given
             BudgetServiceCreateReq request = BudgetServiceCreateReq.builder()
-                    .year(setupBudget.year())
-                    .month(setupBudget.month())
-                    .userEmail(setupBudget.userEmail())
+                    .year(setupBudget.getYear())
+                    .month(setupBudget.getMonth())
+                    .userEmail(setupBudget.getUserEmail())
                     .amount(BigInteger.valueOf(100000))
-                    .categoryCode(setupBudget.categoryCode())
+                    .categoryCode(setupBudget.getCategoryCode())
                     .build();
 
             // when, then

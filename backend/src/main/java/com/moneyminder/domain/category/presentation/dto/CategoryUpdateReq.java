@@ -1,13 +1,15 @@
-package com.moneyminder.domain.category.presentation.dto.request;
+package com.moneyminder.domain.category.presentation.dto;
 
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
+import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.hibernate.validator.constraints.Length;
 
 @Builder
-public record CategoryCreateReq(
+public record CategoryUpdateReq(
 
         @NotEmpty
         @Size(max = 255)
@@ -17,15 +19,20 @@ public record CategoryCreateReq(
         String categoryType,
 
         @NotEmpty
-        @Size(max = 255)
-        String description
+        @Length(max = 255)
+        String description,
+
+        @NotNull
+        Long categoryId
+
 ) {
 
-    public CategoryServiceCreateReq toService(String email) {
-        return CategoryServiceCreateReq.builder()
+    public CategoryServiceUpdateReq toService(String email) {
+        return CategoryServiceUpdateReq.builder()
                 .categoryName(categoryName)
                 .categoryType(CategoryType.fromValue(categoryType))
                 .description(description)
+                .categoryId(categoryId)
                 .userEmail(email)
                 .build();
     }

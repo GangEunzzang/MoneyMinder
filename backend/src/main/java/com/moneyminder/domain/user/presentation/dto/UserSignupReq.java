@@ -1,10 +1,10 @@
 package com.moneyminder.domain.user.presentation.dto;
 
-import com.moneyminder.domain.user.application.dto.request.UserSignupReq;
+import com.moneyminder.domain.user.application.dto.request.UserServiceSignupReq;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record SignupRequest(
+public record UserSignupReq(
 
         @NotBlank
         @Email
@@ -17,8 +17,8 @@ public record SignupRequest(
         String password
 ) {
 
-    public UserSignupReq toService() {
-        return UserSignupReq.builder()
+    public UserServiceSignupReq toService() {
+        return UserServiceSignupReq.builder()
                 .email(email)
                 .name(name)
                 .password(password)

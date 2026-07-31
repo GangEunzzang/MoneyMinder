@@ -21,4 +21,3 @@ public class AuthController {
         return DataResponse.of(tokenInfo);
     }
 }
-

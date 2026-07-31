@@ -2,7 +2,7 @@ package com.moneyminder.global.resolver;
 
 import com.moneyminder.domain.auth.application.JwtProvider;
 import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
-import com.moneyminder.global.annotaion.CurrentUser;
+import com.moneyminder.global.annotation.CurrentUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

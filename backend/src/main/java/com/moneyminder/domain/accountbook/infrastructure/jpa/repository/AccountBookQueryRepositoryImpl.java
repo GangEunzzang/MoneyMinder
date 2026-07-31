@@ -1,16 +1,16 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
 import static com.moneyminder.domain.accountbook.infrastructure.jpa.entity.QAccountBookEntity.accountBookEntity;
-import static com.moneyminder.domain.category.Infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
+import static com.moneyminder.domain.category.infrastructure.jpa.entity.QCategoryEntity.categoryEntity;
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
-import com.moneyminder.domain.accountbook.application.dto.response.QAccountBookDefaultRes;
+import com.moneyminder.domain.accountbook.domain.AccountBookSearchCond;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
+import com.moneyminder.domain.accountbook.domain.AmountByDate;
+import com.moneyminder.domain.accountbook.domain.AmountByMonth;
+import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,96 +22,87 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public AccountBookDefaultRes findWithCategoryById(Long id) {
-        return queryFactory.select(new QAccountBookDefaultRes(
-                        accountBookEntity.id,
-                        accountBookEntity.amount,
-                        accountBookEntity.transactionDate,
-                        accountBookEntity.memo,
-                        categoryEntity.categoryCode,
-                        categoryEntity.categoryName,
-                        categoryEntity.categoryType)
-                )
-                .from(accountBookEntity)
-                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+    public AccountBookWithCategory findWithCategoryById(Long id) {
+        return selectWithCategory()
                 .where(accountBookEntity.id.eq(id))
                 .fetchOne();
     }
 
     @Override
-    public List<AccountBookDefaultRes> findWithCategoryByEmail(String email) {
-        return queryFactory.select(new QAccountBookDefaultRes(
-                        accountBookEntity.id,
-                        accountBookEntity.amount,
-                        accountBookEntity.transactionDate,
-                        accountBookEntity.memo,
-                        categoryEntity.categoryCode,
-                        categoryEntity.categoryName,
-                        categoryEntity.categoryType)
-                )
-                .from(accountBookEntity)
-                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+    public List<AccountBookWithCategory> findWithCategoryByEmail(String email) {
+        return selectWithCategory()
                 .where(accountBookEntity.userEmail.eq(email))
                 .fetch();
     }
 
     @Override
-    public List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
-
-        return queryFactory.select(new QAccountBookDefaultRes(
-                        accountBookEntity.id,
-                        accountBookEntity.amount,
-                        accountBookEntity.transactionDate,
-                        accountBookEntity.memo,
-                        categoryEntity.categoryCode,
-                        categoryEntity.categoryName,
-                        categoryEntity.categoryType)
-                )
-                .from(accountBookEntity)
-                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+    public List<AccountBookWithCategory> findWithCategoryByEmailAndSearch(String email, AccountBookSearchCond cond) {
+        return selectWithCategory()
                 .where(accountBookEntity.userEmail.eq(email),
-                        greaterThanEqualDate(searchReq.startDate()),
-                        lessThanEqualDate(searchReq.endDate()),
-                        eqCategoryCode(searchReq.categoryCode()),
-                        containsMemo(searchReq.memo()),
-                        lessThanCursorId(searchReq.cursorId()))
+                        greaterThanEqualDate(cond.startDate()),
+                        lessThanEqualDate(cond.endDate()),
+                        eqCategoryCode(cond.categoryCode()),
+                        containsMemo(cond.memo()),
+                        lessThanCursorId(cond.cursorId()))
                 .orderBy(accountBookEntity.id.desc())
                 .limit(20)
                 .fetch();
     }
 
     @Override
-    public BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq summaryReq) {
-        BigInteger totalAmount = queryFactory.select(accountBookEntity.amount.sum())
-                .from(accountBookEntity)
-                .leftJoin(categoryEntity)
-                .on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
-                .where(
-                        accountBookEntity.userEmail.eq(email),
-                        accountBookEntity.transactionDate.between(summaryReq.startDate(), summaryReq.endDate()),
-                        categoryEntity.categoryType.eq(summaryReq.categoryType()))
-                .fetchOne();
-
-        return totalAmount == null ? BigInteger.ZERO : totalAmount;
+    public List<AccountBookWithCategory> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate) {
+        return selectWithCategory()
+                .where(accountBookEntity.userEmail.eq(email),
+                        accountBookEntity.transactionDate.between(startDate, endDate))
+                .fetch();
     }
 
     @Override
-    public BigInteger findMonthTotalByCategoryType(String email, AccountBookMonthSummaryReq summaryReq) {
-        BigInteger totalAmount = queryFactory.select(accountBookEntity.amount.sum())
+    public List<AmountByMonth> findMonthlyTotals(String email, int year) {
+        return queryFactory.select(Projections.constructor(AmountByMonth.class,
+                        accountBookEntity.transactionDate.month(),
+                        categoryEntity.categoryType,
+                        accountBookEntity.amount.sum()))
                 .from(accountBookEntity)
-                .leftJoin(categoryEntity)
-                .on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
-                .where(
-                        accountBookEntity.userEmail.eq(email),
-                        accountBookEntity.transactionDate.year().eq(summaryReq.year()),
-                        accountBookEntity.transactionDate.month().eq(summaryReq.month()),
-                        categoryEntity.categoryType.eq(summaryReq.categoryType()))
-                .fetchOne();
-
-        return totalAmount == null ? BigInteger.ZERO : totalAmount;
+                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+                .where(accountBookEntity.userEmail.eq(email),
+                        accountBookEntity.transactionDate.year().eq(year))
+                .groupBy(accountBookEntity.transactionDate.month(), categoryEntity.categoryType)
+                .fetch();
     }
 
-    public BooleanExpression eqCategoryCode(String categoryCode) {
+    @Override
+    public List<AmountByDate> findDailyTotals(String email, LocalDate startDate, LocalDate endDate) {
+        return queryFactory.select(Projections.constructor(AmountByDate.class,
+                        accountBookEntity.transactionDate,
+                        categoryEntity.categoryType,
+                        accountBookEntity.amount.sum()))
+                .from(accountBookEntity)
+                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode))
+                .where(accountBookEntity.userEmail.eq(email),
+                        accountBookEntity.transactionDate.between(startDate, endDate))
+                .groupBy(accountBookEntity.transactionDate, categoryEntity.categoryType)
+                .fetch();
+    }
+
+    private com.querydsl.jpa.impl.JPAQuery<AccountBookWithCategory> selectWithCategory() {
+        return queryFactory.select(withCategoryProjection())
+                .from(accountBookEntity)
+                .leftJoin(categoryEntity).on(accountBookEntity.categoryCode.eq(categoryEntity.categoryCode));
+    }
+
+    private ConstructorExpression<AccountBookWithCategory> withCategoryProjection() {
+        return Projections.constructor(AccountBookWithCategory.class,
+                accountBookEntity.id,
+                accountBookEntity.amount,
+                accountBookEntity.transactionDate,
+                accountBookEntity.memo,
+                categoryEntity.categoryCode,
+                categoryEntity.categoryName,
+                categoryEntity.categoryType);
+    }
+
+    private BooleanExpression eqCategoryCode(String categoryCode) {
         return StringUtils.isBlank(categoryCode) ? null : accountBookEntity.categoryCode.eq(categoryCode);
     }
 

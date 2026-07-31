@@ -1,8 +1,8 @@
-package com.moneyminder.domain.category.Infrastructure.jpa.repository;
+package com.moneyminder.domain.category.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
+import com.moneyminder.domain.category.infrastructure.jpa.entity.CategoryEntity;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import java.util.List;
@@ -47,7 +47,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Category save(Category category) {
-        return jpaRepository.save(category.toEntity()).toDomain();
+        return jpaRepository.save(CategoryEntity.from(category)).toDomain();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public void delete(Category category) {
-        jpaRepository.delete(category.toEntity());
+        jpaRepository.delete(CategoryEntity.from(category));
     }
 
     @Override

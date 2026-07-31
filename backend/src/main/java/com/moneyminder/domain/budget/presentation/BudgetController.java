@@ -7,15 +7,14 @@ import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdate
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.presentation.dto.BudgetCreateReq;
 import com.moneyminder.domain.budget.presentation.dto.BudgetUpdateReq;
-import com.moneyminder.global.annotaion.CurrentUserEmail;
+import com.moneyminder.global.annotation.CurrentUserEmail;
 import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor

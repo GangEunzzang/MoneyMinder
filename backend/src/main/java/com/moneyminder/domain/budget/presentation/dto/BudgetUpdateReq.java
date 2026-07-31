@@ -2,9 +2,8 @@ package com.moneyminder.domain.budget.presentation.dto;
 
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdateReq;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-
 import java.math.BigInteger;
+import lombok.Builder;
 
 @Builder
 public record BudgetUpdateReq(

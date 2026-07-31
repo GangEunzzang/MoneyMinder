@@ -1,4 +1,4 @@
-package com.moneyminder.global.annotaion;
+package com.moneyminder.global.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

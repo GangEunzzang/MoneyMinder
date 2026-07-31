@@ -1,4 +1,4 @@
-package com.moneyminder.domain.user.repository;
+package com.moneyminder.domain.user.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.repository.UserRepository;
@@ -17,7 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        return jpaRepository.save(user.toEntity()).toDomain();
+        return jpaRepository.save(UserEntity.from(user)).toDomain();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(User user) {
-        jpaRepository.delete(user.toEntity());
+        jpaRepository.delete(UserEntity.from(user));
     }
 
     @Override

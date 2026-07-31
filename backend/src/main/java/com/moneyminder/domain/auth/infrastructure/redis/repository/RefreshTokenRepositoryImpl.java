@@ -3,10 +3,9 @@ package com.moneyminder.domain.auth.infrastructure.redis.repository;
 import com.moneyminder.domain.auth.domain.RefreshToken;
 import com.moneyminder.domain.auth.domain.repository.RefreshTokenRepository;
 import com.moneyminder.domain.auth.infrastructure.redis.entity.RefreshTokenRedis;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,14 +20,14 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     @Override
     public RefreshToken save(RefreshToken refreshToken) {
-        RefreshTokenRedis refreshTokenRedis = refreshToken.toEntity();
+        RefreshTokenRedis refreshTokenRedis = RefreshTokenRedis.from(refreshToken);
         refreshTokenRedisRepository.save(refreshTokenRedis);
         return refreshToken;
     }
 
     @Override
     public void delete(RefreshToken refreshToken) {
-        refreshTokenRedisRepository.deleteById(refreshToken.tokenValue());
+        refreshTokenRedisRepository.deleteById(refreshToken.getTokenValue());
     }
 
     @Override

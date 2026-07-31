@@ -3,13 +3,12 @@ package com.moneyminder.domain.budget.infrastructure.jpa.entity;
 import com.moneyminder.domain.budget.domain.Budget;
 import com.moneyminder.global.base.BaseTimeEntity;
 import jakarta.persistence.*;
+import java.math.BigInteger;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
-
-import java.math.BigInteger;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +48,17 @@ public class BudgetEntity extends BaseTimeEntity {
         this.amount = amount;
         this.categoryCode = categoryCode;
         this.userEmail = userEmail;
+    }
+
+    public static BudgetEntity from(Budget budget) {
+        return BudgetEntity.builder()
+                .id(budget.getId())
+                .budgetYear(budget.getYear())
+                .budgetMonth(budget.getMonth())
+                .amount(budget.getAmount())
+                .userEmail(budget.getUserEmail())
+                .categoryCode(budget.getCategoryCode())
+                .build();
     }
 
     public Budget toDomain() {

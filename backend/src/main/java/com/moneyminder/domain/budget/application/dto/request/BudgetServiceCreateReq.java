@@ -1,8 +1,8 @@
 package com.moneyminder.domain.budget.application.dto.request;
 
-import lombok.Builder;
-
+import com.moneyminder.domain.budget.domain.Budget;
 import java.math.BigInteger;
+import lombok.Builder;
 
 @Builder
 public record BudgetServiceCreateReq(
@@ -12,4 +12,14 @@ public record BudgetServiceCreateReq(
         BigInteger amount,
         String categoryCode
 ) {
+
+    public Budget toDomain() {
+        return Budget.builder()
+                .year(year)
+                .month(month)
+                .userEmail(userEmail)
+                .amount(amount)
+                .categoryCode(categoryCode)
+                .build();
+    }
 }

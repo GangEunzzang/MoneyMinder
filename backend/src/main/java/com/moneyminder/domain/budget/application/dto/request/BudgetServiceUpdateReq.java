@@ -1,8 +1,7 @@
 package com.moneyminder.domain.budget.application.dto.request;
 
-import lombok.Builder;
-
 import java.math.BigInteger;
+import lombok.Builder;
 
 @Builder
 public record BudgetServiceUpdateReq(

@@ -1,5 +1,8 @@
 package com.moneyminder.domain.category;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.moneyminder.domain.category.application.CategoryService;
 import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
 import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
@@ -17,9 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class CategoryServiceTest {
@@ -68,9 +68,9 @@ class CategoryServiceTest {
             Category fetchedCategory = categoryRepository.findById(createdCategory.categoryId()).get();
 
             // then
-            assertThat(fetchedCategory.categoryName()).isEqualTo("카테고리");
-            assertThat(fetchedCategory.categoryType()).isEqualTo(CategoryType.EXPENSE);
-            assertThat(fetchedCategory.description()).isEqualTo("카테고리 설명");
+            assertThat(fetchedCategory.getCategoryName()).isEqualTo("카테고리");
+            assertThat(fetchedCategory.getCategoryType()).isEqualTo(CategoryType.EXPENSE);
+            assertThat(fetchedCategory.getDescription()).isEqualTo("카테고리 설명");
             assertThat(fetchedCategory.isCustom()).isTrue();
         }
 
@@ -83,7 +83,7 @@ class CategoryServiceTest {
                     .categoryType(CategoryType.INCOME)
                     .description("수정된 카테고리 설명")
                     .userEmail("테스트이메일")
-                    .categoryId(setupCategory.id())
+                    .categoryId(setupCategory.getId())
                     .build();
 
             // when
@@ -98,7 +98,7 @@ class CategoryServiceTest {
         @Test
         void whenDeleteCategory_thenCategoryIsDeleted() {
             // given
-            Long categoryId = setupCategory.id();
+            Long categoryId = setupCategory.getId();
             String userEmail = "테스트이메일";
 
             // when
@@ -112,28 +112,28 @@ class CategoryServiceTest {
         @Test
         void whenGetCategoryById_thenCategoryIsFound() {
             // given
-            Long categoryId = setupCategory.id();
+            Long categoryId = setupCategory.getId();
 
             // when
             CategoryServiceRes category = categoryService.getById(categoryId);
 
             // then
-            assertThat(category.categoryName()).isEqualTo(setupCategory.categoryName());
-            assertThat(category.description()).isEqualTo(setupCategory.description());
+            assertThat(category.categoryName()).isEqualTo(setupCategory.getCategoryName());
+            assertThat(category.description()).isEqualTo(setupCategory.getDescription());
         }
 
         @DisplayName("조회 - 코드로 카테고리를 성공적으로 조회한다")
         @Test
         void whenGetCategoryByCode_thenCategoryIsFound() {
             // given
-            String categoryCode = setupCategory.categoryCode();
+            String categoryCode = setupCategory.getCategoryCode();
 
             // when
             CategoryServiceRes category = categoryService.getCategoryByCode(categoryCode);
 
             // then
-            assertThat(category.categoryName()).isEqualTo(setupCategory.categoryName());
-            assertThat(category.description()).isEqualTo(setupCategory.description());
+            assertThat(category.categoryName()).isEqualTo(setupCategory.getCategoryName());
+            assertThat(category.description()).isEqualTo(setupCategory.getDescription());
         }
 
         @DisplayName("조회 - 기본 카테고리를 성공적으로 조회한다")
@@ -310,7 +310,7 @@ class CategoryServiceTest {
                     .categoryType(CategoryType.INCOME)
                     .description("수정된 카테고리 설명")
                     .userEmail("다른이메일")
-                    .categoryId(setupCategory.id())
+                    .categoryId(setupCategory.getId())
                     .build();
 
             // when && then
@@ -336,7 +336,7 @@ class CategoryServiceTest {
         @Test
         void whenDeleteCategoryWithDifferentUserEmail_thenThrowException() {
             // given
-            Long categoryId = setupCategory.id();
+            Long categoryId = setupCategory.getId();
             String userEmail = "다른이메일";
 
             // when && then

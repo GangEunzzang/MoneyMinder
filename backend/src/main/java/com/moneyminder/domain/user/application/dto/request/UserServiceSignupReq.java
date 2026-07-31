@@ -4,7 +4,7 @@ import com.moneyminder.domain.user.domain.User;
 import lombok.Builder;
 
 @Builder
-public record UserSignupReq(
+public record UserServiceSignupReq(
         String email,
         String password,
         String name

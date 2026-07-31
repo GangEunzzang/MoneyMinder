@@ -1,24 +1,23 @@
 package com.moneyminder.domain.budget;
 
+import static com.moneyminder.domain.budget.BudgetTestHelper.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
+
 import com.moneyminder.ControllerTest;
 import com.moneyminder.domain.budget.domain.repository.BudgetRepository;
 import com.moneyminder.domain.budget.presentation.dto.BudgetCreateReq;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.math.BigInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
-
-import java.math.BigInteger;
-
-import static com.moneyminder.domain.budget.BudgetTestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.when;
 
 public class BudgetControllerTest extends ControllerTest {
 
@@ -64,7 +63,7 @@ public class BudgetControllerTest extends ControllerTest {
         assertAll(
                 () -> assertThat(updateResponse.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(updateResponse.jsonPath().getString("data.amount")).isEqualTo(BigInteger.TWO.toString()),
-                () -> assertThat(budgetRepository.getById(1L).amount()).isEqualTo(BigInteger.TWO)
+                () -> assertThat(budgetRepository.getById(1L).getAmount()).isEqualTo(BigInteger.TWO)
         );
     }
 

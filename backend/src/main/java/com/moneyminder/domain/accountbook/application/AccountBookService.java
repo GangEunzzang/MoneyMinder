@@ -1,15 +1,16 @@
 package com.moneyminder.domain.accountbook.application;
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookCategorySummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMonthSummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYearSummaryRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
+import com.moneyminder.domain.accountbook.domain.AmountByDate;
+import com.moneyminder.domain.accountbook.domain.AmountByMonth;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
@@ -20,9 +21,9 @@ import com.moneyminder.global.util.TimeUtils;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class AccountBookService {
     public AccountBookDefaultRes create(AccountBookServiceCreateReq createRequest) {
         validateCategoryCode(createRequest.categoryCode());
         AccountBook accountBook = accountBookRepository.save(createRequest.toDomain());
+
         return mapToServiceResponse(accountBook);
     }
 
@@ -47,60 +49,69 @@ public class AccountBookService {
     public AccountBookDefaultRes update(AccountBookServiceUpdateReq updateRequest) {
         validateCategoryCode(updateRequest.categoryCode());
 
-        AccountBook currentAccountBook = accountBookRepository.getById(updateRequest.accountId());
+        AccountBook accountBook = accountBookRepository.getById(updateRequest.accountId());
 
-        validateUserEmail(currentAccountBook.userEmail(), updateRequest.userEmail());
+        accountBook.validateOwner(updateRequest.userEmail());
+        accountBook.update(updateRequest.categoryCode(), updateRequest.amount(), updateRequest.transactionDate(),
+                updateRequest.memo());
 
-        AccountBook updatedAccountBook = currentAccountBook.update(updateRequest.toDomain());
-        accountBookRepository.save(updatedAccountBook);
+        accountBookRepository.save(accountBook);
 
-        return mapToServiceResponse(updatedAccountBook);
+        return mapToServiceResponse(accountBook);
     }
 
     @Transactional
     public void delete(Long accountId, String email) {
         AccountBook accountBook = accountBookRepository.getById(accountId);
 
-        validateUserEmail(accountBook.userEmail(), email);
+        accountBook.validateOwner(email);
 
         accountBookRepository.delete(accountBook);
     }
 
+    @Transactional(readOnly = true)
     public AccountBookDefaultRes getById(Long accountId) {
         return accountBookRepository.findWithCategoryById(accountId)
+                .map(AccountBookDefaultRes::from)
                 .orElseThrow(() -> new BaseException(ResultCode.ACCOUNT_BOOK_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public List<AccountBookDefaultRes> getByUserEmail(String email) {
-        return accountBookRepository.findWithCategoryByEmail(email);
+        return accountBookRepository.findWithCategoryByEmail(email).stream()
+                .map(AccountBookDefaultRes::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<AccountBookDefaultRes> getByUserEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
-        return accountBookRepository.findWithCategoryByEmailAndSearch(email, searchReq);
+        return accountBookRepository.findWithCategoryByEmailAndSearch(email, searchReq.toCond()).stream()
+                .map(AccountBookDefaultRes::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public AccountBookMonthSummaryRes getMonthSummary(String email, Integer year, Integer month) {
-        Map<Integer, AccountBookMonthSummaryRes.WeekSummary> map = new HashMap<>();
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+        LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
+
+        List<AmountByDate> dailyTotals = accountBookRepository.findDailyTotals(email, firstDayOfMonth, lastDayOfMonth);
+
+        Map<Integer, AccountBookMonthSummaryRes.WeekSummary> weeklySummary = new HashMap<>();
         BigInteger monthTotalIncome = BigInteger.ZERO;
         BigInteger monthTotalExpense = BigInteger.ZERO;
 
         int totalWeek = TimeUtils.getWeekOfMonth(year, month);
 
-        for (int i = 1; i <= totalWeek; i++) {
-            LocalDate[] firstAndLastDayOfWeek = TimeUtils.getFirstAndLastDayOfWeek(year, month, i);
+        for (int week = 1; week <= totalWeek; week++) {
+            LocalDate[] firstAndLastDayOfWeek = TimeUtils.getFirstAndLastDayOfWeek(year, month, week);
 
-            AccountBookWeekSummaryReq incomeRequest = AccountBookWeekSummaryReq.from(firstAndLastDayOfWeek[0],
-                    firstAndLastDayOfWeek[1], CategoryType.INCOME);
-            AccountBookWeekSummaryReq expenseRequest = AccountBookWeekSummaryReq.from(firstAndLastDayOfWeek[0],
-                    firstAndLastDayOfWeek[1], CategoryType.EXPENSE);
+            BigInteger weekTotalIncome = sumBetween(dailyTotals, firstAndLastDayOfWeek[0], firstAndLastDayOfWeek[1],
+                    CategoryType.INCOME);
+            BigInteger weekTotalExpense = sumBetween(dailyTotals, firstAndLastDayOfWeek[0], firstAndLastDayOfWeek[1],
+                    CategoryType.EXPENSE);
 
-            BigInteger weekTotalIncome = accountBookRepository.findWeekTotalByCategoryType(email, incomeRequest);
-            BigInteger weekTotalExpense = accountBookRepository.findWeekTotalByCategoryType(email, expenseRequest);
-
-            map.put(i, AccountBookMonthSummaryRes.WeekSummary.from(weekTotalIncome, weekTotalExpense));
+            weeklySummary.put(week, AccountBookMonthSummaryRes.WeekSummary.from(weekTotalIncome, weekTotalExpense));
             monthTotalIncome = monthTotalIncome.add(weekTotalIncome);
             monthTotalExpense = monthTotalExpense.add(weekTotalExpense);
         }
@@ -110,25 +121,24 @@ public class AccountBookService {
                 .month(month)
                 .monthTotalIncome(monthTotalIncome)
                 .monthTotalExpense(monthTotalExpense)
-                .weeklySummary(map)
+                .weeklySummary(weeklySummary)
                 .build();
     }
 
     @Transactional(readOnly = true)
     public AccountBookYearSummaryRes getYearSummary(String email, Integer year) {
-        Map<Integer, AccountBookYearSummaryRes.MonthSummary> map = new HashMap<>();
+        List<AmountByMonth> monthlyTotals = accountBookRepository.findMonthlyTotals(email, year);
+
+        Map<Integer, AccountBookYearSummaryRes.MonthSummary> monthlySummary = new HashMap<>();
         BigInteger yearTotalIncome = BigInteger.ZERO;
         BigInteger yearTotalExpense = BigInteger.ZERO;
 
-        int month = 12;
-        for (int i = 1; i <= month; i++) {
-            AccountBookMonthSummaryReq incomeRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.INCOME);
-            AccountBookMonthSummaryReq expenseRequest = AccountBookMonthSummaryReq.from(year, i, CategoryType.EXPENSE);
+        for (int month = 1; month <= 12; month++) {
+            BigInteger monthTotalIncome = totalOfMonth(monthlyTotals, month, CategoryType.INCOME);
+            BigInteger monthTotalExpense = totalOfMonth(monthlyTotals, month, CategoryType.EXPENSE);
 
-            BigInteger monthTotalIncome = accountBookRepository.findMonthTotalByCategory(email, incomeRequest);
-            BigInteger monthTotalExpense = accountBookRepository.findMonthTotalByCategory(email, expenseRequest);
-
-            map.put(i, AccountBookYearSummaryRes.MonthSummary.from(monthTotalIncome, monthTotalExpense));
+            monthlySummary.put(month,
+                    AccountBookYearSummaryRes.MonthSummary.from(monthTotalIncome, monthTotalExpense));
             yearTotalIncome = yearTotalIncome.add(monthTotalIncome);
             yearTotalExpense = yearTotalExpense.add(monthTotalExpense);
         }
@@ -137,41 +147,50 @@ public class AccountBookService {
                 .year(year)
                 .yearTotalIncome(yearTotalIncome)
                 .yearTotalExpense(yearTotalExpense)
-                .monthlySummary(map)
+                .monthlySummary(monthlySummary)
                 .build();
     }
 
     @Transactional(readOnly = true)
     public List<AccountBookCategorySummaryRes> getTotalAmountByCategory(String email, LocalDate startDate,
             LocalDate endDate) {
-        List<AccountBookDefaultRes> accountBookList = accountBookRepository.findWithCategoryByDate(email, startDate,
-                        endDate).stream()
-                .map(this::mapToServiceResponse)
-                .toList();
+        Map<String, AccountBookCategorySummaryRes> summaryByCategoryCode = new LinkedHashMap<>();
 
-        Map<String, BigInteger> totalAmountByCategory = accountBookList.stream()
-                .collect(Collectors.groupingBy(
-                        AccountBookDefaultRes::categoryCode,
-                        Collectors.mapping(AccountBookDefaultRes::amount,
-                                Collectors.reducing(BigInteger.ZERO, BigInteger::add))
-                ));
+        for (AccountBookWithCategory row : accountBookRepository.findWithCategoryByDate(email, startDate, endDate)) {
+            String categoryCode = row.categoryCode() == null ? Category.DEFAULT_CATEGORY_CODE : row.categoryCode();
+            String categoryName = row.categoryName() == null ? Category.DEFAULT_CATEGORY_NAME : row.categoryName();
 
-        return totalAmountByCategory.entrySet().stream()
-                .map(entry -> {
-                    String categoryCode = entry.getKey();
-                    BigInteger totalAmount = entry.getValue();
+            summaryByCategoryCode.merge(categoryCode,
+                    AccountBookCategorySummaryRes.from(categoryName, categoryCode, row.amount()),
+                    (accumulated, added) -> AccountBookCategorySummaryRes.from(
+                            accumulated.categoryName(),
+                            accumulated.categoryCode(),
+                            accumulated.totalSpentAmount().add(added.totalSpentAmount())));
+        }
 
-                    String categoryName = categoryRepository.findByCategoryCode(categoryCode)
-                            .orElseGet(Category::defaultCategory).categoryName();
-
-                    return AccountBookCategorySummaryRes.from(categoryName, categoryCode, totalAmount);
-                })
-                .toList();
+        return List.copyOf(summaryByCategoryCode.values());
     }
 
+    private BigInteger sumBetween(List<AmountByDate> dailyTotals, LocalDate startDate, LocalDate endDate,
+            CategoryType categoryType) {
+        return dailyTotals.stream()
+                .filter(daily -> categoryType.equals(daily.categoryType()))
+                .filter(daily -> !daily.transactionDate().isBefore(startDate)
+                        && !daily.transactionDate().isAfter(endDate))
+                .map(AmountByDate::total)
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
+    private BigInteger totalOfMonth(List<AmountByMonth> monthlyTotals, int month, CategoryType categoryType) {
+        return monthlyTotals.stream()
+                .filter(monthly -> monthly.month() != null && monthly.month() == month)
+                .filter(monthly -> categoryType.equals(monthly.categoryType()))
+                .map(AmountByMonth::total)
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
 
     private AccountBookDefaultRes mapToServiceResponse(AccountBook accountBook) {
-        Category category = categoryRepository.findByCategoryCode(accountBook.categoryCode())
+        Category category = categoryRepository.findByCategoryCode(accountBook.getCategoryCode())
                 .orElseGet(Category::defaultCategory);
 
         return AccountBookDefaultRes.fromDomain(accountBook, category);
@@ -180,12 +199,6 @@ public class AccountBookService {
     private void validateCategoryCode(String categoryCode) {
         if (!categoryRepository.existsByCategoryCode(categoryCode)) {
             throw new BaseException(ResultCode.CATEGORY_NOT_FOUND);
-        }
-    }
-
-    private void validateUserEmail(String currentEmail, String updateEmail) {
-        if (!currentEmail.equals(updateEmail)) {
-            throw new BaseException(ResultCode.ACCOUNT_BOOK_FORBIDDEN);
         }
     }
 }

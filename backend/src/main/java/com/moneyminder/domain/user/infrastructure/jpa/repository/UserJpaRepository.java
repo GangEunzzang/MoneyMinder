@@ -1,4 +1,4 @@
-package com.moneyminder.domain.user.repository;
+package com.moneyminder.domain.user.infrastructure.jpa.repository;
 
 import com.moneyminder.domain.user.infrastructure.jpa.entity.UserEntity;
 import java.util.Optional;

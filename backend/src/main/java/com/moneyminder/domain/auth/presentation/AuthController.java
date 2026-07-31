@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/v1/auth")
 @RestController
 public class AuthController {
 
@@ -17,7 +17,6 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public DataResponse<TokenInfo> reissueToken(String refreshToken) {
-        TokenInfo tokenInfo = authService.reissueToken(refreshToken);
-        return DataResponse.of(tokenInfo);
+        return DataResponse.of(authService.reissueToken(refreshToken));
     }
 }

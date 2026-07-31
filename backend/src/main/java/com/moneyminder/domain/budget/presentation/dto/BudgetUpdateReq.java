@@ -9,13 +9,10 @@ import lombok.Builder;
 public record BudgetUpdateReq(
 
         @NotNull
-        Long budgetId,
-
-        @NotNull
         BigInteger amount
 ) {
 
-    public BudgetServiceUpdateReq toService(String userEmail) {
+    public BudgetServiceUpdateReq toService(Long budgetId, String userEmail) {
         return BudgetServiceUpdateReq.builder()
                 .budgetId(budgetId)
                 .amount(amount)

@@ -20,7 +20,7 @@ public class CategoryTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .post("/api/v1/categories/create")
+                .post("/api/v1/categories")
                 .then()
                 .log().all().extract();
     }
@@ -42,15 +42,14 @@ public class CategoryTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .put("/api/v1/categories/update")
+                .put("/api/v1/categories/1")
                 .then()
                 .log().all().extract();
     }
 
     public static CategoryUpdateReq 카테고리_수정_요청_생성() {
         return CategoryUpdateReq.builder()
-                .categoryId(1L)
-                .categoryName("수정된 카테고리 이름")
+                                .categoryName("수정된 카테고리 이름")
                 .categoryType("INCOME")
                 .description("수정된 카테고리 설명")
                 .build();
@@ -63,7 +62,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/api/v1/categories/delete/" + categoryId)
+                .delete("/api/v1/categories/" + categoryId)
                 .then()
                 .log().all().extract();
     }
@@ -75,7 +74,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/api/v1/categories/id/" + categoryId)
+                .get("/api/v1/categories/" + categoryId)
                 .then()
                 .log().all().extract();
     }
@@ -87,7 +86,7 @@ public class CategoryTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/api/v1/categories/email")
+                .get("/api/v1/categories")
                 .then()
                 .log().all().extract();
     }

@@ -21,7 +21,7 @@ public class BudgetTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .post("/api/v1/budget/create")
+                .post("/api/v1/budgets")
                 .then()
                 .log().all().extract();
     }
@@ -43,15 +43,14 @@ public class BudgetTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .put("/api/v1/budget/update")
+                .put("/api/v1/budgets/1")
                 .then()
                 .log().all().extract();
     }
 
     public static BudgetUpdateReq 예산_수정_요청_생성(long budgetId, BigInteger amount) {
         return BudgetUpdateReq.builder()
-                .budgetId(budgetId)
-                .amount(amount)
+                                .amount(amount)
                 .build();
     }
 
@@ -62,7 +61,7 @@ public class BudgetTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/api/v1/budget/delete/" + budgetId)
+                .delete("/api/v1/budgets/" + budgetId)
                 .then()
                 .log().all().extract();
     }
@@ -74,7 +73,7 @@ public class BudgetTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/api/v1/budget/id/" + budgetId)
+                .get("/api/v1/budgets/" + budgetId)
                 .then()
                 .log().all().extract();
     }
@@ -87,7 +86,7 @@ public class BudgetTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .param("year", year)
                 .when()
-                .get("/api/v1/budget/year")
+                .get("/api/v1/budgets")
                 .then()
                 .log().all().extract();
     }
@@ -101,7 +100,7 @@ public class BudgetTestHelper {
                 .param("year", year)
                 .param("month", month)
                 .when()
-                .get("/api/v1/budget/year/month")
+                .get("/api/v1/budgets")
                 .then()
                 .log().all().extract();
     }

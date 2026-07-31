@@ -20,7 +20,7 @@ public class AccountTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .post("/api/v1/accountBook/create")
+                .post("/api/v1/account-books")
                 .then()
                 .log().all().extract();
     }
@@ -42,15 +42,14 @@ public class AccountTestHelper {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(request)
                 .when()
-                .put("/api/v1/accountBook/update")
+                .put("/api/v1/account-books/1")
                 .then()
                 .log().all().extract();
     }
 
     public static AccountBookUpdateReq 가계부_수정_요청_생성() {
         return AccountBookUpdateReq.builder()
-                .accountId(1L)
-                .amount(new BigInteger("1500"))
+                                .amount(new BigInteger("1500"))
                 .categoryCode("code")
                 .transactionDate(LocalDate.now())
                 .memo("Updated memo")
@@ -64,7 +63,7 @@ public class AccountTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/api/v1/accountBook/delete/" + accountId)
+                .delete("/api/v1/account-books/" + accountId)
                 .then()
                 .log().all().extract();
     }
@@ -76,7 +75,7 @@ public class AccountTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/api/v1/accountBook/id/" + accountId)
+                .get("/api/v1/account-books/" + accountId)
                 .then()
                 .log().all().extract();
     }
@@ -88,7 +87,7 @@ public class AccountTestHelper {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .get("/api/v1/accountBook/email")
+                .get("/api/v1/account-books")
                 .then()
                 .log().all().extract();
     }

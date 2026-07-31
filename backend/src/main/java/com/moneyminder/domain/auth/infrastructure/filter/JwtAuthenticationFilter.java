@@ -50,13 +50,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    /**
+     * SecurityConfig 의 permitAll 목록과 여기가 어긋나면 인증이 뚫린다. 같이 고친다.
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
 
         return path.startsWith("/health") ||
                 path.startsWith("/actuator/health") ||
-                path.startsWith("/api/auth/reissue") ||
-                path.startsWith("/api/v1/user/");
+                path.equals("/api/v1/auth/reissue") ||
+                path.equals("/api/v1/users/signup") ||
+                path.equals("/api/v1/users/login");
     }
 }

@@ -39,7 +39,7 @@ class JwtAuthenticationFilterTest extends ControllerTest {
         void whenNoToken_thenUnauthorized() {
             ExtractableResponse<Response> response = RestAssured.given().log().all()
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .when().get("/api/v1/accountBook/email")
+                    .when().get("/api/v1/account-books")
                     .then().log().all()
                     .extract();
 
@@ -52,7 +52,7 @@ class JwtAuthenticationFilterTest extends ControllerTest {
             ExtractableResponse<Response> response = RestAssured.given().log().all()
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredToken())
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .when().get("/api/v1/accountBook/email")
+                    .when().get("/api/v1/account-books")
                     .then().log().all()
                     .extract();
 
@@ -65,7 +65,7 @@ class JwtAuthenticationFilterTest extends ControllerTest {
             ExtractableResponse<Response> response = RestAssured.given().log().all()
                     .header(HttpHeaders.AUTHORIZATION, "Bearer this.is.not.a.jwt")
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .when().get("/api/v1/accountBook/email")
+                    .when().get("/api/v1/account-books")
                     .then().log().all()
                     .extract();
 
@@ -77,7 +77,7 @@ class JwtAuthenticationFilterTest extends ControllerTest {
         void whenUnauthorized_thenErrorResponseShape() {
             ExtractableResponse<Response> response = RestAssured.given().log().all()
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .when().get("/api/v1/accountBook/email")
+                    .when().get("/api/v1/account-books")
                     .then().log().all()
                     .extract();
 

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { api } from '@/shared/lib/api';
+import { toAppPaymentMethod, toServerId } from '@/shared/lib/serverAdapter';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { PaymentMethod } from './model';
@@ -21,14 +23,50 @@ type Actions = {
   remove: (id: string) => void;
 };
 
+function toServerInput(pm: PaymentMethod) {
+  return {
+    name: pm.name,
+    kind: pm.kind.toUpperCase() as 'CARD' | 'CASH' | 'ACCOUNT',
+    color: pm.color,
+    // 결제일은 카드만 가질 수 있다. 서버가 다른 종류의 결제일을 거부한다.
+    billingDay: pm.kind === 'card' ? pm.billingDay : null,
+  };
+}
+
 export const usePaymentMethods = create<State & Actions>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       methods: SEED,
-      add: (pm) => set((s) => ({ methods: [...s.methods, pm] })),
-      update: (id, patch) =>
-        set((s) => ({ methods: s.methods.map((m) => (m.id === id ? { ...m, ...patch } : m)) })),
-      remove: (id) => set((s) => ({ methods: s.methods.filter((m) => m.id !== id) })),
+
+      add: (pm) => {
+        set((s) => ({ methods: [...s.methods, pm] }));
+
+        api.paymentMethods
+          .create(toServerInput(pm))
+          .then((saved) =>
+            set((s) => ({
+              methods: s.methods.map((m) => (m.id === pm.id ? toAppPaymentMethod(saved) : m)),
+            })),
+          )
+          .catch(() => undefined);
+      },
+
+      update: (id, patch) => {
+        const next = { ...get().methods.find((m) => m.id === id), ...patch } as PaymentMethod;
+        set((s) => ({ methods: s.methods.map((m) => (m.id === id ? next : m)) }));
+
+        const serverId = toServerId(id);
+        if (serverId) {
+          api.paymentMethods.update(serverId, toServerInput(next)).catch(() => undefined);
+        }
+      },
+
+      remove: (id) => {
+        set((s) => ({ methods: s.methods.filter((m) => m.id !== id) }));
+
+        const serverId = toServerId(id);
+        if (serverId) api.paymentMethods.remove(serverId).catch(() => undefined);
+      },
     }),
     { name: 'moneyminder.payment-methods.v1', storage: persistStorage },
   ),

@@ -4,6 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
 
 import { useAppState } from '@/entities/app/store';
+import { useNotifications } from '@/features/notification';
+import { useServerSync } from '@/shared/lib/useServerSync';
 import { fontAssets, palette } from '@/shared/theme';
 import { Splash } from '@/shared/ui';
 
@@ -24,6 +26,10 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts(fontAssets);
   const onboarded = useAppState((s) => s.onboarded);
   const hydrated = useAppState((s) => s.hydrated);
+
+  // 서버가 없어도 로컬 데이터로 계속 그린다. 붙으면 서버 데이터로 덮는다.
+  useServerSync();
+  useNotifications();
 
   // 폰트 없이 먼저 그리면 시스템 폰트로 한 프레임 찍혔다가 바뀌어 글자가 튄다.
   // 복원 전에 라우팅하면 온보딩을 끝낸 사람에게 온보딩이 한 번 더 스친다.

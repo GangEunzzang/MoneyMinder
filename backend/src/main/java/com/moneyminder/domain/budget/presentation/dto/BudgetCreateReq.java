@@ -23,7 +23,7 @@ public record BudgetCreateReq(
         @Max(value = 12, message = "Month must be at most 12")
         String month,
 
-        @NotNull
+        /** 비우면 그 달 전체 한도가 된다. */
         String categoryCode
 ) {
 

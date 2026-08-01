@@ -7,6 +7,7 @@ import { useMissions } from '@/entities/mission/store';
 import { filterMonth, isExpense, monthKey } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
 import { toDateKey } from '@/shared/lib/format';
+import { requestPermission } from '@/shared/lib/notifications';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
   AmountText,
@@ -58,6 +59,11 @@ export default function MissionSetup() {
 
   const onStart = () => {
     start({ id: spec.id, target, period, startedOn: toDateKey(new Date()) });
+
+    // 미션을 시작한 지금이 알림의 값을 가장 잘 아는 순간이다 ([[DECISIONS#BD14]]).
+    // iOS 는 한 번 거절하면 다시 물을 수 없어 온보딩에서 먼저 묻지 않는다.
+    requestPermission().catch(() => undefined);
+
     router.replace('/missions');
   };
 

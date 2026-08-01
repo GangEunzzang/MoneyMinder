@@ -29,9 +29,11 @@ public class BudgetQueryRepositoryImpl implements BudgetQueryRepository {
                         categoryEntity.categoryType)
                 )
                 .from(budgetEntity)
-                .innerJoin(categoryEntity).on(budgetEntity.categoryCode.eq(categoryEntity.categoryCode))
+                // 총액 예산은 카테고리가 없다. innerJoin 이면 그 행이 통째로 빠진다.
+                .leftJoin(categoryEntity)
+                .on(budgetEntity.categoryCode.eq(categoryEntity.categoryCode),
+                        categoryEntity.isDeleted.eq(false))
                 .where(budgetEntity.userEmail.eq(email),
-                        categoryEntity.isDeleted.eq(false), // 삭제되지 않은 카테고리만 조인
                         eqCategoryCode(cond.categoryCode()),
                         eqYear(cond.year()),
                         eqMonth(cond.month()))

@@ -23,7 +23,6 @@ public class Budget {
         Assert.isTrue(month != null && month >= 1 && month <= 12, "month must be between 1 and 12");
         Assert.notNull(amount, "amount must not be null");
         Assert.notNull(userEmail, "userEmail must not be null");
-        Assert.notNull(categoryCode, "categoryCode must not be null");
 
         this.id = id;
         this.year = year;
@@ -31,6 +30,14 @@ public class Budget {
         this.amount = amount;
         this.userEmail = userEmail;
         this.categoryCode = categoryCode;
+    }
+
+    /**
+     * 카테고리 없는 예산은 그 달 전체의 한도다. 카테고리별 예산의 합과 같을 필요는 없다 —
+     * 일부만 나눠 두고 나머지는 총액으로 관리하는 쓰임이 있다.
+     */
+    public boolean isTotal() {
+        return categoryCode == null;
     }
 
     public void changeAmount(BigInteger amount) {

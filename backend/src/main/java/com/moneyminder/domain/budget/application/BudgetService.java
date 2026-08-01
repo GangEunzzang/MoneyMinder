@@ -12,6 +12,7 @@ import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,14 @@ public class BudgetService {
 
         BudgetServiceSearchReq search = BudgetServiceSearchReq.from(request.categoryCode(), request.year(),
                 request.month());
-        List<BudgetWithCategory> exists = budgetRepository.findByEmailAndSearch(request.userEmail(), search.toCond());
+        List<BudgetWithCategory> sameMonth = budgetRepository.findByEmailAndSearch(request.userEmail(),
+                search.toCond());
 
-        if (!exists.isEmpty()) {
+        // categoryCode 가 null(총액)이면 조회 조건에서 빠져 그 달 전체가 걸린다. 같은 대상만 본다.
+        boolean duplicated = sameMonth.stream()
+                .anyMatch(budget -> Objects.equals(budget.categoryCode(), request.categoryCode()));
+
+        if (duplicated) {
             throw new BaseException(ResultCode.BUDGET_ALREADY_EXISTS);
         }
 
@@ -77,13 +83,22 @@ public class BudgetService {
     }
 
     private BudgetServiceRes mapToServiceResponse(Budget budget) {
+        if (budget.isTotal()) {
+            return BudgetServiceRes.forTotal(budget);
+        }
+
         Category category = categoryRepository.findByCategoryCode(budget.getCategoryCode())
                 .orElseGet(Category::defaultCategory);
 
         return BudgetServiceRes.fromDomain(budget, category);
     }
 
+    /** 총액 예산은 카테고리가 없다. 없는 것을 검사하면 그 달 한도를 아예 세울 수 없다. */
     private void validateCategoryCode(String categoryCode) {
+        if (categoryCode == null) {
+            return;
+        }
+
         if (!categoryRepository.existsByCategoryCode(categoryCode)) {
             throw new BaseException(ResultCode.CATEGORY_NOT_FOUND);
         }

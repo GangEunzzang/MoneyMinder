@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { StyleSheet, TextInput, type TextInputProps } from 'react-native';
 
+import { won } from '../lib/format';
 import { type ColorName, fontFamilyFor, space, type as typeScale, useColors } from '../theme';
 import { Row, Stack } from './layout';
 import { Text } from './Text';
@@ -28,6 +29,8 @@ export function AmountField({
   color = 'ink',
 }: AmountProps) {
   const c = useColors();
+  // 이미 콤마가 찍힌 문자열이 들어와도 NaN 이 되지 않게 한다.
+  const digits = value.replace(DIGITS, '');
 
   return (
     <Stack gap="sm" center style={styles.amountWrap}>
@@ -35,13 +38,8 @@ export function AmountField({
         {eyebrow}
       </Text>
       <Row gap="xxs" center>
-        {sign ? (
-          <Text variant="display" color={color}>
-            {sign}
-          </Text>
-        ) : null}
         <TextInput
-          value={value}
+          value={digits ? (sign ?? '') + won(Number(digits)) : ''}
           onChangeText={(next) => onChange(next.replace(DIGITS, ''))}
           keyboardType="number-pad"
           maxLength={12}
@@ -132,7 +130,7 @@ export function FieldInput(props: TextInputProps) {
 
 const styles = StyleSheet.create({
   amountWrap: { paddingVertical: space['5xl'] },
-  amountInput: { minWidth: 40, maxWidth: 220, padding: 0, fontVariant: ['tabular-nums'] },
+  amountInput: { minWidth: 40, maxWidth: 220, padding: 0, textAlign: 'right', fontVariant: ['tabular-nums'] },
   fieldInput: { minWidth: 140, padding: 0, textAlign: 'right' },
   detailValue: { flexShrink: 1, paddingLeft: space['3xl'] },
 });

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { api } from '@/shared/lib/api';
+import { toAppRecurring, toServerCategoryCode, toServerId } from '@/shared/lib/serverAdapter';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { Recurring } from './model';
@@ -51,14 +53,55 @@ type Actions = {
   markRecorded: (id: string, ym: string) => void;
 };
 
+function toServerInput(r: Recurring) {
+  return {
+    name: r.name,
+    amount: r.amount,
+    cycleDay: r.cycleDay,
+    categoryCode: toServerCategoryCode(r.categoryId),
+    paymentMethodId: r.paymentMethodId == null ? null : toServerId(r.paymentMethodId),
+    autoRecord: r.autoRecord,
+    remindBeforeDays: r.remindBeforeDays,
+  };
+}
+
 export const useRecurring = create<State & Actions>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       items: SEED,
-      add: (r) => set((s) => ({ items: [...s.items, r] })),
-      update: (id, patch) =>
-        set((s) => ({ items: s.items.map((r) => (r.id === id ? { ...r, ...patch } : r)) })),
-      remove: (id) => set((s) => ({ items: s.items.filter((r) => r.id !== id) })),
+
+      add: (r) => {
+        set((s) => ({ items: [...s.items, r] }));
+
+        api.recurrings
+          .create(toServerInput(r))
+          .then((saved) =>
+            set((s) => ({
+              items: s.items.map((item) => (item.id === r.id ? toAppRecurring(saved) : item)),
+            })),
+          )
+          .catch(() => undefined);
+      },
+
+      update: (id, patch) => {
+        const next = { ...get().items.find((r) => r.id === id), ...patch } as Recurring;
+        set((s) => ({ items: s.items.map((r) => (r.id === id ? next : r)) }));
+
+        const serverId = toServerId(id);
+        if (serverId) api.recurrings.update(serverId, toServerInput(next)).catch(() => undefined);
+      },
+
+      remove: (id) => {
+        set((s) => ({ items: s.items.filter((r) => r.id !== id) }));
+
+        const serverId = toServerId(id);
+        if (serverId) api.recurrings.remove(serverId).catch(() => undefined);
+      },
+
+      /**
+       * 자동기록 도장은 서버가 찍는다. 여기서는 화면만 맞춰두고,
+       * 다음 동기화에서 서버 값이 진실이 된다.
+       */
       markRecorded: (id, ym) =>
         set((s) => ({
           items: s.items.map((r) => (r.id === id ? { ...r, lastRecordedMonth: ym } : r)),

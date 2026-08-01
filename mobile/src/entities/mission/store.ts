@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { api } from '@/shared/lib/api';
+import { toServerPeriod } from '@/shared/lib/serverAdapter';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { ActiveMission, MissionId, MissionPeriod } from './model';
@@ -24,6 +26,8 @@ type State = {
   celebrated: string[];
   /** 축하를 이미 띄운 배지 id. 없으면 앱을 열 때마다 같은 배지가 다시 뜬다. */
   seenBadges: string[];
+  /** 미션코드 → 서버가 발급한 id. 수정·중단은 이 id 로 간다. */
+  serverIds: Record<string, number>;
 };
 
 type Actions = {
@@ -42,17 +46,45 @@ export function celebrationKey(id: string, periodKey: string): string {
 
 export const useMissions = create<State & Actions>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       active: SEED,
       celebrated: [],
       seenBadges: [],
       weeklyGoal: 4,
       remind: true,
       remindHour: 21,
-      start: (m) => set((s) => ({ active: [...s.active.filter((x) => x.id !== m.id), m] })),
-      update: (id, patch) =>
-        set((s) => ({ active: s.active.map((m) => (m.id === id ? { ...m, ...patch } : m)) })),
-      stop: (id) => set((s) => ({ active: s.active.filter((m) => m.id !== id) })),
+      serverIds: {},
+
+      start: (m) => {
+        set((s) => ({ active: [...s.active.filter((x) => x.id !== m.id), m] }));
+
+        api.missions
+          .start({ missionCode: m.id, target: m.target, period: toServerPeriod(m.period) })
+          .then((saved) =>
+            set((s) => ({ serverIds: { ...s.serverIds, [m.id]: saved.missionId } })),
+          )
+          .catch(() => undefined);
+      },
+
+      update: (id, patch) => {
+        const next = { ...get().active.find((m) => m.id === id), ...patch } as ActiveMission;
+        set((s) => ({ active: s.active.map((m) => (m.id === id ? next : m)) }));
+
+        const serverId = get().serverIds[id];
+        if (serverId) {
+          api.missions
+            .update(serverId, next.target, toServerPeriod(next.period))
+            .catch(() => undefined);
+        }
+      },
+
+      stop: (id) => {
+        set((s) => ({ active: s.active.filter((m) => m.id !== id) }));
+
+        const serverId = get().serverIds[id];
+        if (serverId) api.missions.stop(serverId).catch(() => undefined);
+      },
+
       configure: (patch) => set(patch),
       resetStreak: () => set({ celebrated: [] }),
       seeBadges: (ids) =>

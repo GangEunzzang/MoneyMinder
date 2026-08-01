@@ -39,6 +39,7 @@ import {
   ProgressBar,
   Row,
   SectionHeader,
+  ServerBanner,
   Stack,
   Text,
 } from '@/shared/ui';
@@ -116,6 +117,8 @@ export default function HomeScreen() {
             <IconBell size={18} color={c.inkSoft} />
           </Pressable>
         </Row>
+
+        <ServerBanner />
 
         <StreakCard
           streak={view.streak}

@@ -189,20 +189,30 @@ jacocoTestReport {
 
 }
 
+// 리포트만 만들고 검증을 안 하면 수치가 떨어져도 아무도 모른다
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+
 jacocoTestCoverageVerification {
     violationRules {
         rule {
             enabled = true
-            element = 'CLASS'
+            // CLASS 단위로 걸면 분기가 적은 클래스 하나가 전체 빌드를 막는다
+            element = 'BUNDLE'
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
-                minimum = 0
+                minimum = 0.45
             }
 
             excludes = coverageExcludes
         }
     }
+
+    classDirectories.setFrom(
+            files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: coverageExcludes)
+            })
+    )
 }
 
 sonar {

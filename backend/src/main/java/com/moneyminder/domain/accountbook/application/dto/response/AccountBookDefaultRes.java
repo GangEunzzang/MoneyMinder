@@ -1,13 +1,12 @@
 package com.moneyminder.domain.accountbook.application.dto.response;
 
 import com.moneyminder.domain.accountbook.domain.AccountBook;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.type.CategoryType;
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
-
 import java.math.BigInteger;
 import java.time.LocalDate;
+import lombok.Builder;
 
 
 public record AccountBookDefaultRes(
@@ -27,7 +26,6 @@ public record AccountBookDefaultRes(
         CategoryType categoryType
 ) {
 
-    @QueryProjection
     @Builder
     public AccountBookDefaultRes {
         categoryCode = categoryCode == null ? Category.DEFAULT_CATEGORY_CODE : categoryCode;
@@ -35,15 +33,27 @@ public record AccountBookDefaultRes(
         categoryType = categoryType == null ? CategoryType.ETC : categoryType;
     }
 
+    public static AccountBookDefaultRes from(AccountBookWithCategory withCategory) {
+        return AccountBookDefaultRes.builder()
+                .accountId(withCategory.accountId())
+                .amount(withCategory.amount())
+                .transactionDate(withCategory.transactionDate())
+                .memo(withCategory.memo())
+                .categoryCode(withCategory.categoryCode())
+                .categoryName(withCategory.categoryName())
+                .categoryType(withCategory.categoryType())
+                .build();
+    }
+
     public static AccountBookDefaultRes fromDomain(AccountBook accountBook, Category category) {
         return AccountBookDefaultRes.builder()
-                .accountId(accountBook.accountId())
-                .amount(accountBook.amount())
-                .transactionDate(accountBook.transactionDate())
-                .memo(accountBook.memo())
-                .categoryCode(category.categoryCode())
-                .categoryName(category.categoryName())
-                .categoryType(category.categoryType())
+                .accountId(accountBook.getAccountId())
+                .amount(accountBook.getAmount())
+                .transactionDate(accountBook.getTransactionDate())
+                .memo(accountBook.getMemo())
+                .categoryCode(category.getCategoryCode())
+                .categoryName(category.getCategoryName())
+                .categoryType(category.getCategoryType())
                 .build();
     }
 

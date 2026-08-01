@@ -17,7 +17,7 @@ public class SlackNotificationAspect {
 
     private final SlackService slackService;
 
-    @Around("@annotation(com.moneyminder.global.annotaion.SlackNotification) && args(request, exception)")
+    @Around("@annotation(com.moneyminder.global.annotation.SlackNotification) && args(request, exception)")
     public Object sendSlack(ProceedingJoinPoint joinPoint, HttpServletRequest request, Exception exception)
             throws Throwable {
         slackService.send(request, exception);

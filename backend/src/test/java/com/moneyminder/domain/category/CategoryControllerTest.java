@@ -1,17 +1,17 @@
 package com.moneyminder.domain.category;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.moneyminder.ControllerTest;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
-import com.moneyminder.domain.category.presentation.dto.request.CategoryCreateReq;
+import com.moneyminder.domain.category.presentation.dto.CategoryCreateReq;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 class CategoryControllerTest extends ControllerTest {
 
@@ -48,7 +48,7 @@ class CategoryControllerTest extends ControllerTest {
         assertAll(
                 () -> assertThat(updateResponse.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(updateResponse.jsonPath().getString("data.categoryName")).isEqualTo("수정된 카테고리 이름"),
-                () -> assertThat(categoryRepository.getById(1L).categoryName()).isEqualTo("수정된 카테고리 이름")
+                () -> assertThat(categoryRepository.getById(1L).getCategoryName()).isEqualTo("수정된 카테고리 이름")
         );
     }
 

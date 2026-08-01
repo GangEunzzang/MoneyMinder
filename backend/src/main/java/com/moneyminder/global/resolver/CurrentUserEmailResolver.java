@@ -1,6 +1,6 @@
 package com.moneyminder.global.resolver;
 
-import com.moneyminder.global.annotaion.CurrentUserEmail;
+import com.moneyminder.global.annotation.CurrentUserEmail;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;

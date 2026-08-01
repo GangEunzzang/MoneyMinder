@@ -8,7 +8,11 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+
+    # step 의 if 는 그 step 의 env 를 보지 못한다. job 레벨에 둬야 조건으로 쓸 수 있다.
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
@@ -28,11 +32,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: SonarQube & Jacoco 분석
+      # 머지를 막는 것은 여기까지다. 테스트가 깨지면 빨간불이 된다.
+      - name: 빌드 & 테스트 & 커버리지
+        working-directory: backend
+        run: ./gradlew clean test jacocoTestReport
+
+      # 정적분석은 보조 수단이라 토큰이 없거나 업로드가 실패해도 머지를 막지 않는다.
+      - name: SonarCloud 분석
+        if: ${{ env.SONAR_TOKEN != '' }}
+        continue-on-error: true
         working-directory: backend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          ./gradlew clean test jacocoTestReport
-          ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar -Dsonar.token=$SONAR_TOKEN

@@ -57,6 +57,18 @@ public class UserEntity extends BaseTimeEntity {
         this.isEmailVerified = isEmailVerified;
     }
 
+    public static UserEntity from(User user) {
+        return UserEntity.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .userRole(user.getUserRole())
+                .socialType(user.getSocialType())
+                .isEmailVerified(user.isEmailVerified())
+                .build();
+    }
+
     public User toDomain() {
         return User.builder()
                 .id(id)
@@ -69,4 +81,3 @@ public class UserEntity extends BaseTimeEntity {
                 .build();
     }
 }
-

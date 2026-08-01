@@ -1,15 +1,14 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
+import com.moneyminder.domain.accountbook.domain.AccountBookSearchCond;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
+import com.moneyminder.domain.accountbook.domain.AmountByDate;
+import com.moneyminder.domain.accountbook.domain.AmountByMonth;
 import com.moneyminder.domain.accountbook.domain.repository.AccountBookRepository;
 import com.moneyminder.domain.accountbook.infrastructure.jpa.entity.AccountBookEntity;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +23,12 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
 
     @Override
     public AccountBook save(AccountBook accountBook) {
-        return jpaRepository.save(accountBook.toEntity()).toDomain();
+        return jpaRepository.save(AccountBookEntity.from(accountBook)).toDomain();
     }
 
     @Override
     public void delete(AccountBook accountBook) {
-        jpaRepository.delete(accountBook.toEntity());
+        jpaRepository.delete(AccountBookEntity.from(accountBook));
     }
 
     @Override
@@ -49,37 +48,32 @@ public class AccountBookRepositoryImpl implements AccountBookRepository {
     }
 
     @Override
-    public Optional<AccountBookDefaultRes> findWithCategoryById(Long id) {
+    public Optional<AccountBookWithCategory> findWithCategoryById(Long id) {
         return Optional.ofNullable(jpaRepository.findWithCategoryById(id));
     }
 
     @Override
-    public List<AccountBookDefaultRes> findWithCategoryByEmail(String email) {
+    public List<AccountBookWithCategory> findWithCategoryByEmail(String email) {
         return jpaRepository.findWithCategoryByEmail(email);
     }
 
     @Override
-    public List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq) {
-        return jpaRepository.findWithCategoryByEmailAndSearch(email, searchReq);
+    public List<AccountBookWithCategory> findWithCategoryByEmailAndSearch(String email, AccountBookSearchCond cond) {
+        return jpaRepository.findWithCategoryByEmailAndSearch(email, cond);
     }
 
     @Override
-    public BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq request) {
-        return jpaRepository.findWeekTotalByCategoryType(email, request);
+    public List<AccountBookWithCategory> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate) {
+        return jpaRepository.findWithCategoryByDate(email, startDate, endDate);
     }
 
     @Override
-    public BigInteger findMonthTotalByCategory(String email, AccountBookMonthSummaryReq request) {
-        return jpaRepository.findMonthTotalByCategoryType(email, request);
+    public List<AmountByMonth> findMonthlyTotals(String email, int year) {
+        return jpaRepository.findMonthlyTotals(email, year);
     }
 
     @Override
-    public List<AccountBook> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate) {
-        return jpaRepository.findByUserEmailAndTransactionDateGreaterThanEqualAndTransactionDateLessThanEqual(email,
-                        startDate, endDate).stream()
-                .map(AccountBookEntity::toDomain)
-                .toList();
+    public List<AmountByDate> findDailyTotals(String email, LocalDate startDate, LocalDate endDate) {
+        return jpaRepository.findDailyTotals(email, startDate, endDate);
     }
-
-
 }

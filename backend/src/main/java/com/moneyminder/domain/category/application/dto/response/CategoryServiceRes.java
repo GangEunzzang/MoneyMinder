@@ -15,11 +15,11 @@ public record CategoryServiceRes(
 
     public static CategoryServiceRes fromDomain(Category category) {
         return CategoryServiceRes.builder()
-                .categoryId(category.id())
-                .categoryName(category.categoryName())
-                .categoryCode(category.categoryCode())
-                .categoryType(category.categoryType().name())
-                .description(category.description())
+                .categoryId(category.getId())
+                .categoryName(category.getCategoryName())
+                .categoryCode(category.getCategoryCode())
+                .categoryType(category.getCategoryType().name())
+                .description(category.getDescription())
                 .isCustom(category.isCustom())
                 .build();
     }

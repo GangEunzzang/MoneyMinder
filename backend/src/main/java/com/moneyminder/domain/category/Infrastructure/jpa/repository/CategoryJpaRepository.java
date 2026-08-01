@@ -1,6 +1,6 @@
-package com.moneyminder.domain.category.Infrastructure.jpa.repository;
+package com.moneyminder.domain.category.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.category.Infrastructure.jpa.entity.CategoryEntity;
+import com.moneyminder.domain.category.infrastructure.jpa.entity.CategoryEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

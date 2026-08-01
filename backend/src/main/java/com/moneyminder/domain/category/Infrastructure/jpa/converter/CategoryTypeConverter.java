@@ -1,4 +1,4 @@
-package com.moneyminder.domain.category.Infrastructure.jpa.converter;
+package com.moneyminder.domain.category.infrastructure.jpa.converter;
 
 import com.moneyminder.domain.category.domain.type.CategoryType;
 import jakarta.persistence.AttributeConverter;

@@ -25,6 +25,13 @@ public class RefreshTokenRedis {
         this.email = email;
     }
 
+    public static RefreshTokenRedis from(RefreshToken refreshToken) {
+        return RefreshTokenRedis.builder()
+                .email(refreshToken.getEmail())
+                .tokenValue(refreshToken.getTokenValue())
+                .build();
+    }
+
     public RefreshToken toDomain() {
         return RefreshToken.builder()
                 .tokenValue(tokenValue)

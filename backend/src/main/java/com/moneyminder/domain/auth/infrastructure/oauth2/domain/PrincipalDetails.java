@@ -24,7 +24,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getName() {
-        return user.name();
+        return user.getName();
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton((GrantedAuthority) () -> user.userRole().getKey());
+        return Collections.singleton((GrantedAuthority) () -> user.getUserRole().getKey());
     }
 
     @Override
@@ -44,6 +44,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return user.email();
+        return user.getEmail();
     }
 }

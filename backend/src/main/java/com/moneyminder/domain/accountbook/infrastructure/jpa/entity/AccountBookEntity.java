@@ -67,6 +67,17 @@ public class AccountBookEntity extends BaseTimeEntity {
         this.isDeleted = isDeleted;
     }
 
+    public static AccountBookEntity from(AccountBook accountBook) {
+        return AccountBookEntity.builder()
+                .id(accountBook.getAccountId())
+                .categoryCode(accountBook.getCategoryCode())
+                .userEmail(accountBook.getUserEmail())
+                .amount(accountBook.getAmount())
+                .transactionDate(accountBook.getTransactionDate())
+                .memo(accountBook.getMemo())
+                .build();
+    }
+
     public AccountBook toDomain() {
         return AccountBook.builder()
                 .accountId(id)

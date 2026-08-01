@@ -1,11 +1,10 @@
 package com.moneyminder.domain.accountbook.domain.repository;
 
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.domain.AccountBook;
-import java.math.BigInteger;
+import com.moneyminder.domain.accountbook.domain.AccountBookSearchCond;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
+import com.moneyminder.domain.accountbook.domain.AmountByDate;
+import com.moneyminder.domain.accountbook.domain.AmountByMonth;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -22,15 +21,15 @@ public interface AccountBookRepository {
 
     Optional<AccountBook> findById(Long id);
 
-    Optional<AccountBookDefaultRes> findWithCategoryById(Long id);
+    Optional<AccountBookWithCategory> findWithCategoryById(Long id);
 
-    List<AccountBookDefaultRes> findWithCategoryByEmail(String email);
+    List<AccountBookWithCategory> findWithCategoryByEmail(String email);
 
-    List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq);
+    List<AccountBookWithCategory> findWithCategoryByEmailAndSearch(String email, AccountBookSearchCond cond);
 
-    BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq request);
+    List<AccountBookWithCategory> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate);
 
-    BigInteger findMonthTotalByCategory(String email, AccountBookMonthSummaryReq request);
+    List<AmountByMonth> findMonthlyTotals(String email, int year);
 
-    List<AccountBook> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate);
+    List<AmountByDate> findDailyTotals(String email, LocalDate startDate, LocalDate endDate);
 }

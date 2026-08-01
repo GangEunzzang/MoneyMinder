@@ -4,13 +4,12 @@ import com.moneyminder.domain.auth.infrastructure.oauth2.info.OAuth2UserInfo;
 import com.moneyminder.domain.user.domain.User;
 import com.moneyminder.domain.user.domain.type.SocialType;
 import com.moneyminder.domain.user.domain.type.UserRole;
+import java.util.Collection;
+import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.Map;
 
 @Service
 public class OAuth2UserInfoService {

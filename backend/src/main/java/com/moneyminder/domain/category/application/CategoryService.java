@@ -23,7 +23,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryServiceRes create(CategoryServiceCreateReq request) {
-        Category category = categoryRepository.save(Category.create(request));
+        Category category = categoryRepository.save(request.toDomain());
         return CategoryServiceRes.fromDomain(category);
     }
 
@@ -31,14 +31,12 @@ public class CategoryService {
     public CategoryServiceRes update(CategoryServiceUpdateReq request) {
         Category category = categoryRepository.getById(request.categoryId());
 
-        if (!category.userEmail().equals(request.userEmail())) {
-            throw new BaseException(ResultCode.CATEGORY_BOOK_FORBIDDEN);
-        }
+        category.validateOwner(request.userEmail());
+        category.update(request.categoryName(), request.categoryType(), request.description());
 
-        Category updateCategory = category.update(request);
-        categoryRepository.save(updateCategory);
+        categoryRepository.save(category);
 
-        return CategoryServiceRes.fromDomain(updateCategory);
+        return CategoryServiceRes.fromDomain(category);
     }
 
     @Transactional
@@ -46,9 +44,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new BaseException(ResultCode.CATEGORY_NOT_FOUND));
 
-        if (!category.userEmail().equals(userEmail)) {
-            throw new BaseException(ResultCode.CATEGORY_BOOK_FORBIDDEN);
-        }
+        category.validateOwner(userEmail);
 
         categoryRepository.delete(category);
     }
@@ -61,24 +57,28 @@ public class CategoryService {
         return Stream.concat(defaultCategories.stream(), userCategories.stream()).toList();
     }
 
+    @Transactional(readOnly = true)
     public CategoryServiceRes getById(Long categoryId) {
         Category category = categoryRepository.getById(categoryId);
 
         return CategoryServiceRes.fromDomain(category);
     }
 
+    @Transactional(readOnly = true)
     public CategoryServiceRes getCategoryByCode(String categoryCode) {
         Category category = categoryRepository.getByCategoryCode(categoryCode);
 
         return CategoryServiceRes.fromDomain(category);
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryServiceRes> getDefaultCategories() {
         return categoryRepository.findByDefaultCategory().stream()
                 .map(CategoryServiceRes::fromDomain)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryServiceRes> getCategoriesByEmail(String email) {
         return categoryRepository.findByUserEmail(email).stream()
                 .map(CategoryServiceRes::fromDomain)

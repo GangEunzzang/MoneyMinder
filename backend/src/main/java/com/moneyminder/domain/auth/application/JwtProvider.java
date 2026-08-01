@@ -60,7 +60,7 @@ public class JwtProvider {
         String newAccessToken = generateAccessToken(user);
         String newRefreshToken = generateRefreshToken();
 
-        RefreshToken refreshToken = RefreshToken.create(user.email(), newRefreshToken);
+        RefreshToken refreshToken = RefreshToken.create(user.getEmail(), newRefreshToken);
 
         refreshTokenRepository.save(refreshToken);
 
@@ -74,14 +74,14 @@ public class JwtProvider {
         RefreshToken currentRefreshToken = refreshTokenRepository.findByTokenValue(refreshToken)
                 .orElseThrow(() -> new BaseException(ResultCode.JWT_INVALID));
 
-        User user = userRepository.findByEmail(currentRefreshToken.email())
+        User user = userRepository.findByEmail(currentRefreshToken.getEmail())
                 .orElseThrow(() -> new BaseException(ResultCode.USER_NOT_FOUND));
 
         String newAccessToken = generateAccessToken(user);
         String newRefreshToken = generateRefreshToken();
 
         refreshTokenRepository.delete(currentRefreshToken);
-        refreshTokenRepository.save(RefreshToken.create(user.email(), newRefreshToken));
+        refreshTokenRepository.save(RefreshToken.create(user.getEmail(), newRefreshToken));
 
         return TokenInfo.create(newAccessToken, newRefreshToken);
     }
@@ -169,9 +169,9 @@ public class JwtProvider {
 
     private String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(user.email())
-                .claim(AUTHORITIES_KEY, user.userRole().getKey())
-                .claim("name", user.name())
+                .setSubject(user.getEmail())
+                .claim(AUTHORITIES_KEY, user.getUserRole().getKey())
+                .claim("name", user.getName())
                 .setExpiration(Date.from(Instant.now().plusMillis(tokenProperties.getAccessTokenExpiry())))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();

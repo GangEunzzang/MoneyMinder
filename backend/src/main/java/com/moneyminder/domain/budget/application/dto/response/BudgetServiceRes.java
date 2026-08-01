@@ -1,12 +1,11 @@
 package com.moneyminder.domain.budget.application.dto.response;
 
 import com.moneyminder.domain.budget.domain.Budget;
+import com.moneyminder.domain.budget.domain.BudgetWithCategory;
 import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.type.CategoryType;
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
-
 import java.math.BigInteger;
+import lombok.Builder;
 
 public record BudgetServiceRes(
         Long budgetId,
@@ -18,20 +17,31 @@ public record BudgetServiceRes(
         CategoryType categoryType
 ) {
 
-    @QueryProjection
     @Builder
     public BudgetServiceRes {
     }
 
+    public static BudgetServiceRes from(BudgetWithCategory withCategory) {
+        return BudgetServiceRes.builder()
+                .budgetId(withCategory.budgetId())
+                .year(withCategory.year())
+                .month(withCategory.month())
+                .amount(withCategory.amount())
+                .categoryCode(withCategory.categoryCode())
+                .categoryName(withCategory.categoryName())
+                .categoryType(withCategory.categoryType())
+                .build();
+    }
+
     public static BudgetServiceRes fromDomain(Budget budget, Category category) {
         return BudgetServiceRes.builder()
-                .budgetId(budget.id())
-                .year(budget.year())
-                .month(budget.month())
-                .amount(budget.amount())
-                .categoryCode(category.categoryCode())
-                .categoryName(category.categoryName())
-                .categoryType(category.categoryType())
+                .budgetId(budget.getId())
+                .year(budget.getYear())
+                .month(budget.getMonth())
+                .amount(budget.getAmount())
+                .categoryCode(category.getCategoryCode())
+                .categoryName(category.getCategoryName())
+                .categoryType(category.getCategoryType())
                 .build();
     }
 }

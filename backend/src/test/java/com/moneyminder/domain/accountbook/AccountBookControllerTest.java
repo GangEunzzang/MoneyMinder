@@ -63,7 +63,7 @@ class AccountBookControllerTest extends ControllerTest {
         assertAll(
                 () -> assertThat(updateResponse.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(updateResponse.jsonPath().getString("data.amount")).isEqualTo("1500"),
-                () -> assertThat(accountBookRepository.findById(1L).get().amount()).isEqualTo(new BigInteger("1500"))
+                () -> assertThat(accountBookRepository.findById(1L).get().getAmount()).isEqualTo(new BigInteger("1500"))
         );
     }
 

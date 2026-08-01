@@ -1,22 +1,23 @@
 package com.moneyminder.domain.accountbook.infrastructure.jpa.repository;
 
-
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookMonthSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookWeekSummaryReq;
-import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
-import java.math.BigInteger;
+import com.moneyminder.domain.accountbook.domain.AccountBookSearchCond;
+import com.moneyminder.domain.accountbook.domain.AccountBookWithCategory;
+import com.moneyminder.domain.accountbook.domain.AmountByDate;
+import com.moneyminder.domain.accountbook.domain.AmountByMonth;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface AccountBookQueryRepository {
 
-    AccountBookDefaultRes findWithCategoryById(Long id);
+    AccountBookWithCategory findWithCategoryById(Long id);
 
-    List<AccountBookDefaultRes> findWithCategoryByEmail(String email);
+    List<AccountBookWithCategory> findWithCategoryByEmail(String email);
 
-    List<AccountBookDefaultRes> findWithCategoryByEmailAndSearch(String email, AccountBookServiceSearchReq searchReq);
+    List<AccountBookWithCategory> findWithCategoryByEmailAndSearch(String email, AccountBookSearchCond cond);
 
-    BigInteger findWeekTotalByCategoryType(String email, AccountBookWeekSummaryReq summaryReq);
+    List<AccountBookWithCategory> findWithCategoryByDate(String email, LocalDate startDate, LocalDate endDate);
 
-    BigInteger findMonthTotalByCategoryType(String email, AccountBookMonthSummaryReq summaryReq);
+    List<AmountByMonth> findMonthlyTotals(String email, int year);
+
+    List<AmountByDate> findDailyTotals(String email, LocalDate startDate, LocalDate endDate);
 }

@@ -10,7 +10,7 @@ import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMo
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYearSummaryRes;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookUpdateReq;
-import com.moneyminder.global.annotaion.CurrentUserEmail;
+import com.moneyminder.global.annotation.CurrentUserEmail;
 import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;

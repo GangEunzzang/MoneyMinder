@@ -1,11 +1,10 @@
 package com.moneyminder.domain.budget.infrastructure.jpa.repository;
 
-import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
-import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
-
+import com.moneyminder.domain.budget.domain.BudgetSearchCond;
+import com.moneyminder.domain.budget.domain.BudgetWithCategory;
 import java.util.List;
 
 public interface BudgetQueryRepository {
 
-    List<BudgetServiceRes> findWithCategoryByEmailAndSearch(String email, BudgetServiceSearchReq searchReq);
+    List<BudgetWithCategory> findWithCategoryByEmailAndSearch(String email, BudgetSearchCond cond);
 }

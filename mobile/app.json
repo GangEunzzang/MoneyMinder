@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "MoneyMinder",
+    "slug": "moneyminder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/moneyminder-icon.png",
+    "scheme": "moneyminder",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "icon": "./assets/images/moneyminder-icon.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#7C5CFF",
+        "foregroundImage": "./assets/images/moneyminder-icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/moneyminder-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#7C5CFF",
+          "image": "./assets/images/moneyminder-icon.png",
+          "imageWidth": 76
+        }
+      ],
+      "expo-sqlite"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

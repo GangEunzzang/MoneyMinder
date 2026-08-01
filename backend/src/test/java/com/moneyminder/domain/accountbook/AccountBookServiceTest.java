@@ -1,5 +1,9 @@
 package com.moneyminder.domain.accountbook;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+
 import com.moneyminder.domain.accountbook.application.AccountBookService;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
@@ -11,6 +15,9 @@ import com.moneyminder.domain.category.domain.Category;
 import com.moneyminder.domain.category.domain.repository.CategoryRepository;
 import com.moneyminder.global.exception.BaseException;
 import com.moneyminder.global.exception.ResultCode;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,14 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class AccountBookServiceTest {
@@ -79,10 +78,10 @@ public class AccountBookServiceTest {
             AccountBook accountBook = accountBookRepository.getById(2L);
 
             // then
-            assertThat(accountBook.userEmail()).isEqualTo("테스트이메일");
-            assertThat(accountBook.categoryCode()).isEqualTo("카테고리코드");
-            assertThat(accountBook.memo()).isEqualTo("메모");
-            assertThat(accountBook.amount()).isEqualTo(BigInteger.valueOf(99999));
+            assertThat(accountBook.getUserEmail()).isEqualTo("테스트이메일");
+            assertThat(accountBook.getCategoryCode()).isEqualTo("카테고리코드");
+            assertThat(accountBook.getMemo()).isEqualTo("메모");
+            assertThat(accountBook.getAmount()).isEqualTo(BigInteger.valueOf(99999));
         }
 
 
@@ -106,10 +105,10 @@ public class AccountBookServiceTest {
             AccountBook accountBook = accountBookRepository.getById(1L);
 
             // then
-            assertThat(accountBook.userEmail()).isEqualTo("테스트이메일");
-            assertThat(accountBook.categoryCode()).isEqualTo("수정 카테고리");
-            assertThat(accountBook.memo()).isEqualTo("수정된 메모");
-            assertThat(accountBook.amount()).isEqualTo(BigInteger.valueOf(100000));
+            assertThat(accountBook.getUserEmail()).isEqualTo("테스트이메일");
+            assertThat(accountBook.getCategoryCode()).isEqualTo("수정 카테고리");
+            assertThat(accountBook.getMemo()).isEqualTo("수정된 메모");
+            assertThat(accountBook.getAmount()).isEqualTo(BigInteger.valueOf(100000));
         }
 
         @DisplayName("삭제 - 특정 가계부를 성공적으로 삭제한다.")
@@ -119,7 +118,7 @@ public class AccountBookServiceTest {
             AccountBook accountBook = accountBookRepository.getById(1L);
 
             // when
-            accountBookService.delete(accountBook.accountId(), "테스트이메일");
+            accountBookService.delete(accountBook.getAccountId(), "테스트이메일");
 
             // then
             assertThat(accountBookRepository.findById(1L)).isEmpty();
@@ -404,7 +403,7 @@ public class AccountBookServiceTest {
             AccountBook accountBook = accountBookRepository.getById(1L);
 
             // when & then
-            assertThatThrownBy(() -> accountBookService.delete(accountBook.accountId(), "다른이메일"))
+            assertThatThrownBy(() -> accountBookService.delete(accountBook.getAccountId(), "다른이메일"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ResultCode.ACCOUNT_BOOK_FORBIDDEN.getMessage());
         }

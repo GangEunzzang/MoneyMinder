@@ -1,13 +1,10 @@
 package com.moneyminder.domain.category.presentation;
 
 import com.moneyminder.domain.category.application.CategoryService;
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceCreateReq;
-import com.moneyminder.domain.category.application.dto.request.CategoryServiceUpdateReq;
 import com.moneyminder.domain.category.application.dto.response.CategoryServiceRes;
 import com.moneyminder.domain.category.presentation.dto.CategoryCreateReq;
 import com.moneyminder.domain.category.presentation.dto.CategoryUpdateReq;
 import com.moneyminder.global.annotation.CurrentUserEmail;
-import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -28,40 +25,35 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/create")
-    public DataResponse<CategoryServiceRes> createCategory(@CurrentUserEmail String email, @RequestBody @Valid CategoryCreateReq request) {
-        CategoryServiceCreateReq serviceRequest = request.toService(email);
-        CategoryServiceRes response = categoryService.create(serviceRequest);
-
-        return DataResponse.of(response);
+    @PostMapping
+    public DataResponse<CategoryServiceRes> create(@CurrentUserEmail String email,
+            @Valid @RequestBody CategoryCreateReq request) {
+        return DataResponse.of(categoryService.create(request.toService(email)));
     }
 
-    @PutMapping("/update")
-    public DataResponse<CategoryServiceRes> updateCategory(@CurrentUserEmail String email, @RequestBody @Valid CategoryUpdateReq request) {
-        CategoryServiceUpdateReq serviceRequest = request.toService(email);
-        CategoryServiceRes response = categoryService.update(serviceRequest);
-
-        return DataResponse.of(response);
+    @PutMapping("/{categoryId}")
+    public DataResponse<CategoryServiceRes> update(@CurrentUserEmail String email, @PathVariable Long categoryId,
+            @Valid @RequestBody CategoryUpdateReq request) {
+        return DataResponse.of(categoryService.update(request.toService(categoryId, email)));
     }
 
-    @DeleteMapping("/delete/{categoryId}")
-    public APIResponse deleteCategory(@CurrentUserEmail String email, @PathVariable Long categoryId) {
+    @DeleteMapping("/{categoryId}")
+    public DataResponse<Void> delete(@CurrentUserEmail String email, @PathVariable Long categoryId) {
         categoryService.delete(categoryId, email);
 
         return DataResponse.empty();
     }
 
-    @GetMapping("/id/{categoryId}")
-    public DataResponse<CategoryServiceRes> findByCategoryId(@PathVariable Long categoryId) {
-        CategoryServiceRes response = categoryService.getById(categoryId);
-
-        return DataResponse.of(response);
+    @GetMapping("/{categoryId}")
+    public DataResponse<CategoryServiceRes> getById(@PathVariable Long categoryId) {
+        return DataResponse.of(categoryService.getById(categoryId));
     }
 
-    @GetMapping("/email")
-    public DataResponse<List<CategoryServiceRes>> findByUserEmail(@CurrentUserEmail String email) {
-        List<CategoryServiceRes> responses = categoryService.getByUserEmailAndDefaultCategories(email);
-
-        return DataResponse.of(responses);
+    /**
+     * 내가 만든 카테고리와 기본 카테고리를 함께 준다.
+     */
+    @GetMapping
+    public DataResponse<List<CategoryServiceRes>> getMine(@CurrentUserEmail String email) {
+        return DataResponse.of(categoryService.getByUserEmailAndDefaultCategories(email));
     }
 }

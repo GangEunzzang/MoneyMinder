@@ -1,63 +1,60 @@
 package com.moneyminder.domain.budget.presentation;
 
 import com.moneyminder.domain.budget.application.BudgetService;
-import com.moneyminder.domain.budget.application.dto.request.BudgetServiceCreateReq;
 import com.moneyminder.domain.budget.application.dto.request.BudgetServiceSearchReq;
-import com.moneyminder.domain.budget.application.dto.request.BudgetServiceUpdateReq;
 import com.moneyminder.domain.budget.application.dto.response.BudgetServiceRes;
 import com.moneyminder.domain.budget.presentation.dto.BudgetCreateReq;
 import com.moneyminder.domain.budget.presentation.dto.BudgetUpdateReq;
 import com.moneyminder.global.annotation.CurrentUserEmail;
-import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/budget")
+@RequestMapping("/api/v1/budgets")
 @RestController
 public class BudgetController {
 
     private final BudgetService budgetService;
 
-    @PostMapping("/create")
+    @PostMapping
     public DataResponse<BudgetServiceRes> create(@CurrentUserEmail String email,
-                                                 @Valid @RequestBody BudgetCreateReq request) {
-        BudgetServiceCreateReq serviceRequest = request.toService(email);
-        BudgetServiceRes response = budgetService.create(serviceRequest);
-
-        return DataResponse.of(response);
+            @Valid @RequestBody BudgetCreateReq request) {
+        return DataResponse.of(budgetService.create(request.toService(email)));
     }
 
-    @PutMapping("/update")
-    public DataResponse<BudgetServiceRes> update(@CurrentUserEmail String email,
-                                                 @Valid @RequestBody BudgetUpdateReq request) {
-        BudgetServiceUpdateReq serviceRequest = request.toService(email);
-        BudgetServiceRes response = budgetService.update(serviceRequest);
-
-        return DataResponse.of(response);
+    @PutMapping("/{budgetId}")
+    public DataResponse<BudgetServiceRes> update(@CurrentUserEmail String email, @PathVariable Long budgetId,
+            @Valid @RequestBody BudgetUpdateReq request) {
+        return DataResponse.of(budgetService.update(request.toService(budgetId, email)));
     }
 
-    @DeleteMapping("/delete/{budgetId}")
-    public APIResponse delete(@CurrentUserEmail String email, @PathVariable Long budgetId) {
+    @DeleteMapping("/{budgetId}")
+    public DataResponse<Void> delete(@CurrentUserEmail String email, @PathVariable Long budgetId) {
         budgetService.delete(budgetId, email);
 
         return DataResponse.empty();
     }
 
-    @GetMapping("/id/{budgetId}")
-    public DataResponse<BudgetServiceRes> findByBudgetId(@PathVariable Long budgetId) {
-        BudgetServiceRes response = budgetService.getById(budgetId);
-
-        return DataResponse.of(response);
+    @GetMapping("/{budgetId}")
+    public DataResponse<BudgetServiceRes> getById(@PathVariable Long budgetId) {
+        return DataResponse.of(budgetService.getById(budgetId));
     }
 
-    @GetMapping("/search")
-    public DataResponse<List<BudgetServiceRes>> findBySearch(
+    @GetMapping
+    public DataResponse<List<BudgetServiceRes>> getMine(
             @CurrentUserEmail String email,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month,
@@ -65,8 +62,6 @@ public class BudgetController {
     ) {
         BudgetServiceSearchReq searchReq = BudgetServiceSearchReq.from(categoryCode, year, month);
 
-        List<BudgetServiceRes> response = budgetService.getByEmailAndSearch(email, searchReq);
-        return DataResponse.of(response);
+        return DataResponse.of(budgetService.getByEmailAndSearch(email, searchReq));
     }
-
 }

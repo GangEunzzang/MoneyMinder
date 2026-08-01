@@ -1,9 +1,7 @@
 package com.moneyminder.domain.accountbook.presentation;
 
 import com.moneyminder.domain.accountbook.application.AccountBookService;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceCreateReq;
 import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceSearchReq;
-import com.moneyminder.domain.accountbook.application.dto.request.AccountBookServiceUpdateReq;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookCategorySummaryRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookDefaultRes;
 import com.moneyminder.domain.accountbook.application.dto.response.AccountBookMonthSummaryRes;
@@ -11,7 +9,6 @@ import com.moneyminder.domain.accountbook.application.dto.response.AccountBookYe
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookCreateReq;
 import com.moneyminder.domain.accountbook.presentation.dto.AccountBookUpdateReq;
 import com.moneyminder.global.annotation.CurrentUserEmail;
-import com.moneyminder.global.response.APIResponse;
 import com.moneyminder.global.response.DataResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
@@ -30,49 +27,41 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/accountBook")
+@RequestMapping("/api/v1/account-books")
 @RestController
 public class AccountBookController {
 
     private final AccountBookService accountBookService;
 
-    @PostMapping("/create")
+    @PostMapping
     public DataResponse<AccountBookDefaultRes> create(@CurrentUserEmail String email,
             @Valid @RequestBody AccountBookCreateReq request) {
-        AccountBookServiceCreateReq serviceRequest = request.toService(email);
-        AccountBookDefaultRes response = accountBookService.create(serviceRequest);
-        return DataResponse.of(response);
+        return DataResponse.of(accountBookService.create(request.toService(email)));
     }
 
-    @PutMapping("/update")
-    public DataResponse<AccountBookDefaultRes> update(@CurrentUserEmail String email,
+    @PutMapping("/{accountId}")
+    public DataResponse<AccountBookDefaultRes> update(@CurrentUserEmail String email, @PathVariable Long accountId,
             @Valid @RequestBody AccountBookUpdateReq request) {
-        AccountBookServiceUpdateReq serviceRequest = request.toService(email);
-        AccountBookDefaultRes response = accountBookService.update(serviceRequest);
-        return DataResponse.of(response);
+        return DataResponse.of(accountBookService.update(request.toService(accountId, email)));
     }
 
-    @DeleteMapping("/delete/{accountId}")
-    public APIResponse delete(@CurrentUserEmail String email, @PathVariable Long accountId) {
+    @DeleteMapping("/{accountId}")
+    public DataResponse<Void> delete(@CurrentUserEmail String email, @PathVariable Long accountId) {
         accountBookService.delete(accountId, email);
 
         return DataResponse.empty();
     }
 
-    @GetMapping("/id/{accountId}")
-    public DataResponse<AccountBookDefaultRes> findByAccountId(@PathVariable Long accountId) {
-        AccountBookDefaultRes response = accountBookService.getById(accountId);
-        return DataResponse.of(response);
+    @GetMapping("/{accountId}")
+    public DataResponse<AccountBookDefaultRes> getById(@PathVariable Long accountId) {
+        return DataResponse.of(accountBookService.getById(accountId));
     }
 
-    @GetMapping("/email")
-    public DataResponse<List<AccountBookDefaultRes>> findByUserEmail(@CurrentUserEmail String email) {
-        List<AccountBookDefaultRes> response = accountBookService.getByUserEmail(email);
-        return DataResponse.of(response);
-    }
-
-    @GetMapping("/search")
-    public DataResponse<List<AccountBookDefaultRes>> findBySearch(
+    /**
+     * 내 거래 목록. 이메일은 경로가 아니라 토큰에서 온다.
+     */
+    @GetMapping
+    public DataResponse<List<AccountBookDefaultRes>> getMine(
             @CurrentUserEmail String email,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(required = false) String categoryCode,
@@ -83,34 +72,24 @@ public class AccountBookController {
         AccountBookServiceSearchReq searchReq = AccountBookServiceSearchReq.from(categoryCode, startDate, endDate, memo,
                 cursorId);
 
-        List<AccountBookDefaultRes> response = accountBookService.getByUserEmailAndSearch(email, searchReq);
-        return DataResponse.of(response);
+        return DataResponse.of(accountBookService.getByUserEmailAndSearch(email, searchReq));
     }
 
-    @GetMapping("/year-summary")
-    public DataResponse<AccountBookYearSummaryRes> getYearlySummary(
-            @CurrentUserEmail String email,
-            @RequestParam Integer year
-    ) {
+    @GetMapping("/summaries/yearly")
+    public DataResponse<AccountBookYearSummaryRes> getYearlySummary(@CurrentUserEmail String email,
+            @RequestParam Integer year) {
         return DataResponse.of(accountBookService.getYearSummary(email, year));
     }
 
-    @GetMapping("/month-summary")
-    public DataResponse<AccountBookMonthSummaryRes> getMonthlySummary(
-            @CurrentUserEmail String email,
-            @RequestParam Integer year,
-            @RequestParam Integer month
-    ) {
+    @GetMapping("/summaries/monthly")
+    public DataResponse<AccountBookMonthSummaryRes> getMonthlySummary(@CurrentUserEmail String email,
+            @RequestParam Integer year, @RequestParam Integer month) {
         return DataResponse.of(accountBookService.getMonthSummary(email, year, month));
     }
 
-    @GetMapping("/category-total")
-    public DataResponse<List<AccountBookCategorySummaryRes>> getCategorySummary(
-            @CurrentUserEmail String email,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate
-    ) {
+    @GetMapping("/summaries/categories")
+    public DataResponse<List<AccountBookCategorySummaryRes>> getCategorySummary(@CurrentUserEmail String email,
+            @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
         return DataResponse.of(accountBookService.getTotalAmountByCategory(email, startDate, endDate));
     }
-
 }

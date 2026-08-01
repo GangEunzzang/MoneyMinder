@@ -10,9 +10,6 @@ import lombok.Builder;
 public record AccountBookUpdateReq(
 
         @NotNull
-        Long accountId,
-
-        @NotNull
         BigInteger amount,
 
         @NotNull
@@ -30,7 +27,7 @@ public record AccountBookUpdateReq(
 
 ) {
 
-    public AccountBookServiceUpdateReq toService(String email) {
+    public AccountBookServiceUpdateReq toService(Long accountId, String email) {
         return AccountBookServiceUpdateReq.builder()
                 .accountId(accountId)
                 .amount(amount)

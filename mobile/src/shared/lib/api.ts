@@ -238,6 +238,16 @@ export const api = {
     stop: (id: number) => request<void>(`/api/v1/missions/${id}`, { method: 'DELETE' }),
   },
 
+  deviceTokens: {
+    register: (token: string, platform: 'IOS' | 'ANDROID') =>
+      request<void>('/api/v1/device-tokens', {
+        method: 'POST',
+        body: JSON.stringify({ token, platform }),
+      }),
+    unregister: (token: string) =>
+      request<void>(`/api/v1/device-tokens/${encodeURIComponent(token)}`, { method: 'DELETE' }),
+  },
+
   budgets: {
     list: (year: number, month: number) =>
       request<ServerBudget[]>(`/api/v1/budgets?year=${year}&month=${month}`),

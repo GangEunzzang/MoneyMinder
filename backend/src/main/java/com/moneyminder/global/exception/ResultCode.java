@@ -60,6 +60,9 @@ public enum ResultCode {
     MISSION_ALREADY_STARTED(409, HttpStatus.CONFLICT, "이미 진행 중인 미션입니다."),
     MISSION_INVALID_TARGET(400, HttpStatus.BAD_REQUEST, "목표는 1 이상이어야 합니다."),
 
+    // notification
+    DEVICE_TOKEN_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
+
     INVALID_PASSWORD(401, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     ;
     private final Integer code;

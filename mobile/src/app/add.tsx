@@ -9,6 +9,7 @@ import { isCard, type PaymentMethod } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { toDateKey, type TransactionType } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
+import { notifyAfterRecord } from '@/features/notification';
 import { relativeDay, won } from '@/shared/lib/format';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
 import {
@@ -114,6 +115,10 @@ export default function AddScreen() {
     }
 
     setError(null);
+
+    // 큰 지출·예산 초과는 지금 판정된다. 미래에 다시 계산할 이유가 없다.
+    notifyAfterRecord({ ...input, id: editing?.id ?? '' }).catch(() => undefined);
+
     setSaved(
       `${won(parsed)}원 ${type === 'expense' ? '지출' : '수입'}을 ${editing ? '수정' : '기록'}했어요`,
     );

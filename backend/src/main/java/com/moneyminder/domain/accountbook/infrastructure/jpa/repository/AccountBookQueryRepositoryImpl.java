@@ -97,6 +97,9 @@ public class AccountBookQueryRepositoryImpl implements AccountBookQueryRepositor
                 accountBookEntity.amount,
                 accountBookEntity.transactionDate,
                 accountBookEntity.memo,
+                accountBookEntity.paymentMethodId,
+                accountBookEntity.merchant,
+                accountBookEntity.autoRecorded,
                 categoryEntity.categoryCode,
                 categoryEntity.categoryName,
                 categoryEntity.categoryType);

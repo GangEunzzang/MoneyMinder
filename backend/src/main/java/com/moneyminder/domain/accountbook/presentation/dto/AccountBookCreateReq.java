@@ -18,7 +18,11 @@ public record AccountBookCreateReq(
         @NotNull
         LocalDate transactionDate,
 
-        String memo
+        String memo,
+
+        Long paymentMethodId,
+
+        String merchant
 ) {
 
     public AccountBookServiceCreateReq toService(String email) {
@@ -27,6 +31,8 @@ public record AccountBookCreateReq(
                 .categoryCode(categoryCode)
                 .transactionDate(transactionDate)
                 .memo(memo)
+                .paymentMethodId(paymentMethodId)
+                .merchant(merchant)
                 .userEmail(email)
                 .build();
     }

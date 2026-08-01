@@ -53,7 +53,7 @@ public class AccountBookService {
 
         accountBook.validateOwner(updateRequest.userEmail());
         accountBook.update(updateRequest.categoryCode(), updateRequest.amount(), updateRequest.transactionDate(),
-                updateRequest.memo());
+                updateRequest.memo(), updateRequest.paymentMethodId(), updateRequest.merchant());
 
         accountBookRepository.save(accountBook);
 

@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import lombok.Builder;
 
-
 public record AccountBookDefaultRes(
 
         Long accountId,
@@ -18,6 +17,12 @@ public record AccountBookDefaultRes(
         LocalDate transactionDate,
 
         String memo,
+
+        Long paymentMethodId,
+
+        String merchant,
+
+        boolean autoRecorded,
 
         String categoryCode,
 
@@ -39,6 +44,9 @@ public record AccountBookDefaultRes(
                 .amount(withCategory.amount())
                 .transactionDate(withCategory.transactionDate())
                 .memo(withCategory.memo())
+                .paymentMethodId(withCategory.paymentMethodId())
+                .merchant(withCategory.merchant())
+                .autoRecorded(Boolean.TRUE.equals(withCategory.autoRecorded()))
                 .categoryCode(withCategory.categoryCode())
                 .categoryName(withCategory.categoryName())
                 .categoryType(withCategory.categoryType())
@@ -51,11 +59,12 @@ public record AccountBookDefaultRes(
                 .amount(accountBook.getAmount())
                 .transactionDate(accountBook.getTransactionDate())
                 .memo(accountBook.getMemo())
+                .paymentMethodId(accountBook.getPaymentMethodId())
+                .merchant(accountBook.getMerchant())
+                .autoRecorded(accountBook.isAutoRecorded())
                 .categoryCode(category.getCategoryCode())
                 .categoryName(category.getCategoryName())
                 .categoryType(category.getCategoryType())
                 .build();
     }
-
-
 }

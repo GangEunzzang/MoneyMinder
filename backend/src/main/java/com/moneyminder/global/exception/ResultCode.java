@@ -42,8 +42,25 @@ public enum ResultCode {
     BUDGET_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
     BUDGET_ALREADY_EXISTS(409, HttpStatus.CONFLICT, "이미 존재하는 예산입니다."),
 
+    // paymentMethod
+    PAYMENT_METHOD_NOT_FOUND(404, HttpStatus.NOT_FOUND, "결제수단을 찾을 수 없습니다."),
+    PAYMENT_METHOD_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
+    PAYMENT_METHOD_BILLING_DAY_NOT_ALLOWED(400, HttpStatus.BAD_REQUEST, "카드가 아니면 결제일을 둘 수 없습니다."),
+    PAYMENT_METHOD_INVALID_BILLING_DAY(400, HttpStatus.BAD_REQUEST, "결제일은 1일에서 31일 사이여야 합니다."),
 
-    INVALID_PASSWORD(500, HttpStatus.NOT_ACCEPTABLE, "비밀번호가 일치하지 않습니다."),
+    // recurring
+    RECURRING_NOT_FOUND(404, HttpStatus.NOT_FOUND, "고정지출을 찾을 수 없습니다."),
+    RECURRING_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
+    RECURRING_INVALID_CYCLE_DAY(400, HttpStatus.BAD_REQUEST, "결제 주기일은 1일에서 31일 사이여야 합니다."),
+    RECURRING_INVALID_REMIND_DAYS(400, HttpStatus.BAD_REQUEST, "알림은 결제일 0일에서 14일 전 사이여야 합니다."),
+
+    // mission
+    MISSION_NOT_FOUND(404, HttpStatus.NOT_FOUND, "미션을 찾을 수 없습니다."),
+    MISSION_FORBIDDEN(403, HttpStatus.FORBIDDEN, "데이터에 접근 권한이 없습니다."),
+    MISSION_ALREADY_STARTED(409, HttpStatus.CONFLICT, "이미 진행 중인 미션입니다."),
+    MISSION_INVALID_TARGET(400, HttpStatus.BAD_REQUEST, "목표는 1 이상이어야 합니다."),
+
+    INVALID_PASSWORD(401, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     ;
     private final Integer code;
     private final HttpStatus httpStatus;

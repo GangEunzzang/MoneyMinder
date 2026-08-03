@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { api } from '@/shared/lib/api';
-import { toServerPeriod } from '@/shared/lib/serverAdapter';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { ActiveMission, MissionId, MissionPeriod } from './model';
+import { toServerPeriod } from './serverAdapter';
 
 /** 무지출은 앱의 기본 미션이라 처음부터 켜져 있다. */
 const SEED: ActiveMission[] = [

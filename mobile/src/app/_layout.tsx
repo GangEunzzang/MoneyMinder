@@ -5,7 +5,7 @@ import { useColorScheme } from 'react-native';
 
 import { useAppState } from '@/entities/app/store';
 import { useNotifications } from '@/features/notification';
-import { useServerSync } from '@/shared/lib/useServerSync';
+import { useServerSync } from '@/features/sync';
 import { fontAssets, palette } from '@/shared/theme';
 import { Splash } from '@/shared/ui';
 

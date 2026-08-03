@@ -41,3 +41,11 @@ example
 # generated native folders
 /ios
 /android
+.ds-sync/
+.ds-src/smoke/
+.ds-src/dist/
+.ds-src/node_modules
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

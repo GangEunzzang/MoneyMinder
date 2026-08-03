@@ -1,0 +1,18 @@
+/* MoneyMinder 디자인시스템 웹 스타일.
+   RNW 는 스타일을 런타임에 주입하므로 컴포넌트 CSS 는 여기 없다.
+   여기가 담당하는 건 폰트 하나 — 없으면 프리뷰가 세리프로 떨어진다. */
+
+@font-face { font-family: 'Noto Sans KR'; font-style: normal; font-weight: 500; font-display: block; src: url('./fonts/NotoSansKR-500.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans KR'; font-style: normal; font-weight: 600; font-display: block; src: url('./fonts/NotoSansKR-600.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans KR'; font-style: normal; font-weight: 700; font-display: block; src: url('./fonts/NotoSansKR-700.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans KR'; font-style: normal; font-weight: 800; font-display: block; src: url('./fonts/NotoSansKR-800.woff2') format('woff2'); }
+
+/* RN 은 굵기마다 패밀리 이름을 따로 쓴다 (NotoSansKR_600SemiBold …). 웹에는 그런 패밀리가
+   없으므로 굵기별 별칭을 실제 폰트로 매핑한다. 이게 없으면 fontFamilyFor() 가 내는 이름이
+   전부 미해결이 되어 세리프로 떨어진다. */
+@font-face { font-family: 'NotoSansKR_500Medium';     font-weight: 500; font-display: block; src: url('./fonts/NotoSansKR-500.woff2') format('woff2'); }
+@font-face { font-family: 'NotoSansKR_600SemiBold';   font-weight: 600; font-display: block; src: url('./fonts/NotoSansKR-600.woff2') format('woff2'); }
+@font-face { font-family: 'NotoSansKR_700Bold';       font-weight: 700; font-display: block; src: url('./fonts/NotoSansKR-700.woff2') format('woff2'); }
+@font-face { font-family: 'NotoSansKR_800ExtraBold';  font-weight: 800; font-display: block; src: url('./fonts/NotoSansKR-800.woff2') format('woff2'); }
+
+html, body { font-family: 'Noto Sans KR', system-ui, sans-serif; }

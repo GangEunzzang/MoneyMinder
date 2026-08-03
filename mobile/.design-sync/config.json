@@ -1,0 +1,21 @@
+{
+  "projectId": "664e99fc-73c4-4455-b588-9518519fe959",
+  "shape": "package",
+  "pkg": "moneyminder-mobile",
+  "globalName": "MoneyMinderDS",
+  "entry": "./dist/index.es.js",
+  "srcDir": "src",
+  "tsconfig": "tsconfig.json",
+  "buildCmd": "node .ds-src/build.mjs",
+  "cssEntry": ".ds-src/ds-styles.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "ConfirmDialog": {
+      "cardMode": "single",
+      "primaryStory": "Danger"
+    },
+    "Badge": {
+      "cardMode": "column"
+    }
+  }
+}

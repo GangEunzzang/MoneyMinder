@@ -9,4 +9,7 @@ pencil-home-widgets-export.html
 
 # 손으로 만든 낡은 프리뷰들 — 펜슬과 어긋나 폐기 (D62)
 preview-*.html
-prototype.html
+
+# 위젯 두 벌은 남긴다. pencil-prototype.html 의 Screen/* 18프레임에 위젯 화면이 없어
+# 대체물이 아직 없다 (.context/design/MoneyMinder/widgets/MODULES.md 가 가리킨다).
+!preview-widgets.html

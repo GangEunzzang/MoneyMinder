@@ -15,9 +15,10 @@ import {
   txnTitle,
 } from '@/entities/transaction/model';
 import { useLedger } from '@/entities/transaction/store';
+import { useRecurring } from '@/entities/recurring/store';
 import { currentStreak, startOfWeek, StreakCard, weekProgress } from '@/features/mission';
 import { nextAutoCharge, type Upcoming } from '@/features/recurring';
-import { useRecurring } from '@/entities/recurring/store';
+import { ServerBanner } from '@/features/sync';
 import {
   dateHeading,
   monthLabel,
@@ -39,7 +40,6 @@ import {
   ProgressBar,
   Row,
   SectionHeader,
-  ServerBanner,
   Stack,
   Text,
 } from '@/shared/ui';

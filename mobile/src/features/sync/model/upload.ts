@@ -1,15 +1,13 @@
+import { toServerCategoryCode } from '@/entities/category/serverCode';
+import { toServerPeriod } from '@/entities/mission/serverAdapter';
 import { useMissions } from '@/entities/mission/store';
+import { toAppPaymentMethod } from '@/entities/payment-method/serverAdapter';
 import { usePaymentMethods } from '@/entities/payment-method/store';
+import { toAppRecurring } from '@/entities/recurring/serverAdapter';
 import { useRecurring } from '@/entities/recurring/store';
+import { toAppTransaction } from '@/entities/transaction/serverAdapter';
 import { useLedger } from '@/entities/transaction/store';
 import { api } from '@/shared/lib/api';
-import {
-  toAppPaymentMethod,
-  toAppRecurring,
-  toAppTransaction,
-  toServerCategoryCode,
-  toServerPeriod,
-} from '@/shared/lib/serverAdapter';
 
 /**
  * 로그인 전에 로컬에만 쌓인 것을 서버로 올린다. 서버가 비어 있을 때만 한다 —

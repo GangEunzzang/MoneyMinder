@@ -2,8 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useSession } from '@/entities/session/store';
 import { radius, space, useColors } from '@/shared/theme';
-
-import { Text } from './Text';
+import { Text } from '@/shared/ui';
 
 const LABEL = {
   idle: '서버 확인 전',
@@ -45,5 +44,5 @@ const styles = StyleSheet.create({
     paddingVertical: space.xs,
     borderRadius: radius.sm,
   },
-  dot: { width: 6, height: 6, borderRadius: 3 },
+  dot: { width: 6, height: 6, borderRadius: radius.pill },
 });

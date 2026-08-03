@@ -1,18 +1,16 @@
 import { useEffect } from 'react';
 
+import { toAppMission } from '@/entities/mission/serverAdapter';
 import { useMissions } from '@/entities/mission/store';
+import { toAppPaymentMethod } from '@/entities/payment-method/serverAdapter';
 import { usePaymentMethods } from '@/entities/payment-method/store';
+import { toAppRecurring } from '@/entities/recurring/serverAdapter';
 import { useRecurring } from '@/entities/recurring/store';
 import { useSession } from '@/entities/session/store';
+import { toAppTransaction } from '@/entities/transaction/serverAdapter';
 import { useLedger } from '@/entities/transaction/store';
+import { uploadLocalData } from '@/features/sync/model/upload';
 import { api, ApiError, setAccessToken, type ServerBudget } from '@/shared/lib/api';
-import {
-  toAppMission,
-  toAppPaymentMethod,
-  toAppRecurring,
-  toAppTransaction,
-} from '@/shared/lib/serverAdapter';
-import { uploadLocalData } from '@/shared/lib/serverUpload';
 
 /** 데모 계정. 로그인 화면이 실제 인증을 하게 되면 여기는 사라진다. */
 const DEMO = { email: 'demo@moneyminder.com', name: '데모', password: 'demo1234' };

@@ -2,10 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { api } from '@/shared/lib/api';
-import { toAppPaymentMethod, toServerId } from '@/shared/lib/serverAdapter';
+import { toServerId } from '@/shared/lib/serverId';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { PaymentMethod } from './model';
+import { toAppPaymentMethod } from './serverAdapter';
 
 /** 첫 실행 시드. 빈 목록으로 시작하면 기록 화면에서 고를 게 없다. */
 const SEED: PaymentMethod[] = [

@@ -20,7 +20,6 @@ export {
 export { ColorSwatch, IconBadge, ListRow, SettingRow } from './ListRow';
 export { ProgressBar } from './ProgressBar';
 export { ScreenHeader } from './ScreenHeader';
-export { ServerBanner } from './ServerBanner';
 export { ErrorState, Loading, Splash } from './ScreenState';
 export { Segmented, type SegmentItem } from './Segmented';
 export { TabBar } from './TabBar';

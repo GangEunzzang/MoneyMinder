@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { toServerCategoryCode } from '@/entities/category/serverCode';
 import { api } from '@/shared/lib/api';
-import { toAppRecurring, toServerCategoryCode, toServerId } from '@/shared/lib/serverAdapter';
+import { toServerId } from '@/shared/lib/serverId';
 import { persistStorage } from '@/shared/lib/storage';
 
 import type { Recurring } from './model';
+import { toAppRecurring } from './serverAdapter';
 
 const SEED: Recurring[] = [
   {

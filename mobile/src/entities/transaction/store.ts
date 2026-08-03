@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { toServerCategoryCode } from '@/entities/category/serverCode';
 import { api } from '@/shared/lib/api';
-import { toAppTransaction, toServerCategoryCode, toServerId } from '@/shared/lib/serverAdapter';
+import { toServerId } from '@/shared/lib/serverId';
 import { persistStorage } from '@/shared/lib/storage';
 
 import { type Transaction, transactionSchema } from './model';
+import { toAppTransaction } from './serverAdapter';
 
 type State = {
   transactions: Transaction[];

@@ -24,10 +24,12 @@ public class Category {
     private String categoryName;
     private CategoryType categoryType;
     private String description;
+    private String icon;
+    private String color;
 
     @Builder
     private Category(Long id, String categoryName, String categoryCode, CategoryType categoryType, boolean isCustom,
-            String userEmail, String description) {
+            String userEmail, String description, String icon, String color) {
         Assert.hasText(categoryName, "categoryName must not be empty");
         Assert.hasText(categoryCode, "categoryCode must not be empty");
         Assert.notNull(categoryType, "categoryType must not be empty");
@@ -41,6 +43,8 @@ public class Category {
         this.isCustom = isCustom;
         this.userEmail = userEmail;
         this.description = description;
+        this.icon = icon;
+        this.color = color;
     }
 
     public static String generateCategoryCode() {
@@ -59,7 +63,7 @@ public class Category {
     }
 
     public static Category create(String categoryName, CategoryType categoryType, String description,
-            String userEmail) {
+            String userEmail, String icon, String color) {
         return Category.builder()
                 .categoryName(categoryName)
                 .categoryType(categoryType)
@@ -67,10 +71,12 @@ public class Category {
                 .categoryCode(generateCategoryCode())
                 .isCustom(true)
                 .userEmail(userEmail)
+                .icon(icon)
+                .color(color)
                 .build();
     }
 
-    public void update(String categoryName, CategoryType categoryType, String description) {
+    public void update(String categoryName, CategoryType categoryType, String description, String icon, String color) {
         Assert.hasText(categoryName, "categoryName must not be empty");
         Assert.notNull(categoryType, "categoryType must not be empty");
         Assert.notNull(description, "description must not be empty");
@@ -78,6 +84,8 @@ public class Category {
         this.categoryName = categoryName;
         this.categoryType = categoryType;
         this.description = description;
+        this.icon = icon;
+        this.color = color;
     }
 
     public boolean isOwnedBy(String email) {

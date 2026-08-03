@@ -19,7 +19,13 @@ public record CategoryUpdateReq(
 
         @NotEmpty
         @Length(max = 255)
-        String description
+        String description,
+
+        @Length(max = 30)
+        String icon,
+
+        @Length(max = 30)
+        String color
 
 ) {
 
@@ -28,6 +34,8 @@ public record CategoryUpdateReq(
                 .categoryName(categoryName)
                 .categoryType(CategoryType.fromValue(categoryType))
                 .description(description)
+                .icon(icon)
+                .color(color)
                 .categoryId(categoryId)
                 .userEmail(email)
                 .build();

@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 
+import { toAppCategory } from '@/entities/category/serverAdapter';
+import { useCategoryStore } from '@/entities/category/store';
+import type { Category } from '@/entities/category/model';
 import { toAppMission } from '@/entities/mission/serverAdapter';
 import { useMissions } from '@/entities/mission/store';
 import { toAppPaymentMethod } from '@/entities/payment-method/serverAdapter';
@@ -10,7 +13,13 @@ import { useSession } from '@/entities/session/store';
 import { toAppTransaction } from '@/entities/transaction/serverAdapter';
 import { useLedger } from '@/entities/transaction/store';
 import { uploadLocalData } from '@/features/sync/model/upload';
-import { api, ApiError, setAccessToken, type ServerBudget } from '@/shared/lib/api';
+import {
+  api,
+  ApiError,
+  setAccessToken,
+  type ServerBudget,
+  type ServerCategory,
+} from '@/shared/lib/api';
 
 /** 데모 계정. 로그인 화면이 실제 인증을 하게 되면 여기는 사라진다. */
 const DEMO = { email: 'demo@moneyminder.com', name: '데모', password: 'demo1234' };
@@ -36,13 +45,15 @@ export function useServerSync(): void {
         setAccessToken(accessToken);
 
         const now = new Date();
-        const [transactions, paymentMethods, recurrings, missions, budgets] = await Promise.all([
-          api.transactions.list(),
-          api.paymentMethods.list(),
-          api.recurrings.list(),
-          api.missions.list(),
-          api.budgets.list(now.getFullYear(), now.getMonth() + 1),
-        ]);
+        const [transactions, paymentMethods, recurrings, missions, budgets, categories] =
+          await Promise.all([
+            api.transactions.list(),
+            api.paymentMethods.list(),
+            api.recurrings.list(),
+            api.missions.list(),
+            api.budgets.list(now.getFullYear(), now.getMonth() + 1),
+            api.categories.list(),
+          ]);
         if (cancelled) return;
 
         const serverEmpty =
@@ -61,6 +72,9 @@ export function useServerSync(): void {
 
           return;
         }
+
+        // 거래보다 먼저다. 거래의 categoryCode 를 여기서 등록한 코드로 되찾는다.
+        applyCategories(categories);
 
         useLedger.setState({ transactions: transactions.map(toAppTransaction) });
 
@@ -100,6 +114,31 @@ export function useServerSync(): void {
       cancelled = true;
     };
   }, []);
+}
+
+/**
+ * 서버에 올라간 내 카테고리로 목록을 맞춘다. 기본 카테고리(DC001~DC017)는 건너뛴다 —
+ * 아이콘·색이 없고 앱이 쓰는 것도 아니다.
+ */
+function applyCategories(server: ServerCategory[]): void {
+  const mine = server.filter((c) => c.isCustom);
+  if (mine.length === 0) return;
+
+  const linked = useCategoryStore.getState().server;
+  const idByCode = new Map(Object.entries(linked).map(([id, ref]) => [ref.code, id]));
+
+  const categories: Category[] = [];
+  const next: Record<string, { id: number; code: string }> = {};
+
+  for (const category of mine) {
+    // 이 기기에서 올린 것은 로컬 id 를 지킨다. 거래가 그 id 를 참조하고 있다.
+    const id = idByCode.get(category.categoryCode) ?? `s${category.categoryId}`;
+
+    categories.push(toAppCategory(category, id));
+    next[id] = { id: category.categoryId, code: category.categoryCode };
+  }
+
+  useCategoryStore.setState({ categories, server: next });
 }
 
 /** 카테고리 없는 행이 그 달 총액이고, 나머지가 카테고리별 한도다. */

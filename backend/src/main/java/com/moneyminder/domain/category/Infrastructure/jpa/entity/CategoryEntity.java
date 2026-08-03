@@ -48,13 +48,22 @@ public class CategoryEntity {
     @Comment("카테고리 설명")
     private String description;
 
+    @Column(length = 30)
+    @Comment("아이콘 이름. 앱이 정한 이름을 그대로 담는다")
+    private String icon;
+
+    @Column(length = 30)
+    @Comment("색 토큰 이름. 앱이 정한 이름을 그대로 담는다")
+    private String color;
+
     @Comment("삭제 여부")
     @ColumnDefault("false")
     private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
     private CategoryEntity(Long id, String categoryName, String categoryCode, CategoryType categoryType,
-                           boolean isCustom, String userEmail, String description, boolean isDeleted) {
+                           boolean isCustom, String userEmail, String description, String icon, String color,
+                           boolean isDeleted) {
         this.id = id;
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;
@@ -62,6 +71,8 @@ public class CategoryEntity {
         this.isCustom = isCustom;
         this.userEmail = userEmail;
         this.description = description;
+        this.icon = icon;
+        this.color = color;
         this.isDeleted = isDeleted;
     }
 
@@ -74,6 +85,8 @@ public class CategoryEntity {
                 .isCustom(category.isCustom())
                 .userEmail(category.getUserEmail())
                 .description(category.getDescription())
+                .icon(category.getIcon())
+                .color(category.getColor())
                 .build();
     }
 
@@ -86,6 +99,8 @@ public class CategoryEntity {
                 .isCustom(isCustom)
                 .userEmail(userEmail)
                 .description(description)
+                .icon(icon)
+                .color(color)
                 .build();
     }
 }

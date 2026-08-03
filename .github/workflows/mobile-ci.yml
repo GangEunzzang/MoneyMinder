@@ -1,0 +1,42 @@
+name: Mobile CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-ci.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node 22 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: 의존성 설치
+        run: npm ci
+
+      # 레이어 경계(boundaries)와 디자인 토큰(D23/D24)이 여기서 막힌다.
+      # 문서로만 있는 규칙은 반드시 깨지므로 게이트로 둔다.
+      - name: 린트
+        run: npx expo lint
+
+      - name: 타입 체크
+        run: npx tsc --noEmit
+
+      - name: 테스트
+        run: npx jest

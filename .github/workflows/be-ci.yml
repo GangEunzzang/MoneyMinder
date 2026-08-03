@@ -1,9 +1,12 @@
-name: Continuous Integration Pipeline
+name: BE CI Pipeline
 
 on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'backend/**'
+      - '.github/workflows/be-ci.yml'
 
 jobs:
   build-and-test:

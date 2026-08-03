@@ -1,0 +1,38 @@
+name: FE CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/fe-ci.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      # vue-cli 계열 의존성이 node 22 까지만 지원한다.
+      - name: Node 22 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 린트
+        run: npm run lint -- --no-fix
+
+      - name: 빌드
+        run: npm run build

@@ -1,0 +1,12 @@
+# 펜슬 export 원본 — extract-spec.py 의 입력일 뿐이고 펜슬에서 언제든 다시 뽑는다.
+# 커밋하는 건 결과물인 pencil-spec-ALL.md 와 추출기다.
+pencil-b*.html
+pencil-core.html
+pencil-mission.html
+pencil-records.html
+pencil-manage.html
+pencil-home-widgets-export.html
+
+# 손으로 만든 낡은 프리뷰들 — 펜슬과 어긋나 폐기 (D62)
+preview-*.html
+prototype.html

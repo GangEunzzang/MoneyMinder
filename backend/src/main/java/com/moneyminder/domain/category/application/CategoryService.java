@@ -32,7 +32,8 @@ public class CategoryService {
         Category category = categoryRepository.getById(request.categoryId());
 
         category.validateOwner(request.userEmail());
-        category.update(request.categoryName(), request.categoryType(), request.description());
+        category.update(request.categoryName(), request.categoryType(), request.description(), request.icon(),
+                request.color());
 
         categoryRepository.save(category);
 

@@ -18,7 +18,13 @@ public record CategoryCreateReq(
 
         @NotEmpty
         @Size(max = 255)
-        String description
+        String description,
+
+        @Size(max = 30)
+        String icon,
+
+        @Size(max = 30)
+        String color
 ) {
 
     public CategoryServiceCreateReq toService(String email) {
@@ -27,6 +33,8 @@ public record CategoryCreateReq(
                 .categoryType(CategoryType.fromValue(categoryType))
                 .description(description)
                 .userEmail(email)
+                .icon(icon)
+                .color(color)
                 .build();
     }
 }

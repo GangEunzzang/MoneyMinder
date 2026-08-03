@@ -30,6 +30,8 @@ public class CategoryTestHelper {
                 .categoryName("카테고리 이름")
                 .categoryType("EXPENSE")
                 .description("카테고리 설명")
+                .icon("cafe")
+                .color("peach")
                 .build();
     }
 
@@ -52,6 +54,8 @@ public class CategoryTestHelper {
                                 .categoryName("수정된 카테고리 이름")
                 .categoryType("INCOME")
                 .description("수정된 카테고리 설명")
+                .icon("wallet")
+                .color("mint")
                 .build();
     }
 

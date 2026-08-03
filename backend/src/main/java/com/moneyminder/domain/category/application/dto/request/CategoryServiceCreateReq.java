@@ -13,11 +13,15 @@ public record CategoryServiceCreateReq(
 
         CategoryType categoryType,
 
-        String description
+        String description,
+
+        String icon,
+
+        String color
 
 ) {
 
     public Category toDomain() {
-        return Category.create(categoryName, categoryType, description, userEmail);
+        return Category.create(categoryName, categoryType, description, userEmail, icon, color);
     }
 }

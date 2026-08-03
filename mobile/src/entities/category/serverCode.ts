@@ -1,8 +1,16 @@
 /**
- * 서버 카테고리는 코드(DC006)와 이름만 갖고, 아이콘·색은 앱이 정한다.
+ * 앱 카테고리 ↔ 서버 코드.
+ *
+ * 등록된 카테고리(store 의 server 맵)를 먼저 본다. 앱 카테고리는 제 이름·아이콘·색
+ * 그대로 서버에 올라가므로 거래는 그 코드를 물고 간다.
+ *
+ * 아래 두 표는 그 전에 저장된 것을 읽기 위한 **폴백**이다. 14키 고정이라 사용자가
+ * 만든 카테고리는 담기지 못했고, 왕복하면 카페→식비·교육→문화·구독→통신으로 접혔다.
  */
 
-/** 서버 기본 카테고리 코드 ↔ 앱 카테고리. 서버엔 아이콘·색이 없어 여기서 붙인다. */
+import { categoryIdOfCode, serverCodeOf } from './store';
+
+/** 서버 기본 카테고리 코드 → 앱 시드 카테고리. */
 const CODE_TO_APP: Record<string, string> = {
   DC001: 'salary',
   DC002: 'salary',
@@ -41,9 +49,9 @@ const APP_TO_CODE: Record<string, string> = {
 };
 
 export function toAppCategoryId(categoryCode: string): string {
-  return CODE_TO_APP[categoryCode] ?? 'etc';
+  return categoryIdOfCode(categoryCode) ?? CODE_TO_APP[categoryCode] ?? 'etc';
 }
 
 export function toServerCategoryCode(appCategoryId: string): string {
-  return APP_TO_CODE[appCategoryId] ?? 'DC017';
+  return serverCodeOf(appCategoryId) ?? APP_TO_CODE[appCategoryId] ?? 'DC017';
 }

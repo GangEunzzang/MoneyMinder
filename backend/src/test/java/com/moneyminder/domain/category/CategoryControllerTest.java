@@ -35,6 +35,45 @@ class CategoryControllerTest extends ControllerTest {
         );
     }
 
+    @DisplayName("아이콘·색이 등록·조회·수정을 왕복한다")
+    @Test
+    void givenIconAndColor_whenRoundTrip_thenKept() {
+        ExtractableResponse<Response> created = CategoryTestHelper.카테고리_등록_요청(
+                CategoryTestHelper.카테고리_등록_요청_생성());
+        long categoryId = created.jsonPath().getLong("data.categoryId");
+
+        ExtractableResponse<Response> found = CategoryTestHelper.카테고리_조회_요청(categoryId);
+        ExtractableResponse<Response> updated = CategoryTestHelper.카테고리_수정_요청(
+                CategoryTestHelper.카테고리_수정_요청_생성());
+
+        assertAll(
+                () -> assertThat(created.jsonPath().getString("data.icon")).isEqualTo("cafe"),
+                () -> assertThat(created.jsonPath().getString("data.color")).isEqualTo("peach"),
+                () -> assertThat(found.jsonPath().getString("data.icon")).isEqualTo("cafe"),
+                () -> assertThat(found.jsonPath().getString("data.color")).isEqualTo("peach"),
+                () -> assertThat(updated.jsonPath().getString("data.icon")).isEqualTo("wallet"),
+                () -> assertThat(updated.jsonPath().getString("data.color")).isEqualTo("mint")
+        );
+    }
+
+    @DisplayName("아이콘·색 없이 만든 카테고리는 비어서 돌아온다")
+    @Test
+    void givenNoIconAndColor_whenCreateCategory_thenNull() {
+        CategoryCreateReq request = CategoryCreateReq.builder()
+                .categoryName("아이콘 없는 카테고리")
+                .categoryType("EXPENSE")
+                .description("설명")
+                .build();
+
+        ExtractableResponse<Response> response = CategoryTestHelper.카테고리_등록_요청(request);
+
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("data.icon")).isNull(),
+                () -> assertThat(response.jsonPath().getString("data.color")).isNull()
+        );
+    }
+
     @DisplayName("카테고리 수정")
     @Test
     void givenCategoryUpdateRequest_whenUpdateCategory_thenSuccess() {

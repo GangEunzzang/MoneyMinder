@@ -51,6 +51,8 @@ export type ServerCategory = {
   categoryCode: string;
   categoryType: 'INCOME' | 'EXPENSE' | 'ETC';
   description: string;
+  icon: string | null;
+  color: string | null;
   isCustom: boolean;
 };
 
@@ -123,6 +125,8 @@ export type CategoryInput = {
   categoryName: string;
   categoryType: 'INCOME' | 'EXPENSE' | 'ETC';
   description: string;
+  icon: string;
+  color: string;
 };
 
 export type PaymentMethodInput = {

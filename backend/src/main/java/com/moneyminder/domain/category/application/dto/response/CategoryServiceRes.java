@@ -10,6 +10,8 @@ public record CategoryServiceRes(
         String categoryCode,
         String categoryType,
         String description,
+        String icon,
+        String color,
         Boolean isCustom
 ) {
 
@@ -20,6 +22,8 @@ public record CategoryServiceRes(
                 .categoryCode(category.getCategoryCode())
                 .categoryType(category.getCategoryType().name())
                 .description(category.getDescription())
+                .icon(category.getIcon())
+                .color(category.getColor())
                 .isCustom(category.isCustom())
                 .build();
     }

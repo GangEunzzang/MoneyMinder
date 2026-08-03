@@ -9,6 +9,10 @@ public record CategoryServiceUpdateReq(
         CategoryType categoryType,
         String description,
 
+        String icon,
+
+        String color,
+
         Long categoryId,
 
         String userEmail

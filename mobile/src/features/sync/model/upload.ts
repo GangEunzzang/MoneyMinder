@@ -1,4 +1,6 @@
 import { toServerCategoryCode } from '@/entities/category/serverCode';
+import { toCategoryInput } from '@/entities/category/serverAdapter';
+import { useCategoryStore } from '@/entities/category/store';
 import { toServerPeriod } from '@/entities/mission/serverAdapter';
 import { useMissions } from '@/entities/mission/store';
 import { toAppPaymentMethod } from '@/entities/payment-method/serverAdapter';
@@ -13,14 +15,33 @@ import { api } from '@/shared/lib/api';
  * 로그인 전에 로컬에만 쌓인 것을 서버로 올린다. 서버가 비어 있을 때만 한다 —
  * 이미 서버에 기록이 있으면 그쪽이 진실이고, 여기서 올리면 같은 것이 두 벌 된다.
  *
- * 결제수단을 먼저 올려야 한다. 거래가 그 id 를 물고 가기 때문이다.
+ * 카테고리와 결제수단을 먼저 올려야 한다. 거래가 둘의 코드·id 를 물고 가기 때문이다.
  */
 export async function uploadLocalData(): Promise<void> {
+  await uploadCategories();
+
   const methodIdMap = await uploadPaymentMethods();
 
   await Promise.all([uploadTransactions(methodIdMap), uploadRecurrings(methodIdMap)]);
   await uploadMissions();
   await uploadBudget();
+}
+
+/**
+ * 앱 카테고리를 서버에 그대로 올린다. 올리지 않으면 거래의 categoryCode 가
+ * 기본 카테고리 표를 타고, 표에 없는 것은 전부 기타로 접힌다.
+ */
+async function uploadCategories(): Promise<void> {
+  const categories = useCategoryStore.getState().categories;
+  const linked: Record<string, { id: number; code: string }> = {};
+
+  for (const category of categories) {
+    const saved = await api.categories.create(toCategoryInput(category)).catch(() => null);
+
+    if (saved) linked[category.id] = { id: saved.categoryId, code: saved.categoryCode };
+  }
+
+  if (Object.keys(linked).length > 0) useCategoryStore.getState().linkServer(linked);
 }
 
 async function uploadPaymentMethods(): Promise<Map<string, number>> {

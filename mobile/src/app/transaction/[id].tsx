@@ -7,6 +7,8 @@ import { useCategories } from '@/entities/category/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { useLedger } from '@/entities/transaction/store';
 import { dateFull, signedWon } from '@/shared/lib/format';
+import { warningFeedback } from '@/shared/lib/haptic';
+import { toast } from '@/shared/lib/toast';
 import { screenPadding, space, useColors } from '@/shared/theme';
 import {
   Card,
@@ -65,7 +67,9 @@ export default function TransactionDetail() {
   const onDelete = () => {
     remove(txn.id);
     setConfirming(false);
+    warningFeedback();
     router.back();
+    toast('기록을 삭제했어요');
   };
 
   return (

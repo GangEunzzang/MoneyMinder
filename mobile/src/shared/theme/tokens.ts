@@ -225,3 +225,14 @@ export const shadow = {
     elevation: 8,
   },
 } as const;
+
+/**
+ * 누름 피드백. 눌린 동안만 흐려져 "닿았다"를 알린다.
+ * 0.6 이 앱에서 이미 다수였고, 그보다 진하면 눌림이 안 보이고 옅으면 사라진 것처럼 보인다.
+ */
+export const pressedOpacity = 0.6;
+
+/** `style={pressedStyle}` 로 바로 쓴다. Pressable 이 넘기는 state 를 그대로 받는다. */
+export function pressedStyle({ pressed }: { pressed: boolean }) {
+  return pressed ? { opacity: pressedOpacity } : null;
+}

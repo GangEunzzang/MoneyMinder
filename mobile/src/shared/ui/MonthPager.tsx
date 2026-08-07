@@ -1,6 +1,7 @@
 import { Pressable } from 'react-native';
 
 import { monthHeading, monthKey, shiftMonth } from '../lib/format';
+import { pressedStyle } from '../theme';
 import { Row } from './layout';
 import { Text } from './Text';
 
@@ -13,13 +14,18 @@ export function MonthPager({ ym, onChange }: { ym: string; onChange: (next: stri
 
   return (
     <Row between center>
-      <Pressable onPress={() => onChange(shiftMonth(ym, -1))} hitSlop={10}>
+      <Pressable onPress={() => onChange(shiftMonth(ym, -1))} hitSlop={10} style={pressedStyle}>
         <Text variant="callout" color="smoke">
           이전
         </Text>
       </Pressable>
       <Text variant="calloutBold">{monthHeading(ym)}</Text>
-      <Pressable onPress={() => onChange(shiftMonth(ym, 1))} hitSlop={10} disabled={atNow}>
+      <Pressable
+        onPress={() => onChange(shiftMonth(ym, 1))}
+        hitSlop={10}
+        disabled={atNow}
+        style={pressedStyle}
+      >
         <Text variant="callout" color={atNow ? 'mist' : 'smoke'}>
           다음
         </Text>

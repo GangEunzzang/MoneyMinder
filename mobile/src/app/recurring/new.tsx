@@ -8,6 +8,8 @@ import { useRecurring } from '@/entities/recurring/store';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import { won } from '@/shared/lib/format';
 import { screenPadding, space } from '@/shared/theme';
+import { successFeedback } from '@/shared/lib/haptic';
+import { toast } from '@/shared/lib/toast';
 import {
   AmountField,
   Button,
@@ -54,7 +56,9 @@ export default function NewRecurring() {
       remindBeforeDays: remind ? 3 : 0,
       lastRecordedMonth: null,
     });
+    successFeedback();
     router.back();
+    toast('고정지출을 추가했어요');
   };
 
   return (

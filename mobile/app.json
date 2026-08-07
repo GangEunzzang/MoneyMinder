@@ -8,7 +8,9 @@
     "scheme": "moneyminder",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/images/moneyminder-icon.png"
+      "icon": "./assets/images/moneyminder-icon.png",
+      "bundleIdentifier": "com.gangeunzzang.moneyminder",
+      "appleTeamId": "FNX4ZSCT77"
     },
     "android": {
       "adaptiveIcon": {

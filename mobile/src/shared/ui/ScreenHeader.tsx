@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { screenPadding, space, useColors } from '../theme';
+import { pressedStyle, screenPadding, space, useColors } from '../theme';
 import { IconChevronLeft } from './icons';
 import { Row } from './layout';
 import { Text } from './Text';
@@ -32,7 +32,7 @@ export function ScreenHeader({
         accessibilityLabel="뒤로"
         hitSlop={12}
         onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
-        style={styles.back}
+        style={(state) => [styles.back, pressedStyle(state)]}
       >
         <IconChevronLeft size={22} color={c.ink} strokeWidth={2.1} />
       </Pressable>

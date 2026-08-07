@@ -26,5 +26,6 @@ export { Segmented, type SegmentItem } from './Segmented';
 export { TabBar } from './TabBar';
 export { AmountText, NumText, Text } from './Text';
 export { Toast } from './Toast';
+export { ToastHost } from './ToastHost';
 export { Toggle, ToggleRow } from './Toggle';
 export * from './icons';

@@ -6,6 +6,8 @@ import { KIND_LABEL, type PaymentKind } from '@/entities/payment-method/model';
 import { usePaymentMethods } from '@/entities/payment-method/store';
 import type { ColorName } from '@/shared/theme';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import { successFeedback } from '@/shared/lib/haptic';
+import { toast } from '@/shared/lib/toast';
 import {
   Button,
   FieldInput,
@@ -39,7 +41,9 @@ export default function NewPaymentMethod() {
   const onSave = () => {
     if (!canSave) return;
     add({ id: `pm-${Date.now().toString(36)}`, name: name.trim(), kind, color, billingDay: null });
+    successFeedback();
     router.back();
+    toast('결제수단을 추가했어요');
   };
 
   return (

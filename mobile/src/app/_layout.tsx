@@ -7,7 +7,7 @@ import { useAppState } from '@/entities/app/store';
 import { useNotifications } from '@/features/notification';
 import { useServerSync } from '@/shared/lib/useServerSync';
 import { fontAssets, palette } from '@/shared/theme';
-import { Splash } from '@/shared/ui';
+import { Splash, ToastHost } from '@/shared/ui';
 
 /** 네비게이션 크롬도 앱과 같은 팔레트를 쓴다. 헤더만 회색이면 화면이 두 겹으로 보인다. */
 function navTheme(dark: boolean) {
@@ -55,6 +55,7 @@ export default function RootLayout() {
         <Stack.Screen name="budget-setup" />
       </Stack>
       <StatusBar style="auto" />
+      <ToastHost />
     </ThemeProvider>
   );
 }

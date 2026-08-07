@@ -5,6 +5,8 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { CATEGORY_ICONS, CATEGORY_TINTS, type IconKey } from '@/entities/category/model';
 import { useCategoryStore } from '@/entities/category/store';
 import { radius, screenPadding, space, useColors } from '@/shared/theme';
+import { successFeedback } from '@/shared/lib/haptic';
+import { toast } from '@/shared/lib/toast';
 import {
   Button,
   Card,
@@ -34,7 +36,9 @@ export default function CategoryNew() {
   const save = () => {
     if (!canSave) return;
     add({ label: label.trim(), icon, ...tint, income: income || undefined });
+    successFeedback();
     router.back();
+    toast('카테고리를 추가했어요');
   };
 
   return (

@@ -3,7 +3,7 @@ import { type ComponentType } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { palette, radius, space, useColors } from '../theme';
+import { palette, pressedStyle, radius, space, useColors } from '../theme';
 import { IconFlame, IconGrid, IconHome, IconPlus, IconReceipt } from './icons';
 import { Text } from './Text';
 
@@ -62,7 +62,7 @@ export function TabBar({ state, navigation }: Props) {
         key={name}
         accessibilityRole="tab"
         accessibilityState={{ selected: active }}
-        style={styles.tab}
+        style={(state) => [styles.tab, pressedStyle(state)]}
         onPress={() => navigation.navigate(name)}
       >
         <Icon size={22} color={color} strokeWidth={1.9} />

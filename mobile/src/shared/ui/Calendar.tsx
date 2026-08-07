@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { radius, useColors } from '../theme';
+import { pressedStyle, radius, useColors } from '../theme';
 import { Row, Stack } from './layout';
 import { Text } from './Text';
 
@@ -63,7 +63,7 @@ export function Calendar({
                 key={cell.key}
                 disabled={!onPressDay || cell.muted}
                 onPress={() => onPressDay?.(cell.key)}
-                style={styles.cell}
+                style={(state) => [styles.cell, pressedStyle(state)]}
               >
                 <Stack gap="xxs" center>
                   <View

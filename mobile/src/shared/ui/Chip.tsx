@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
 
-import { radius, space, useColors } from '../theme';
+import { pressedStyle, radius, space, useColors } from '../theme';
 import { Text } from './Text';
 
 export function Chip({
@@ -20,7 +20,11 @@ export function Chip({
       accessibilityRole="button"
       accessibilityState={{ selected: !!selected }}
       onPress={onPress}
-      style={[styles.chip, { backgroundColor: selected ? c.violetFill : c.surface2 }]}
+      style={(state) => [
+        styles.chip,
+        { backgroundColor: selected ? c.violetFill : c.surface2 },
+        pressedStyle(state),
+      ]}
     >
       <Text variant="callout" style={{ color: selected ? c.onColor : c.inkSoft }}>
         {label}
